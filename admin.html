@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Админ-панель — записи</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23161513'/%3E%3Ccircle cx='10' cy='10' r='3.5' fill='none' stroke='%23c9a35f' stroke-width='2'/%3E%3Ccircle cx='10' cy='22' r='3.5' fill='none' stroke='%23c9a35f' stroke-width='2'/%3E%3Cpath d='M13 12l12 10M13 20l12-10' stroke='%23c9a35f' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="admin.css">
+<script>window.__DEMO_CONFIG__={"timezone":"Europe/Moscow","slotStepMinutes":30,"daysAhead":14,"defaults":{"shop":{"name":"BLADE & BEARD","tagline":"Мужские стрижки и уход за бородой","phone":"+7 (900) 123-45-67","address":"Москва, ул. Примерная, 12","instagram":"https://instagram.com/","telegram":"https://t.me/","mapQuery":"Москва, ул. Примерная, 12"},"openTime":"10:00","closeTime":"21:00","services":[{"id":"haircut","name":"Мужская стрижка","duration":60,"price":1800,"description":"Консультация, мытьё головы, стрижка, укладка"},{"id":"fade","name":"Фейд / андеркат","duration":60,"price":2000,"description":"Плавный переход машинкой и ножницами"},{"id":"beard","name":"Оформление бороды","duration":30,"price":1200,"description":"Форма, контуры, горячее полотенце"},{"id":"combo","name":"Стрижка + борода","duration":90,"price":2700,"description":"Полный комплекс со скидкой"},{"id":"kids","name":"Детская стрижка","duration":30,"price":1200,"description":"Для мальчиков до 12 лет"},{"id":"shave","name":"Королевское бритьё","duration":60,"price":1900,"description":"Опасная бритва, распаривание, уход"}],"masters":[{"id":"alex","name":"Алексей","role":"Топ-барбер","experience":"8 лет опыта"},{"id":"dmitry","name":"Дмитрий","role":"Барбер","experience":"5 лет опыта"},{"id":"artem","name":"Артём","role":"Барбер","experience":"3 года опыта"}]}}</script>
+<script src="mock-api.js"></script>
+<link rel="stylesheet" href="demo.css">
+</head>
+<body>
+<section id="login" class="login" hidden>
+  <form id="login-form" class="login__box">
+    <h1>Админ-панель</h1>
+    <p class="muted">Записи клиентов и их статусы</p>
+    <label for="pw">Пароль</label>
+    <input id="pw" type="password" autocomplete="current-password" required>
+    <p id="login-err" class="err" role="alert"></p>
+    <button class="btn btn--primary" type="submit">Войти</button>
+  </form>
+</section>
+
+<div id="app" hidden>
+  <header class="top">
+    <div class="wrap top__in">
+      <h1 id="shop-name">Записи</h1>
+      <div class="tabs" role="tablist" aria-label="Разделы">
+        <button type="button" role="tab" id="tab-bookings" aria-controls="view-bookings" aria-selected="true">Записи</button>
+        <button type="button" role="tab" id="tab-settings" aria-controls="view-settings" aria-selected="false" tabindex="-1">Настройки</button>
+      </div>
+      <div class="top__actions">
+        <span id="updated" class="muted" aria-live="polite"></span>
+        <button id="refresh" class="btn btn--secondary btn--sm" type="button">Обновить</button>
+        <button id="logout" class="btn btn--secondary btn--sm" type="button">Выйти</button>
+      </div>
+    </div>
+  </header>
+  <main class="wrap">
+    <div id="view-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+      <form id="settings-form" class="settings" novalidate></form>
+    </div>
+    <div id="view-bookings" role="tabpanel" aria-labelledby="tab-bookings">
+    <section class="stats" aria-label="Статистика">
+      <div class="stat"><span>Записей сегодня</span><b id="st-count">—</b></div>
+      <div class="stat"><span>Выручка за сегодня</span><b id="st-rev">—</b></div>
+      <div class="stat"><span>Всего предстоящих</span><b id="st-total">—</b></div>
+    </section>
+    <section class="filters" aria-label="Фильтры">
+      <label>Мастер <select id="f-master"><option value="">Все</option></select></label>
+      <label>Статус <select id="f-status">
+        <option value="">Все</option><option value="new">Новые</option><option value="confirmed">Подтверждённые</option><option value="done">Выполненные</option><option value="cancelled">Отменённые</option>
+      </select></label>
+    </section>
+    <p id="msg" class="err" role="alert"></p>
+    <div id="list" aria-live="polite"></div>
+    </div>
+  </main>
+</div>
+<script type="module" src="admin.js"></script>
+</body>
+</html>

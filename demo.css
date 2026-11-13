@@ -1,0 +1,7 @@
+/* Demo build only: a small note telling visitors this is a sandbox. */
+.demo-note{position:fixed;left:16px;bottom:16px;z-index:60;display:flex;align-items:center;gap:12px;flex-wrap:wrap;max-width:calc(100vw - 32px);
+  padding:8px 12px;font:400 13px/1.4 'Instrument Sans',system-ui,sans-serif;color:#b7afa2;background:rgba(18,17,15,.94);
+  border:1px solid rgba(239,233,222,.14);border-radius:10px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.demo-note b{color:#f2ece1;font-weight:500}
+.demo-note a,.demo-note button{font:inherit;color:#f2ece1;background:none;border:0;padding:0;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+@media (max-width:560px){.demo-note{left:8px;right:8px;bottom:8px;gap:8px 12px;font-size:12px}}

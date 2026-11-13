@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Барбершоп — онлайн-запись</title>
+<meta name="description" content="Мужские стрижки и уход за бородой. Онлайн-запись на удобное время.">
+<meta name="theme-color" content="#161513">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23161513'/%3E%3Ccircle cx='10' cy='10' r='3.5' fill='none' stroke='%23c9a35f' stroke-width='2'/%3E%3Ccircle cx='10' cy='22' r='3.5' fill='none' stroke='%23c9a35f' stroke-width='2'/%3E%3Cpath d='M13 12l12 10M13 20l12-10' stroke='%23c9a35f' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>window.__DEMO_CONFIG__={"timezone":"Europe/Moscow","slotStepMinutes":30,"daysAhead":14,"defaults":{"shop":{"name":"BLADE & BEARD","tagline":"Мужские стрижки и уход за бородой","phone":"+7 (900) 123-45-67","address":"Москва, ул. Примерная, 12","instagram":"https://instagram.com/","telegram":"https://t.me/","mapQuery":"Москва, ул. Примерная, 12"},"openTime":"10:00","closeTime":"21:00","services":[{"id":"haircut","name":"Мужская стрижка","duration":60,"price":1800,"description":"Консультация, мытьё головы, стрижка, укладка"},{"id":"fade","name":"Фейд / андеркат","duration":60,"price":2000,"description":"Плавный переход машинкой и ножницами"},{"id":"beard","name":"Оформление бороды","duration":30,"price":1200,"description":"Форма, контуры, горячее полотенце"},{"id":"combo","name":"Стрижка + борода","duration":90,"price":2700,"description":"Полный комплекс со скидкой"},{"id":"kids","name":"Детская стрижка","duration":30,"price":1200,"description":"Для мальчиков до 12 лет"},{"id":"shave","name":"Королевское бритьё","duration":60,"price":1900,"description":"Опасная бритва, распаривание, уход"}],"masters":[{"id":"alex","name":"Алексей","role":"Топ-барбер","experience":"8 лет опыта"},{"id":"dmitry","name":"Дмитрий","role":"Барбер","experience":"5 лет опыта"},{"id":"artem","name":"Артём","role":"Барбер","experience":"3 года опыта"}]}}</script>
+<script src="mock-api.js"></script>
+<link rel="stylesheet" href="demo.css">
+</head>
+<body>
+<a class="skip" href="#booking">К записи</a>
+
+<header class="header" id="header">
+  <div class="container header__in">
+    <a href="#top" class="logo" aria-label="На главную"><span class="logo__mark" data-icon="scissors"></span><span data-shop="name">&nbsp;</span></a>
+    <nav class="nav" id="nav" aria-label="Основное меню">
+      <a href="#services">Услуги</a>
+      <a href="#masters">Мастера</a>
+      <a href="#why">Визит</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#contacts">Контакты</a>
+      <a href="#booking" class="btn btn--primary btn--sm nav__cta">Записаться</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav"><span></span><span></span></button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="container hero__in">
+      <div class="hero__text">
+        <p class="hero__place" data-shop="address">&nbsp;</p>
+        <h1 class="hero__title">Стрижка и борода ровно в назначенное время</h1>
+        <p class="hero__sub" id="hero-sub">&nbsp;</p>
+        <div class="hero__actions">
+          <a href="#booking" class="btn btn--primary">Записаться онлайн</a>
+          <a href="#services" class="btn btn--secondary">Услуги и цены</a>
+        </div>
+      </div>
+
+      <div class="hero__visual">
+      <div class="pole" aria-hidden="true">
+        <span class="pole__cap"></span>
+        <span class="pole__glass"><span class="pole__stripes"></span></span>
+        <span class="pole__cap"></span>
+      </div>
+      <aside class="ticket" aria-labelledby="ticket-title">
+        <div class="ticket__body">
+          <div class="ticket__head">
+            <p class="ticket__label" id="ticket-title">Свободное время</p>
+            <p class="ticket__date" id="ticket-date">&nbsp;</p>
+          </div>
+          <p class="ticket__svc" id="ticket-svc">&nbsp;</p>
+          <div class="ticket__slots" id="ticket-slots" aria-live="polite"></div>
+        </div>
+        <div class="ticket__stub">
+          <span class="ticket__brand" data-shop="name"></span>
+          <span id="ticket-hours"></span>
+        </div>
+      </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <div class="container split">
+      <header class="section__head split__aside">
+        <h2>Услуги и цены</h2>
+        <p class="lead">Цена окончательная. Нажмите «Выбрать», и услуга подставится в запись.</p>
+      </header>
+      <ul class="menu" id="services-list"></ul>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="masters">
+    <div class="container">
+      <header class="section__head">
+        <h2>Мастера</h2>
+        <p class="lead">Можно записаться к конкретному мастеру или на ближайшее свободное время.</p>
+      </header>
+      <div class="masters" id="masters-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="why">
+    <div class="container">
+      <header class="section__head">
+        <h2>Как проходит визит</h2>
+      </header>
+      <div class="why">
+        <article><span class="ico" data-icon="clock"></span><h3>Строго по времени</h3><p>Вы приходите к назначенному часу, и мастер уже свободен. Ждать в очереди не нужно.</p></article>
+        <article><span class="ico" data-icon="comb"></span><h3>Форма под вас</h3><p>Перед стрижкой мастер спрашивает, как вы носите волосы, и подбирает форму под их тип.</p></article>
+        <article><span class="ico" data-icon="razor"></span><h3>Бритва и полотенце</h3><p>Горячее полотенце, опасная бритва, стерильный инструмент для каждого клиента.</p></article>
+        <article><span class="ico" data-icon="cup"></span><h3>Кофе или чай</h3><p>Пока мастер заканчивает с предыдущим гостем, вам предложат кофе или чай.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="reviews">
+    <div class="container">
+      <header class="section__head">
+        <h2>Отзывы</h2>
+      </header>
+      <div class="reviews">
+        <figure class="review"><blockquote>Хожу второй год. Всегда аккуратно и именно так, как договорились. Записываюсь онлайн за минуту.</blockquote><figcaption>Максим К.</figcaption></figure>
+        <figure class="review"><blockquote>Королевское бритьё с горячим полотенцем, после него никакого раздражения. Вернусь.</blockquote><figcaption>Игорь С.</figcaption></figure>
+        <figure class="review"><blockquote>Привёл сына на первую «взрослую» стрижку. Мастер нашёл подход, ребёнок доволен.</blockquote><figcaption>Андрей П.</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="booking">
+    <div class="container container--narrow">
+      <header class="section__head">
+        <h2>Онлайн-запись</h2>
+        <p class="lead">Услуга, мастер, дата и время. Запись сразу появится у администратора.</p>
+      </header>
+      <div id="booking-root" class="booking" aria-busy="true">
+        <p class="muted">Загрузка…</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="contacts">
+    <div class="container">
+      <header class="section__head">
+        <h2>Как нас найти</h2>
+      </header>
+      <div class="contacts">
+        <div class="contacts__info">
+          <dl>
+            <div><dt>Адрес</dt><dd data-shop="address">—</dd></div>
+            <div><dt>Телефон</dt><dd><a id="c-phone" href="#">—</a></dd></div>
+            <div><dt>Часы работы</dt><dd id="c-hours">—</dd></div>
+            <div><dt>Соцсети</dt><dd class="socials"><a id="c-ig" href="#" target="_blank" rel="noopener">Instagram</a><a id="c-tg" href="#" target="_blank" rel="noopener">Telegram</a></dd></div>
+          </dl>
+          <a href="#booking" class="btn btn--primary">Записаться</a>
+        </div>
+        <div class="contacts__map">
+          <iframe id="map" title="Карта" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="about:blank"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer__in">
+    <span>© <span id="year"></span> <span data-shop="name"></span></span>
+    <a href="#top">Наверх</a>
+  </div>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
