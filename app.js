@@ -300,6 +300,7 @@ function initBooking(cfg) {
       h('div', { class: 'summary' }, h('dl', {},
         ...row('Услуга', r.service), ...row('Мастер', r.master),
         ...row('Дата', fmtDateLong(r.date)), ...row('Время', r.time), ...row('Итого', fmtPrice(r.price), 'total'))),
+      r.manageUrl ? h('p', { class: 'muted' }, h('a', { href: r.manageUrl, text: 'Добавить в календарь или отменить запись' })) : null,
       h('button', { class: 'btn btn--secondary', type: 'button', text: 'Записаться ещё', onclick: reset }));
     root.replaceChildren(card);
     card.setAttribute('tabindex', '-1'); card.focus({ preventScroll: true });

@@ -134,9 +134,24 @@
       if (!slot) return reply(409, { error: 'Это время уже заняли. Выберите другое.' });
       const m = mstById(slot.masters[0]);
       const b = { id: state.nextId++, name, phone, comment, status: 'new', date, start_min: toMin(time), duration: sv.duration,
-        service_id: sv.id, service_name: sv.name, price: sv.price, master_id: m.id, master_name: m.name, created_at: new Date().toISOString(), consent_at: new Date().toISOString() };
+        service_id: sv.id, service_name: sv.name, price: sv.price, master_id: m.id, master_name: m.name, created_at: new Date().toISOString(), consent_at: new Date().toISOString(), cancel_token: [...crypto.getRandomValues(new Uint8Array(16))].map((x) => x.toString(16).padStart(2, '0')).join('') };
       state.bookings.push(b); save();
-      return reply(201, { id: b.id, date, time, service: sv.name, price: sv.price, master: m.name });
+      return reply(201, { id: b.id, date, time, service: sv.name, price: sv.price, master: m.name, manageUrl: `booking.html?t=${b.cancel_token}` });
+    }
+    if (route === 'GET /api/booking' || route === 'POST /api/booking/cancel') {
+      const t = String(method === 'POST' ? body.t : q.get('t') || '');
+      const b = /^[a-f0-9]{32}$/.test(t) ? state.bookings.find((x) => x.cancel_token === t) : null;
+      if (!b) return reply(404, { error: 'Запись не найдена' });
+      const now = nowInShopTz(), before = CFG.cancelBeforeMinutes ?? 120;
+      const left = (Date.parse(`${b.date}T00:00:00Z`) - Date.parse(`${now.date}T00:00:00Z`)) / 60000 + b.start_min - now.minutes;
+      const canCancel = ['new', 'confirmed'].includes(b.status) && left >= before;
+      if (method === 'POST') {
+        if (b.status === 'cancelled') return reply(200, { ok: true, status: 'cancelled' });
+        if (!canCancel) return reply(409, { error: `Отменить онлайн уже нельзя, позвоните: ${S().shop.phone}` });
+        b.status = 'cancelled'; save(); return reply(200, { ok: true, status: 'cancelled' });
+      }
+      return reply(200, { date: b.date, time: toHHMM(b.start_min), duration: b.duration, service: b.service_name, master: b.master_name, price: b.price,
+        status: b.status, canCancel, cancelBeforeMinutes: before, shop: { name: S().shop.name, address: S().shop.address, phone: S().shop.phone } });
     }
     if (route === 'POST /api/admin/login') {
       if (body.password !== PASSWORD) return reply(401, { error: 'Неверный пароль. В демо пароль: demo' });
