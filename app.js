@@ -7,6 +7,11 @@ const ICONS = {
   clock: `<svg viewBox="0 0 24 24" ${S}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`,
   cup: `<svg viewBox="0 0 24 24" ${S}><path d="M4 9h12v5a5 5 0 01-5 5H9a5 5 0 01-5-5z"/><path d="M16 10.5h2a2 2 0 010 4h-2.5M8 3v2M12 3v2"/></svg>`,
   check: `<svg viewBox="0 0 24 24" ${S}><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`,
+  sparkle: `<svg viewBox="0 0 24 24" ${S}><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg>`,
+  heart: `<svg viewBox="0 0 24 24" ${S}><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg>`,
+  shield: `<svg viewBox="0 0 24 24" ${S}><path d="M12 3l7 3v5c0 4.4-3 8-7 10-4-2-7-5.6-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>`,
+  leaf: `<svg viewBox="0 0 24 24" ${S}><path d="M5 19c0-8 5-14 15-14 0 9-5 15-13 15"/><path d="M5 19c3-5 6-8 10-10"/></svg>`,
+  star: `<svg viewBox="0 0 24 24" ${S}><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8L3.5 9.7l5.9-.9z"/></svg>`,
 };
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -66,7 +71,7 @@ function initChrome() {
 function renderShop(cfg) {
   const { shop } = cfg;
   const n = cfg.masters.length;
-  document.title = `${shop.name} — онлайн-запись`;
+  document.title = `${window.__DEMO_LINK__ ? 'Демо: ' : ''}${shop.name} — онлайн-запись`; // a demo built from a link says so in the tab too
   const lead = shop.tagline ? `${shop.tagline}. ` : '';
   const md = $('meta[name=description]'); if (md) md.content = `${shop.name}. ${lead}${shop.address}. Онлайн-запись.`;
   document.querySelectorAll('[data-shop]').forEach((el) => { el.textContent = shop[el.dataset.shop] ?? ''; });
@@ -104,10 +109,38 @@ function renderMasters(cfg, onPick) {
     h('button', { class: 'btn btn--secondary btn--sm', type: 'button', 'aria-label': `Записаться, мастер ${m.name}`, onclick: () => onPick({ master: m.id }), text: 'Записаться' }))));
 }
 
+// The texts, sections and colors of the page come from the preset (config.content). Everything is set with textContent.
+const SECTION_IDS = ['services', 'masters', 'works', 'why', 'reviews', 'booking', 'contacts'];
+function renderContent(cfg) {
+  const c = cfg.content || {};
+  const set = (sel, text) => { const el = $(sel); if (el) el.textContent = text ?? ''; };
+  set('#hero-title', c.heroTitle); set('#hero-cta', c.heroCta); set('#hero-cta2', c.heroCta2);
+  set('#services-lead', c.servicesLead); set('#masters-title', c.mastersTitle); set('#masters-lead', c.mastersLead);
+  set('#why-title', c.visitTitle); set('#booking-lead', c.bookingLead);
+  const mark = $('#logo-mark'); if (mark) mark.innerHTML = Object.hasOwn(ICONS, c.logoIcon) ? ICONS[c.logoIcon] : ICONS.scissors; // trusted SVG from the table above
+  $('#why-list').replaceChildren(...(c.why || []).map((w) => {
+    const ico = h('span', { class: 'ico' }); ico.innerHTML = Object.hasOwn(ICONS, w.icon) ? ICONS[w.icon] : '';
+    return h('article', {}, ico, h('h3', { text: w.title }), h('p', { text: w.text }));
+  }));
+  $('#reviews-list').replaceChildren(...(c.reviews || []).map((r) => h('figure', { class: 'review' }, h('blockquote', { text: r.text }), h('figcaption', { text: r.name }))));
+  $('#pole').hidden = c.visual !== 'pole';
+  const a = c.accent;
+  if (a && /^#[0-9a-f]{6}$/i.test(a.main) && /^#[0-9a-f]{6}$/i.test(a.text) && /^#[0-9a-f]{6}$/i.test(a.ink)) {
+    const root = document.documentElement.style;
+    root.setProperty('--brass', a.main); root.setProperty('--brass-text', a.text); root.setProperty('--brass-ink', a.ink);
+  }
+  // A section is shown only when the preset lists it and it has something to show.
+  const listed = (id) => !c.sections || c.sections.includes(id);
+  const filled = { why: (c.why || []).length > 0, reviews: (c.reviews || []).length > 0, works: (cfg.gallery || []).length > 0 };
+  for (const id of SECTION_IDS) {
+    const show = listed(id) && (id in filled ? filled[id] : true);
+    const sec = $(`#${id}`); if (sec) sec.hidden = !show;
+    document.querySelectorAll(`a[data-nav="${id}"]`).forEach((link) => { link.hidden = !show || !(c.nav?.[id] ?? link.textContent); if (c.nav?.[id]) link.textContent = c.nav[id]; });
+  }
+}
+
 function renderGallery(cfg) {
   const photos = cfg.gallery || [];
-  $('#works').hidden = !photos.length;
-  document.querySelectorAll('a[href="#works"]').forEach((a) => { a.hidden = !photos.length; });
   $('#works-grid').replaceChildren(...photos.map((src, i) => h('img', { src, alt: `Работа мастера, фото ${i + 1}`, loading: 'lazy' })));
 }
 
@@ -239,7 +272,9 @@ function initBooking(cfg) {
         onclick: () => { st.date = d; st.error = ''; paintDates(); loadSlots(); },
       }, h('span', { text: wd }), ' ', h('b', { text: String(dt.getDate()) }));
     }));
-    refs.dates.querySelector('[aria-pressed=true]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    // Only the strip of dates scrolls sideways to the chosen day. scrollIntoView would also move the whole page.
+    const on = refs.dates.querySelector('[aria-pressed=true]');
+    if (on) refs.dates.scrollLeft = Math.max(0, on.offsetLeft - (refs.dates.clientWidth - on.offsetWidth) / 2);
   }
   function paintSlots() {
     if (!st.service) refs.slots.replaceChildren(h('p', { class: 'status', text: 'Сначала выберите услугу' }));
@@ -307,6 +342,7 @@ function initBooking(cfg) {
         ...row('Услуга', r.service), ...row('Мастер', r.master),
         ...row('Дата', fmtDateLong(r.date)), ...row('Время', r.time), ...row('Итого', fmtPrice(r.price), 'total'))),
       r.manageUrl ? h('p', { class: 'muted' }, h('a', { href: r.manageUrl, text: 'Добавить в календарь или отменить запись' }), ' Сохраните эту ссылку: другого способа вернуться к записи нет.') : null,
+      r.manageUrl && cfg.reminderBot ? h('a', { class: 'btn btn--secondary', target: '_blank', rel: 'noopener', href: `https://t.me/${cfg.reminderBot}?start=r_${r.manageUrl.split('=')[1]}`, text: 'Напомнить в Telegram' }) : null,
       h('button', { class: 'btn btn--secondary', type: 'button', text: 'Записаться ещё', onclick: reset }));
     root.replaceChildren(card);
     card.setAttribute('tabindex', '-1'); card.focus({ preventScroll: true });
@@ -343,6 +379,7 @@ async function main() {
   }
   const pick = (sel) => widget && widget.pick(sel);
   renderShop(cfg);
+  renderContent(cfg);
   renderServices(cfg, pick);
   renderMasters(cfg, pick);
   renderGallery(cfg);

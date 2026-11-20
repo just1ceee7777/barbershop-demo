@@ -3,7 +3,7 @@
 // window.__DEMO_CONFIG__ is injected by scripts/build-demo.mjs from config.js.
 (() => {
   const CFG = window.__DEMO_CONFIG__;
-  const KEY = 'barbershop-demo-v1';
+  let KEY = 'barbershop-demo-v1';
   const PASSWORD = 'demo';
 
   const toMin = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
@@ -17,6 +17,39 @@
   const addDays = (d, n) => { const x = new Date(`${d}T00:00:00Z`); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
   const clone = (o) => JSON.parse(JSON.stringify(o));
 
+  /* ---------- a demo for one business, described in the address: page#d=<base64url JSON> ---------- */
+  // {"preset":"salon","shop":{"name","tagline","phone","address"},"hours":["10:00","20:00"],"services":[{"name","price","duration","description"}],"masters":[{"name","role"}]}
+  // Everything goes through validate(), the same rules as the real settings, and is shown with textContent. Links and photos are not accepted.
+  function readLink() {
+    let raw = '';
+    try {
+      raw = (location.hash.match(/^#d=([A-Za-z0-9_-]{1,8000})$/) || [])[1] || '';
+      if (raw) sessionStorage.setItem('demo-link', raw);
+      else if (location.hash.startsWith('#d=')) sessionStorage.removeItem('demo-link'); // a damaged link must not show the previous business
+      else raw = sessionStorage.getItem('demo-link') || ''; // other pages of the same tab keep the profile
+    } catch { /* no storage */ }
+    if (!raw) return null;
+    try {
+      const p = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(raw.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0))));
+      const presets = CFG.presets || {};
+      const base = presets[p.preset] || presets[Object.keys(presets)[0]];
+      if (!base) return null;
+      const s = p.shop || {};
+      const v = window.validateSettings({
+        shop: { name: s.name || base.shop.name, tagline: s.tagline ?? base.shop.tagline, phone: s.phone || base.shop.phone, address: s.address || base.shop.address, mapQuery: s.address || base.shop.address },
+        openTime: p.hours?.[0] || base.openTime, closeTime: p.hours?.[1] || base.closeTime,
+        services: Array.isArray(p.services) && p.services.length ? p.services.slice(0, 12) : base.services,
+        masters: Array.isArray(p.masters) && p.masters.length ? p.masters.slice(0, 6).map((m) => ({ name: m.name, role: m.role ?? '', experience: '' })) : base.masters,
+        gallery: [],
+      });
+      const content = { ...base.content, reviews: [], reviewsAreSamples: false, sections: base.content.sections.filter((x) => x !== 'reviews') };
+      let h = 5381; for (const ch of raw) h = ((h * 33) ^ ch.charCodeAt(0)) >>> 0;
+      return { defaults: v, content, key: h.toString(36), name: v.shop.name };
+    } catch { return null; } // a broken or invalid link shows the ordinary demo
+  }
+  const LINK = readLink();
+  if (LINK) { CFG.defaults = LINK.defaults; CFG.content = LINK.content; KEY += `:${LINK.key}`; window.__DEMO_LINK__ = true; }
+
   /* ---------- state ---------- */
   let state;
   // Returns false when the browser refused to store it (quota, private mode): the data then lives in memory only.
@@ -28,13 +61,14 @@
     const svc = (id) => s.settings.services.find((x) => x.id === id) || s.settings.services[0];
     const m = s.settings.masters;
     const samples = [
-      [today, '15:00', 'combo', m[0], 'Максим Королёв', '+7 (916) 204-11-38', 'Оставить длину сверху', 'confirmed'],
+      [today, '15:00', 'combo', m[0], 'Максим Королёв', '+7 (916) 204-11-38', '', 'confirmed'],
       [today, '17:30', 'beard', m[1 % m.length], 'Игорь Савин', '+7 (903) 557-90-12', '', 'new'],
-      [tomorrow, '12:00', 'kids', m[2 % m.length], 'Андрей Петров', '+7 (925) 118-40-77', 'Сыну 7 лет', 'new'],
+      [tomorrow, '12:00', 'kids', m[2 % m.length], 'Андрей Петров', '+7 (925) 118-40-77', 'Позвоните за час', 'new'],
       [tomorrow, '18:00', 'haircut', m[0], 'Олег Миронов', '+7 (985) 340-22-61', '', 'new'],
     ];
     for (const [date, time, sid, master, name, phone, comment, status] of samples) {
       const sv = svc(sid);
+      if (toMin(time) < toMin(s.settings.openTime) || toMin(time) + sv.duration > toMin(s.settings.closeTime)) continue; // a business with other hours gets no sample outside them
       s.bookings.push({ id: s.nextId++, name, phone, comment, status, date, start_min: toMin(time), duration: sv.duration,
         service_id: sv.id, service_name: sv.name, price: sv.price, master_id: master.id, master_name: master.name, created_at: new Date().toISOString() });
     }
@@ -66,39 +100,8 @@
     return out;
   }
 
-  /* ---------- settings validation (condensed from server.js) ---------- */
-  function validate(input) {
-    const str = (v, max, label, req) => { const s = typeof v === 'string' ? v.trim() : ''; if (req && !s) throw new Error(`Заполните поле «${label}»`); if (s.length > max) throw new Error(`Поле «${label}» длиннее ${max} символов`); return s; };
-    const int = (v, min, max, label) => { const n = v === '' || v == null ? NaN : Number(v); if (!Number.isInteger(n) || n < min || n > max) throw new Error(`${label}: целое число от ${min} до ${max}`); return n; };
-    const link = (v, label) => { const s = str(v, 200, label); if (s && !/^https?:\/\/\S+$/.test(s)) throw new Error(`${label}: ссылка должна начинаться с https:// или http://`); return s; };
-    // In the demo a photo is a small data: URL kept in this browser; the real site stores files and keeps their path.
-    const photo = (v, label) => { const s = typeof v === 'string' ? v : ''; if (s && !/^data:image\/jpeg;base64,[A-Za-z0-9+/=]{1,400000}$/.test(s)) throw new Error(`${label}: неверный файл`); return s; };
-    const ids = (arr, label, map) => {
-      if (!Array.isArray(arr) || !arr.length) throw new Error(`Добавьте хотя бы одну позицию в разделе «${label}»`);
-      const seen = new Set();
-      return arr.map((raw, i) => { const it = map(raw || {}, i + 1); it.id = typeof raw.id === 'string' && /^[a-z0-9_-]{1,40}$/.test(raw.id) ? raw.id : `x${Math.random().toString(16).slice(2, 10)}`; if (seen.has(it.id)) throw new Error(`Повторяющаяся позиция в разделе «${label}»`); seen.add(it.id); return it; });
-    };
-    const sh = input.shop || {};
-    const phone = str(sh.phone, 30, 'Телефон', true);
-    const digits = phone.replace(/\D/g, '').length; if (digits < 10 || digits > 15) throw new Error('Телефон: от 10 до 15 цифр');
-    const address = str(sh.address, 120, 'Адрес', true);
-    const v = {
-      shop: { name: str(sh.name, 60, 'Название', true), tagline: str(sh.tagline, 120, 'Подзаголовок'), phone, address,
-        mapQuery: str(sh.mapQuery, 120, 'Адрес для карты') || address, instagram: link(sh.instagram, 'Instagram'), telegram: link(sh.telegram, 'Telegram') },
-      openTime: String(input.openTime || ''), closeTime: String(input.closeTime || ''),
-    };
-    const T = /^([01]\d|2[0-3]):[0-5]\d$/;
-    if (!T.test(v.openTime) || !(T.test(v.closeTime) || v.closeTime === '24:00')) throw new Error('Часы работы в формате ЧЧ:ММ');
-    const day = toMin(v.closeTime) - toMin(v.openTime);
-    if (day < 60) throw new Error('Закрытие должно быть хотя бы на час позже открытия');
-    v.services = ids(input.services, 'Услуги', (s, n) => ({ name: str(s.name, 60, `Название услуги ${n}`, true), description: str(s.description, 200, `Описание услуги ${n}`),
-      duration: int(s.duration, 15, Math.min(480, day), `Длительность услуги ${n} в минутах`), price: int(s.price, 0, 1e6, `Цена услуги ${n}`) }));
-    v.masters = ids(input.masters, 'Мастера', (m, n) => ({ name: str(m.name, 40, `Имя мастера ${n}`, true), role: str(m.role, 60, `Должность мастера ${n}`), experience: str(m.experience, 60, `Опыт мастера ${n}`), photo: photo(m.photo, `Фото мастера ${n}`) }));
-    const gal = Array.isArray(input.gallery) ? input.gallery : [];
-    if (gal.length > 8) throw new Error('В галерее не больше 8 фото');
-    v.gallery = gal.map((p) => photo(p, 'Фото галереи'));
-    return v;
-  }
+  /* ---------- settings validation: demo/validate.js ---------- */
+  const validate = (input) => window.validateSettings(input); // (readLink above calls window.validateSettings directly: it runs before this line)
 
   /* ---------- routes ---------- */
   const reply = (status, data) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
@@ -109,7 +112,7 @@
     const q = url.searchParams;
     if (route === 'GET /api/config') {
       const today = nowInShopTz().date;
-      return reply(200, { shop: S().shop, services: S().services, masters: S().masters, gallery: S().gallery || [], openTime: S().openTime, closeTime: S().closeTime, privacy: { ...CFG.privacy, telegram: false },
+      return reply(200, { shop: S().shop, services: S().services, masters: S().masters, gallery: S().gallery || [], openTime: S().openTime, closeTime: S().closeTime, content: CFG.content, reminderBot: '', privacy: { ...CFG.privacy, telegram: false },
         dates: Array.from({ length: CFG.daysAhead }, (_, i) => addDays(today, i)) });
     }
     if (route === 'GET /api/slots') {
@@ -224,6 +227,13 @@
   /* ---------- demo note ---------- */
   document.addEventListener('DOMContentLoaded', () => {
     const isAdmin = /admin(\.html)?$/.test(location.pathname);
+    if (LINK) { // a demo for one business: a ribbon says so on every page, so nobody takes it for the real site
+      document.body.dataset.prospect = '';
+      const rb = document.createElement('div');
+      rb.className = 'demo-ribbon';
+      rb.textContent = `Демо-версия для «${LINK.name}». Тексты и цены условные`;
+      document.body.append(rb);
+    }
     const bar = document.createElement('div');
     bar.className = 'demo-note';
     bar.innerHTML = isAdmin

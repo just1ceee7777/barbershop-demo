@@ -43,6 +43,7 @@ function paint(b) {
       const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([await icsFile(b)], { type: 'text/calendar' })), download: 'zapis.ics' });
       a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 10_000); // revoking at once can cancel the download on iOS
     } }));
+    if (b.reminderBot && ['new', 'confirmed'].includes(b.status)) actions.push(Object.assign(el('a', 'Напомнить в Telegram'), { className: 'btn btn--secondary', target: '_blank', rel: 'noopener', href: `https://t.me/${b.reminderBot}?start=r_${token}` }));
     if (b.canCancel) actions.push(Object.assign(el('button', 'Отменить запись'), { type: 'button', className: 'btn btn--secondary', onclick: async (e) => {
       if (!confirm('Отменить запись?')) return;
       e.target.disabled = true;

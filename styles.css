@@ -270,3 +270,6 @@ p{margin:0}
 .map-facade{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:12px;min-height:360px;padding:24px;color:var(--text2)}
 .map-facade p{margin:0;font-size:14px;color:var(--muted)}
 .map-facade a{color:var(--text);text-underline-offset:2px}
+
+[hidden]{display:none!important}
+.dates{position:relative}
