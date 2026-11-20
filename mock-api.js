@@ -112,7 +112,7 @@
     const q = url.searchParams;
     if (route === 'GET /api/config') {
       const today = nowInShopTz().date;
-      return reply(200, { shop: S().shop, services: S().services, masters: S().masters, gallery: S().gallery || [], openTime: S().openTime, closeTime: S().closeTime, content: CFG.content, reminderBot: '', privacy: { ...CFG.privacy, telegram: false },
+      return reply(200, { shop: S().shop, services: S().services, masters: S().masters, gallery: S().gallery || [], openTime: S().openTime, closeTime: S().closeTime, cancelBeforeMinutes: CFG.cancelBeforeMinutes, content: CFG.content, reminderBot: '', privacy: { ...CFG.privacy, telegram: false },
         dates: Array.from({ length: CFG.daysAhead }, (_, i) => addDays(today, i)) });
     }
     if (route === 'GET /api/slots') {

@@ -134,11 +134,28 @@ function renderMasters(cfg, onPick) {
 // The texts, sections and colors of the page come from the preset (config.content). Everything is set with textContent.
 // Russian typesetting: a one- to three-letter word is glued to the next one, so it never ends a line (the server does the same for the first paint).
 const tie = (t) => String(t).replace(/(^|[\s(«])([А-Яа-яЁёA-Za-z]{1,3})\s+(?=\S)/g, '$1$2\u00a0');
-const SECTION_IDS = ['services', 'statement', 'masters', 'works', 'why', 'reviews', 'booking', 'contacts'];
+const SECTION_IDS = ['services', 'statement', 'masters', 'works', 'why', 'reviews', 'faq', 'booking', 'contacts'];
+// A strip of plain numbers taken from the shop's own settings, so it can never claim something the booking does not do.
+function renderFacts(cfg) {
+  const sec = $('#facts'), list = $('#facts-list'); if (!sec || !list) return;
+  const prices = cfg.services.map((s) => s.price).filter((p) => p > 0);
+  const n = cfg.masters.length;
+  const facts = [
+    prices.length ? [`от ${fmtPrice(Math.min(...prices))}`, 'самая доступная услуга, цена окончательная'] : null,
+    [String(n), `${plural(n, 'мастер', 'мастера', 'мастеров')}, можно выбрать любого или ближайшего свободного`],
+    [`${cfg.openTime}–${cfg.closeTime}`, 'ежедневно, запись на любое свободное время'],
+    cfg.cancelBeforeMinutes ? [`за ${Math.round(cfg.cancelBeforeMinutes / 60)} ч`, 'можно отменить запись онлайн, без звонков'] : null,
+  ].filter(Boolean);
+  list.replaceChildren(...facts.map(([big, small]) => h('div', {}, h('dt', { text: big }), h('dd', { text: small }))));
+  sec.hidden = false;
+}
+
 function renderContent(cfg) {
   const c = cfg.content || {};
   const set = (sel, text) => { const el = $(sel); if (el) el.textContent = tie(text ?? ''); };
   set('#hero-title', c.heroTitle); set('#hero-cta', c.heroCta); set('#hero-cta2', c.heroCta2);
+  $('#faq-list').replaceChildren(...(c.faq || []).map((f) => h('details', {}, h('summary', { text: f.q }), h('p', { text: f.a }))));
+  renderFacts(cfg);
   set('#statement-text', c.statement); set('#closing-text', c.closing);
   const concept = $('#hero-concept'); if (concept) { concept.textContent = tie(c.concept ?? ''); concept.hidden = !c.concept; }
   set('#services-lead', c.servicesLead); set('#masters-title', c.mastersTitle); set('#masters-lead', c.mastersLead);
@@ -163,7 +180,7 @@ function renderContent(cfg) {
   const whyPic = (cfg.gallery || []).length > 2 ? cfg.gallery.at(-1) : '';
   const wp = $('#why-photo'); if (wp) { wp.hidden = !whyPic; if (whyPic) wp.src = whyPic; }
   $('.why-wrap')?.classList.toggle('why-wrap--photo', !!whyPic);
-  const filled = { statement: !!c.statement, why: (c.why || []).length > 0, reviews: (c.reviews || []).length > 0, works: (cfg.gallery || []).length > 1 };
+  const filled = { faq: (c.faq || []).length > 0, statement: !!c.statement, why: (c.why || []).length > 0, reviews: (c.reviews || []).length > 0, works: (cfg.gallery || []).length > 1 };
   const closing = $('#closing'); if (closing) closing.hidden = !c.closing;
   for (const id of SECTION_IDS) {
     const show = listed(id) && (id in filled ? filled[id] : true);

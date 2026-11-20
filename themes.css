@@ -142,6 +142,30 @@
 [data-theme=sign] .review:first-child blockquote::before{content:"«";color:var(--brass-text);margin-right:.08em}
 [data-theme=sign] .review:first-child blockquote::after{content:"»";color:var(--brass-text);margin-left:.04em}
 [data-theme=sign] .review figcaption{color:var(--muted)}
+/* a row of plain numbers right under the first screen */
+.facts{display:none}
+[data-theme=sign] .facts{display:block;background:var(--deep);border-bottom:1px solid var(--line)}
+[data-theme=sign] .facts[hidden]{display:none}
+[data-theme=sign] .facts dl{margin:0;display:grid;grid-template-columns:repeat(4,1fr)}
+[data-theme=sign] .facts dl>div{padding:32px 28px 32px 0;border-right:1px solid var(--line);margin-right:28px}
+[data-theme=sign] .facts dl>div:last-child{border-right:0;margin-right:0}
+[data-theme=sign] .facts dt{font:700 clamp(26px,3vw,40px)/1.05 var(--display);color:var(--text)}
+[data-theme=sign] .facts dd{margin:8px 0 0;font-size:14px;line-height:1.4;color:var(--muted);max-width:18em}
+/* questions people ask before they book */
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:24px;align-items:center;padding:22px 0;font:600 18px/1.3 var(--ui)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:400 28px/1 var(--ui);color:var(--brass-text);transition:transform .2s var(--ease)}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq p{margin:0 0 24px;max-width:44em;color:var(--text2)}
+[data-theme=sign] .faq summary{font:700 21px/1.25 var(--display)}
+/* the eye zigzags: some headings sit left, some right, and the middle portrait drops a step */
+@media (min-width:961px){
+  [data-theme=sign] #works .section__head,[data-theme=sign] #reviews .section__head{text-align:right;margin-left:auto}
+  [data-theme=sign] #works .section__head .lead,[data-theme=sign] #reviews .section__head .lead{margin-left:auto}
+  [data-theme=sign] .masters{align-items:start}
+  [data-theme=sign] .masters .master:nth-child(2){margin-top:56px}
+}
 /* the work: real photographs, the first one large */
 [data-theme=sign] .works{grid-template-columns:repeat(3,1fr);gap:16px}
 [data-theme=sign] .works img{border:0;border-radius:var(--r-sm);box-shadow:none;filter:saturate(.92) contrast(1.04);background:var(--card)}
@@ -340,6 +364,8 @@
 .menu li{display:block}
 .ticket{position:relative}
 @media (max-width:960px){
+  [data-theme=sign] .facts dl{grid-template-columns:1fr 1fr}
+  [data-theme=sign] .facts dl>div{border-right:0;margin-right:0;padding:24px 12px 24px 0}
   .why-wrap--photo{grid-template-columns:1fr;gap:28px}
   .why-photo{aspect-ratio:16/10;height:auto}
   [data-theme=sign] .why-photo{position:static;transform:none}
