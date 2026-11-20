@@ -301,3 +301,12 @@ p{margin:0}
 .fab--on{transform:none}
 @media (max-width:860px){.fab{display:flex}}
 @media (prefers-reduced-motion:reduce){.fab{transition:none}}
+
+.master__body{display:flex;flex-direction:column;align-items:inherit;gap:6px;width:100%}
+.master .note{margin:4px 0 0;color:var(--text2)}
+.master .free{font-size:14px;color:var(--brass-text);font-weight:500}
+.master--photo{display:flex;flex-direction:column}
+.master--photo .master__body{flex:1}
+.master__body .btn{margin-top:auto;align-self:flex-start}
+.master__body .exp{margin-bottom:auto}
+.master__body .free{margin-bottom:14px}

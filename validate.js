@@ -28,7 +28,7 @@
     if (day < 60) throw new Error('Закрытие должно быть хотя бы на час позже открытия');
     v.services = ids(input.services, 'Услуги', (s, n) => ({ name: str(s.name, 60, `Название услуги ${n}`, true), description: str(s.description, 200, `Описание услуги ${n}`),
       duration: int(s.duration, 15, Math.min(480, day), `Длительность услуги ${n} в минутах`), price: int(s.price, 0, 1e6, `Цена услуги ${n}`) }));
-    v.masters = ids(input.masters, 'Мастера', (m, n) => ({ name: str(m.name, 40, `Имя мастера ${n}`, true), role: str(m.role, 60, `Должность мастера ${n}`), experience: str(m.experience, 60, `Опыт мастера ${n}`), photo: photo(m.photo, `Фото мастера ${n}`) }));
+    v.masters = ids(input.masters, 'Мастера', (m, n) => ({ name: str(m.name, 40, `Имя мастера ${n}`, true), role: str(m.role, 60, `Должность мастера ${n}`), experience: str(m.experience, 60, `Опыт мастера ${n}`), note: str(m.note, 90, `Строка о мастере ${n}`), photo: photo(m.photo, `Фото мастера ${n}`) }));
     const gal = Array.isArray(input.gallery) ? input.gallery : [];
     if (gal.length > 8) throw new Error('В галерее не больше 8 фото');
     v.gallery = gal.map((p) => photo(p, 'Фото галереи'));

@@ -104,13 +104,31 @@ function renderServices(cfg, onPick) {
 }
 
 function renderMasters(cfg, onPick) {
-  $('#masters-grid').replaceChildren(...cfg.masters.map((m) => h('article', { class: 'master' },
-    m.photo ? h('img', { class: 'avatar avatar--photo', src: m.photo, alt: m.name, loading: 'lazy', width: '96', height: '96' })
-      : h('div', { class: 'avatar', 'aria-hidden': 'true', text: m.name.trim().slice(0, 1).toUpperCase() }),
-    h('h3', { text: m.name }),
-    h('span', { class: 'role', text: m.role }),
-    h('span', { class: 'exp', text: m.experience }),
-    h('button', { class: 'btn btn--secondary btn--sm', type: 'button', 'aria-label': `Записаться, мастер ${m.name}`, onclick: () => onPick({ master: m.id }), text: 'Записаться' }))));
+  const svc = cfg.services[0];
+  const cards = cfg.masters.map((m) => {
+    const free = h('span', { class: 'free', hidden: true });
+    const card = h('article', { class: `master${m.photo ? ' master--photo' : ''}` },
+      m.photo ? h('img', { class: 'avatar avatar--photo', src: m.photo, alt: m.name, loading: 'lazy', decoding: 'async', width: '480', height: '600' })
+        : h('div', { class: 'avatar', 'aria-hidden': 'true', text: m.name.trim().slice(0, 1).toUpperCase() }),
+      h('div', { class: 'master__body' },
+        h('h3', { text: m.name }),
+        h('span', { class: 'role', text: m.role }),
+        m.note ? h('p', { class: 'note', text: tie(m.note) }) : '',
+        h('span', { class: 'exp', text: m.experience }),
+        free,
+        h('button', { class: 'btn btn--secondary btn--sm', type: 'button', 'aria-label': `Записаться, мастер ${m.name}`, onclick: () => onPick({ master: m.id }), text: 'Записаться' })));
+    return { card, free, m };
+  });
+  $('#masters-grid').replaceChildren(...cards.map((c) => c.card));
+  // The nearest free time of each master, today or tomorrow. A failed request just leaves the line out.
+  for (const { free, m } of cards) {
+    (async () => {
+      for (const [i, date] of (cfg.dates || []).slice(0, 2).entries()) {
+        const { slots } = await api(`/api/slots?${new URLSearchParams({ date, service: svc.id, master: m.id })}`);
+        if (slots.length) { free.textContent = `${i === 0 ? 'Сегодня' : 'Завтра'} свободно в ${slots[0]}`; free.hidden = false; return; }
+      }
+    })().catch(() => {});
+  }
 }
 
 // The texts, sections and colors of the page come from the preset (config.content). Everything is set with textContent.
