@@ -64,6 +64,24 @@
 [data-theme=sign] .ticket{max-width:400px;--rot:-2.5deg;box-shadow:0 18px 32px rgba(0,0,0,.5)}
 [data-theme=sign] .ticket__label{font:800 22px/1.1 var(--display)}
 [data-theme=sign] .ticket__body{border-top:8px solid var(--brass)}
+/* the first screen as a photograph: the shop itself edge to edge, the headline on its dark side, the booking card on the other */
+[data-theme=sign] .hero--cover{background:var(--deep);min-height:min(100svh,880px);display:flex;align-items:flex-end;padding-top:120px}
+[data-theme=sign] .hero--cover::before{display:block;content:"";position:absolute;inset:0;width:auto;height:auto;transform:none;border-radius:0;filter:none;opacity:1;z-index:1;
+  background:linear-gradient(90deg,rgba(9,19,34,.94) 0,rgba(9,19,34,.78) 38%,rgba(9,19,34,.2) 72%,rgba(9,19,34,.05)),linear-gradient(0deg,rgba(9,19,34,.9),transparent 42%)}
+[data-theme=sign] .hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 40%;z-index:0;transform-origin:70% 50%}
+@media (prefers-reduced-motion:no-preference){[data-theme=sign] .hero__bg{animation:bgin .9s var(--ease) both,drift 26s ease-in-out .9s infinite alternate}}
+@keyframes bgin{from{opacity:0}}
+@keyframes drift{to{transform:scale(1.07)}}
+[data-theme=sign] .hero--cover .hero__in{position:relative;z-index:2;width:100%;align-items:end}
+[data-theme=sign] .hero--cover .hero__in{grid-template-columns:1.35fr .65fr}
+[data-theme=sign] .hero--cover .hero__title{font-size:clamp(40px,5.4vw,82px);line-height:1;max-width:none}
+[data-theme=sign] .hero--cover .hero__sub{color:var(--text)}
+[data-theme=sign] .hero--cover .badge{top:-70px;right:-18px}
+[data-theme=sign] .hero--cover .hero__visual{justify-content:flex-end}
+/* a shop-counter tag: the one thing the shop is known for */
+.hero__concept{margin:0 0 18px}
+[data-theme=sign] .hero__concept{display:inline-block;background:var(--paper);color:var(--ink);font:700 15px/1.2 var(--display);padding:9px 16px 9px 22px;transform:rotate(-1.5deg);
+  clip-path:polygon(0 0,100% 0,100% 100%,0 100%,10px 50%);box-shadow:0 8px 18px rgba(0,0,0,.35)}
 /* sections */
 [data-theme=sign] .section--alt{background:var(--deep)}
 [data-theme=sign] .section__head h2{font:800 clamp(30px,3.8vw,52px)/1.06 var(--display);text-transform:uppercase}
@@ -90,8 +108,9 @@
 [data-theme=sign] .menu .btn--sm{height:32px}
 /* masters */
 [data-theme=sign] .master{background:var(--card)}
-[data-theme=sign] .avatar{border-radius:var(--r-sm);width:72px;height:72px;font:800 38px/1 var(--display);color:var(--ink);background:var(--paper);border:0;box-shadow:inset 0 -8px 0 var(--brass)}
-[data-theme=sign] .avatar--photo{border-radius:var(--r-sm);filter:grayscale(1) contrast(1.05);box-shadow:none}
+[data-theme=sign] .master{padding:28px;gap:16px}
+[data-theme=sign] .avatar{border-radius:var(--r-sm);width:104px;height:128px;font:800 64px/1 var(--display);color:var(--ink);background:var(--paper);border:0;box-shadow:inset 0 -8px 0 var(--brass)}
+[data-theme=sign] .avatar--photo{width:104px;height:128px;border-radius:var(--r-sm);filter:grayscale(1) contrast(1.05);box-shadow:none}
 [data-theme=sign] .master h3{font:800 22px/1.1 var(--display);text-transform:uppercase;letter-spacing:.02em}
 [data-theme=sign] .why{border-top:3px solid var(--text)}
 [data-theme=sign] .why .ico{color:var(--brass-text);width:28px;height:28px}
@@ -296,6 +315,9 @@
 .menu li{display:block}
 .ticket{position:relative}
 @media (max-width:960px){
+  [data-theme=sign] .hero--cover .hero__visual .ticket{margin:8px 0 0;max-width:none;width:100%}
+  [data-theme=sign] .hero--cover .hero__in{grid-template-columns:1fr}
+  [data-theme=sign] .hero--cover::before{background:linear-gradient(0deg,rgba(9,19,34,.96) 0,rgba(9,19,34,.72) 60%,rgba(9,19,34,.5))}
   .hero__visual{align-items:flex-start;margin-top:8px}
   .art{width:min(100%,320px);max-height:none}
   .hero__visual .ticket{margin-top:-72px;margin-left:24px}
@@ -310,6 +332,9 @@
   /* on a phone the booking card is the useful part of the first screen; the picture waits for the desktop */
   .art{display:none!important} /* the theme rules for each picture are more specific than this one */
   .badge{display:none!important}
+  [data-theme=sign] .hero--cover{padding-top:96px;min-height:0}
+  [data-theme=sign] .hero--cover::before{right:0;bottom:0;top:0;background:linear-gradient(0deg,rgba(9,19,34,.96) 0,rgba(9,19,34,.72) 60%,rgba(9,19,34,.5))}
+  [data-theme=sign] .hero--cover .hero__title{font-size:clamp(34px,10vw,56px)}
   .art.art--photo{display:block!important;width:100%;aspect-ratio:16/10;max-height:none;border-width:6px}
   .hero__visual{margin-top:0}
   .hero__visual .ticket{margin:0 auto}

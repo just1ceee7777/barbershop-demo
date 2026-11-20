@@ -121,6 +121,7 @@ function renderContent(cfg) {
   const c = cfg.content || {};
   const set = (sel, text) => { const el = $(sel); if (el) el.textContent = tie(text ?? ''); };
   set('#hero-title', c.heroTitle); set('#hero-cta', c.heroCta); set('#hero-cta2', c.heroCta2);
+  const concept = $('#hero-concept'); if (concept) { concept.textContent = tie(c.concept ?? ''); concept.hidden = !c.concept; }
   set('#services-lead', c.servicesLead); set('#masters-title', c.mastersTitle); set('#masters-lead', c.mastersLead);
   set('#why-title', c.visitTitle); set('#booking-lead', c.bookingLead);
   const mark = $('#logo-mark'); if (mark) mark.innerHTML = Object.hasOwn(ICONS, c.logoIcon) ? ICONS[c.logoIcon] : ICONS.scissors; // trusted SVG from the table above
@@ -151,7 +152,13 @@ function renderContent(cfg) {
 // The first screen's picture: the client's own first photo when there is one, otherwise the niche's own graphic.
 // A real photo is always better than the graphic, so the graphic is only a stand-in.
 function renderArt(cfg) {
-  const c = cfg.content || {}, art = $('#art'), photo = (cfg.gallery || [])[0];
+  const c = cfg.content || {}, art = $('#art'), photo = (cfg.gallery || [])[0], hero = $('.hero');
+  // The barbershop look puts the photo behind the headline, edge to edge; the other looks keep it in a frame beside the text.
+  hero.querySelector('.hero__bg')?.remove(); hero.classList.remove('hero--cover');
+  if (photo && document.documentElement.dataset.theme === 'sign') {
+    hero.classList.add('hero--cover'); art.hidden = true;
+    return hero.prepend(h('img', { class: 'hero__bg', src: photo, alt: '', width: '1800', height: '1100', fetchpriority: 'high', decoding: 'async' }));
+  }
   art.className = `art art--${photo ? 'photo' : (c.art || 'none')}`;
   art.hidden = !photo && (c.art || 'none') === 'none';
   if (photo) return art.replaceChildren(h('img', { src: photo, alt: '', width: '840', height: '1050', fetchpriority: 'high' }));
