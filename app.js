@@ -135,6 +135,15 @@ function renderMasters(cfg, onPick) {
 // Russian typesetting: a one- to three-letter word is glued to the next one, so it never ends a line (the server does the same for the first paint).
 const tie = (t) => String(t).replace(/(^|[\s(«])([А-Яа-яЁёA-Za-z]{1,3})\s+(?=\S)/g, '$1$2\u00a0');
 const SECTION_IDS = ['services', 'statement', 'masters', 'works', 'why', 'reviews', 'faq', 'booking', 'contacts'];
+// The sentence on the orange band: one span per word so the page can light the words up while it is scrolled (CSS, see themes.css).
+// Without that CSS support, or with reduced motion, the spans are plain text.
+function renderStatement(text) {
+  const p = $('#statement-text'); if (!p) return;
+  const words = tie(text ?? '').split(' ').filter(Boolean);
+  p.style.setProperty('--n', words.length);
+  p.replaceChildren(...words.flatMap((w, i) => [i ? ' ' : '', h('span', { text: w, style: `--i:${i}` })]));
+}
+
 // A strip of plain numbers taken from the shop's own settings, so it can never claim something the booking does not do.
 function renderFacts(cfg) {
   const sec = $('#facts'), list = $('#facts-list'); if (!sec || !list) return;
@@ -156,7 +165,8 @@ function renderContent(cfg) {
   set('#hero-title', c.heroTitle); set('#hero-cta', c.heroCta); set('#hero-cta2', c.heroCta2);
   $('#faq-list').replaceChildren(...(c.faq || []).map((f) => h('details', {}, h('summary', { text: f.q }), h('p', { text: f.a }))));
   renderFacts(cfg);
-  set('#statement-text', c.statement); set('#closing-text', c.closing);
+  set('#closing-text', c.closing);
+  renderStatement(c.statement);
   const concept = $('#hero-concept'); if (concept) { concept.textContent = tie(c.concept ?? ''); concept.hidden = !c.concept; }
   set('#services-lead', c.servicesLead); set('#masters-title', c.mastersTitle); set('#masters-lead', c.mastersLead);
   set('#why-title', c.visitTitle); set('#booking-lead', c.bookingLead);

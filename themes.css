@@ -130,6 +130,16 @@
 [data-theme=sign] .closing{display:block;background:var(--paper);color:var(--ink);padding:72px 0}
 [data-theme=sign] .closing__in{display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
 [data-theme=sign] .closing p{margin:0;max-width:20em;font:800 clamp(24px,3vw,40px)/1.12 var(--display)}
+/* the one moment tied to the scroll: the sentence lights up word by word as the band comes into view.
+   Plain CSS, no script after the words are split; browsers without scroll timelines, and people who asked for less motion, just see the text. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion:no-preference) {
+    [data-theme=sign] .statement{view-timeline:--lit block}
+    [data-theme=sign] .statement p span{animation:lit linear both;animation-timeline:--lit;
+      animation-range:cover calc(2% + var(--i) * 20% / var(--n)) cover calc(28% + var(--i) * 22% / var(--n))}
+    @keyframes lit{from{opacity:.18}to{opacity:1}}
+  }
+}
 /* the visit: a photograph beside the four reasons */
 .why-wrap--photo{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:56px;align-items:start}
 .why-photo{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
