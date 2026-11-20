@@ -11,6 +11,7 @@ const ICONS = {
   heart: `<svg viewBox="0 0 24 24" ${S}><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg>`,
   shield: `<svg viewBox="0 0 24 24" ${S}><path d="M12 3l7 3v5c0 4.4-3 8-7 10-4-2-7-5.6-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>`,
   leaf: `<svg viewBox="0 0 24 24" ${S}><path d="M5 19c0-8 5-14 15-14 0 9-5 15-13 15"/><path d="M5 19c3-5 6-8 10-10"/></svg>`,
+  drop: `<svg viewBox="0 0 24 24" ${S}><path d="M12 3.5c3.2 4 6 7.1 6 10.6a6 6 0 01-12 0c0-3.5 2.8-6.6 6-10.6z"/></svg>`,
   star: `<svg viewBox="0 0 24 24" ${S}><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8L3.5 9.7l5.9-.9z"/></svg>`,
 };
 
@@ -113,10 +114,12 @@ function renderMasters(cfg, onPick) {
 }
 
 // The texts, sections and colors of the page come from the preset (config.content). Everything is set with textContent.
+// Russian typesetting: a one- to three-letter word is glued to the next one, so it never ends a line (the server does the same for the first paint).
+const tie = (t) => String(t).replace(/(^|[\s(«])([А-Яа-яЁёA-Za-z]{1,3})\s+(?=\S)/g, '$1$2\u00a0');
 const SECTION_IDS = ['services', 'masters', 'works', 'why', 'reviews', 'booking', 'contacts'];
 function renderContent(cfg) {
   const c = cfg.content || {};
-  const set = (sel, text) => { const el = $(sel); if (el) el.textContent = text ?? ''; };
+  const set = (sel, text) => { const el = $(sel); if (el) el.textContent = tie(text ?? ''); };
   set('#hero-title', c.heroTitle); set('#hero-cta', c.heroCta); set('#hero-cta2', c.heroCta2);
   set('#services-lead', c.servicesLead); set('#masters-title', c.mastersTitle); set('#masters-lead', c.mastersLead);
   set('#why-title', c.visitTitle); set('#booking-lead', c.bookingLead);
@@ -407,3 +410,27 @@ async function main() {
   });
 }
 main();
+
+/* ---------- two small movements: the ticket follows the pointer, a booking button follows the phone user ---------- */
+(() => {
+  const fine = matchMedia('(hover: hover) and (pointer: fine)'), calm = matchMedia('(prefers-reduced-motion: reduce)');
+  const hero = document.querySelector('.hero'), ticket = document.querySelector('.ticket');
+  if (hero && ticket && fine.matches && !calm.matches) {
+    hero.addEventListener('pointermove', (e) => {
+      const r = hero.getBoundingClientRect();
+      ticket.style.setProperty('--tx', (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
+      ticket.style.setProperty('--ty', (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
+    }, { passive: true });
+    hero.addEventListener('pointerleave', () => { ticket.style.setProperty('--tx', 0); ticket.style.setProperty('--ty', 0); });
+  }
+  // The floating button appears once the first screen is behind the visitor and disappears while the form itself is on screen.
+  const fab = document.getElementById('fab'), booking = document.getElementById('booking');
+  if (fab && hero && booking && 'IntersectionObserver' in window) {
+    const seen = new Map([[hero, true], [booking, false]]);
+    const io = new IntersectionObserver((es) => {
+      for (const e of es) seen.set(e.target, e.isIntersecting);
+      fab.classList.toggle('fab--on', !seen.get(hero) && !seen.get(booking));
+    });
+    io.observe(hero); io.observe(booking);
+  }
+})();

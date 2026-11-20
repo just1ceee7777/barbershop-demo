@@ -9,10 +9,16 @@
   --danger:#e5484d;
   --display:'Playfair Display',Georgia,serif;
   --ui:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
-  --ease:cubic-bezier(.22,1,.36,1);
+  --ease:cubic-bezier(.23,1,.32,1);
   --r-sm:8px; --r-ctl:10px; --r-card:16px; --blue:#2c4a7c;
 }
 *{box-sizing:border-box}
+:root{color-scheme:dark}
+[data-theme=atelier],[data-theme=candy]{color-scheme:light}
+button,a,input,select,textarea,summary{touch-action:manipulation}
+body{-webkit-tap-highlight-color:rgba(214,58,44,.18)}
+h1,h2,h3,.lead,.hero__sub{text-wrap:balance}
+.hero__sub,.lead,.desc,.why p{text-wrap:pretty}
 html{scroll-behavior:smooth;scroll-padding-top:80px;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.6 var(--ui);overflow-x:hidden}
 img,svg{display:block;max-width:100%}
@@ -62,14 +68,13 @@ p{margin:0}
 .hero::before{content:"";position:absolute;z-index:-1;width:900px;height:900px;right:-160px;top:50%;transform:translateY(-55%);
   background:radial-gradient(closest-side,rgba(226,182,110,.20),rgba(226,182,110,.07) 55%,transparent)}
 .hero__in{display:grid;grid-template-columns:1.1fr .9fr;gap:64px;align-items:center}
-.hero__text{animation:enter .5s var(--ease) both}
+
 .hero__place{font-size:14px;color:var(--muted);margin-bottom:24px}
 .hero__title{font:400 clamp(40px,6vw,68px)/1.04 var(--display);letter-spacing:-.03em;max-width:13ch}
 .hero__sub{margin-top:24px;font-size:19px;line-height:1.55;color:var(--text2);max-width:34rem}
 .hero__actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:40px}
-@keyframes enter{from{opacity:0;transform:translateY(8px)}}
 
-.hero__visual{position:relative;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;animation:enter .5s .08s var(--ease) both}
+.hero__visual{position:relative;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;perspective:1200px}
 .art{margin:0;width:min(100%,420px);aspect-ratio:4/5;max-height:62vh;position:relative;overflow:hidden}
 .art img{width:100%;height:100%;object-fit:cover}
 .art[hidden]{display:none}
@@ -122,11 +127,12 @@ p{margin:0}
 .master .exp{font-size:14px;color:var(--muted)}
 .master .btn{margin-top:20px;align-self:flex-start}
 
-/* visit */
-.why{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
-.why .ico{margin-bottom:16px}
-.why h3{font:500 17px/1.3 var(--ui);margin-bottom:8px}
-.why p{font-size:15px;color:var(--text2)}
+/* visit: rows, like the price board, instead of a grid of equal cards */
+.why{display:block;border-top:1px solid var(--line2)}
+.why article{display:grid;grid-template-columns:28px minmax(0,1fr) minmax(0,1.6fr);gap:8px 32px;align-items:baseline;padding:24px 0;border-bottom:1px solid var(--line)}
+.why .ico{margin:0}
+.why h3{font:500 18px/1.3 var(--ui);margin:0}
+.why p{font-size:16px;color:var(--text2)}
 
 /* reviews */
 .reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -210,7 +216,6 @@ p{margin:0}
   .hero::before{right:-400px;top:auto;bottom:-450px;transform:none}
   .split{grid-template-columns:1fr;gap:0}
   .split__aside{position:static;margin-bottom:40px}
-  .why{grid-template-columns:repeat(2,1fr)}
   .reviews{grid-template-columns:1fr}
 }
 @media (max-width:860px){
@@ -219,6 +224,7 @@ p{margin:0}
   .nav{position:fixed;inset:64px 0 auto 0;flex-direction:column;align-items:stretch;gap:0;padding:8px 24px 24px;background:var(--bg);border-bottom:1px solid var(--line);
     opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .18s var(--ease),transform .18s var(--ease),visibility .18s}
   .nav.open{opacity:1;visibility:visible;transform:none}
+  .nav{overscroll-behavior:contain}
   .nav a:not(.btn){padding:12px 0;border-bottom:1px solid var(--line);font-size:16px;color:var(--text)}
   .nav .btn{margin-top:16px;height:44px}
   .header{background:rgba(22,21,19,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-color:var(--line)}
@@ -236,7 +242,8 @@ p{margin:0}
   .menu li{grid-template-columns:1fr auto;padding:20px 0}
   .menu .text{grid-column:1/-1}
   .menu .meta{justify-self:start}
-  .why{grid-template-columns:1fr;gap:24px}
+  .why article{grid-template-columns:28px 1fr;padding:20px 0}
+  .why p{grid-column:2}
   .booking{padding:20px 16px;border-radius:var(--r-card)}
   .fields{grid-template-columns:1fr}
   .summary{padding:16px}
@@ -257,7 +264,7 @@ p{margin:0}
 
 .avatar--photo{object-fit:cover;width:72px;height:72px;font-size:0}
 .works{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:12px}
-.works img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:var(--r-ctl);border:1px solid var(--line);background:var(--card)}
+.works img{width:100%;aspect-ratio:1;background:var(--card);object-fit:cover;border-radius:var(--r-ctl);border:1px solid var(--line);background:var(--card)}
 
 .legal dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:16px 0}.legal dt{color:var(--muted)}.legal dd{margin:0;color:var(--text)}
 .legal .photo__row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
@@ -268,3 +275,29 @@ p{margin:0}
 
 [hidden]{display:none!important}
 .dates{position:relative}
+
+/* the one orchestrated moment: the first screen arrives in order, the ticket last, as if it were just printed */
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+@keyframes settle{from{opacity:0;transform:translateY(28px) rotate(2deg)}}
+@keyframes print{from{opacity:0;transform:translateY(56px) rotate(-7deg)}}
+@keyframes fade{from{opacity:0}}
+@media (prefers-reduced-motion:no-preference){
+  .hero__place,.hero__title,.hero__sub,.hero__actions{animation:rise .6s var(--ease) both}
+  .hero__title{animation-delay:.05s}.hero__sub{animation-delay:.14s}.hero__actions{animation-delay:.2s}
+  .art{animation:settle .7s .1s var(--ease) both}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero__place,.hero__title,.hero__sub,.hero__actions,.art,.ticket{animation:fade .3s both}
+}
+.ticket{--tx:0;--ty:0;--rot:0deg;transform:rotate(var(--rot)) rotateX(calc(var(--ty) * -4deg)) rotateY(calc(var(--tx) * 5deg));transition:transform .25s var(--ease)}
+@media (prefers-reduced-motion:no-preference){.ticket{animation:print .8s .32s var(--ease) both}}
+.btn:active,.slot:active,.chip:active,.opt:active{transform:scale(.97)}
+.slot,.chip,.opt{transition:background-color .15s ease,border-color .15s ease,color .15s ease,transform .12s var(--ease)}
+@media (hover:hover) and (pointer:fine){.menu li:hover .leader{border-bottom-color:var(--brass)}}
+
+/* a booking button that follows phone users once the first screen is behind them */
+.fab{position:fixed;left:16px;right:16px;bottom:16px;z-index:40;display:none;align-items:center;justify-content:center;height:52px;border-radius:var(--r-ctl);background:var(--brass);color:var(--brass-ink);
+  font:600 16px/1 var(--ui);text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.35);transform:translateY(calc(100% + 24px));transition:transform .25s var(--ease)}
+.fab--on{transform:none}
+@media (max-width:860px){.fab{display:flex}}
+@media (prefers-reduced-motion:reduce){.fab{transition:none}}
