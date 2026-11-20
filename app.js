@@ -130,6 +130,8 @@ function renderContent(cfg) {
   }));
   $('#reviews-list').replaceChildren(...(c.reviews || []).map((r) => h('figure', { class: 'review' }, h('blockquote', { text: r.text }), h('figcaption', { text: r.name }))));
   document.documentElement.dataset.theme = c.theme || 'sign';
+  // The browser bar follows the page. (The server fills this for the first paint; a demo that switches niche in the browser sets it here.)
+  document.querySelector('meta[name=theme-color]')?.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#0f1113');
   renderArt(cfg);
   const a = c.accent;
   if (a && /^#[0-9a-f]{6}$/i.test(a.main) && /^#[0-9a-f]{6}$/i.test(a.text) && /^#[0-9a-f]{6}$/i.test(a.ink)) {
