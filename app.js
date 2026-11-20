@@ -1,4 +1,5 @@
 // Public site: renders everything from /api/config. Server/user text is inserted via textContent only.
+import { COUNTRIES, formatPhone, countryOf, phoneOk, phonePrefix } from './phone.js';
 const S = 'fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const ICONS = {
   scissors: `<svg viewBox="0 0 24 24" ${S}><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.12 8.12L20 20M8.12 15.88L20 4"/></svg>`,
@@ -250,23 +251,9 @@ async function renderTicket(cfg, onPick) {
 }
 
 /* ---------- booking widget ---------- */
-function formatPhone(raw) {
-  let d = raw.replace(/\D/g, '');
-  if (d[0] === '7' || d[0] === '8') d = d.slice(1);
-  d = d.slice(0, 10);
-  if (!d.length) return '';
-  // The bracket is added only once a 4th digit exists, so Backspace can delete back into the area code.
-  let out = '+7 (' + d.slice(0, 3);
-  if (d.length > 3) out += ') ' + d.slice(3, 6);
-  if (d.length > 6) out += '-' + d.slice(6, 8);
-  if (d.length > 8) out += '-' + d.slice(8, 10);
-  return out;
-}
-const phoneDigits = (v) => v.replace(/\D/g, '').replace(/^[78]/, '');
-
 function initBooking(cfg) {
   const root = $('#booking-root');
-  const st = { service: null, master: 'any', date: cfg.dates[0], time: null, slots: null, loading: false, name: '', phone: '', comment: '', consent: false, submitting: false, error: '' };
+  const st = { service: null, master: 'any', date: cfg.dates[0], time: null, slots: null, loading: false, name: '', phone: '', cc: '+7', comment: '', consent: false, submitting: false, error: '' };
   const svc = () => cfg.services.find((s) => s.id === st.service);
   const mst = () => (st.master === 'any' ? null : cfg.masters.find((m) => m.id === st.master));
   let reqId = 0;
@@ -297,6 +284,8 @@ function initBooking(cfg) {
   refs.slots = h('div', { class: 'slots', 'aria-live': 'polite' });
   refs.name = h('input', { id: 'f-name', type: 'text', autocomplete: 'name', maxlength: '60', required: true, placeholder: 'Как к вам обращаться' });
   refs.phone = h('input', { id: 'f-phone', type: 'tel', inputmode: 'tel', autocomplete: 'tel', required: true, placeholder: '+7 (___) ___-__-__' });
+  refs.cc = h('select', { id: 'f-cc', 'aria-label': 'Страна номера', autocomplete: 'off' }, ...COUNTRIES.map(([code, name]) => h('option', { value: code, text: code ? `${code} ${name}` : name })));
+  const placeholderFor = (cc) => (cc === '+7' ? '+7 (___) ___-__-__' : cc ? `${cc} ___ ___ ___` : '+ код страны и номер');
   refs.comment = h('textarea', { id: 'f-comment', maxlength: '500', placeholder: 'Например, хочу оставить длину сверху' });
   refs.consent = h('input', { id: 'f-consent', type: 'checkbox', required: true });
   refs.consent.addEventListener('change', () => { st.consent = refs.consent.checked; paintSummary(); });
@@ -305,9 +294,17 @@ function initBooking(cfg) {
   refs.submit = h('button', { class: 'btn btn--primary submit', type: 'submit', text: 'Записаться' });
 
   refs.name.addEventListener('input', () => { st.name = refs.name.value; paintSummary(); });
-  refs.phone.addEventListener('input', () => { refs.phone.value = formatPhone(refs.phone.value); st.phone = refs.phone.value; paintSummary(); });
-  refs.phone.addEventListener('focus', () => { if (!refs.phone.value) { refs.phone.value = '+7 ('; } const n = refs.phone.value.length; setTimeout(() => refs.phone.setSelectionRange(n, n), 0); });
-  refs.phone.addEventListener('blur', () => { if (phoneDigits(refs.phone.value).length === 0) { refs.phone.value = ''; st.phone = ''; } });
+  refs.phone.addEventListener('input', () => {
+    st.cc = countryOf(refs.phone.value, st.cc); refs.cc.value = st.cc;
+    refs.phone.value = formatPhone(refs.phone.value, st.cc); refs.phone.placeholder = placeholderFor(st.cc);
+    st.phone = refs.phone.value; paintSummary();
+  });
+  refs.cc.addEventListener('change', () => {
+    st.cc = refs.cc.value; refs.phone.placeholder = placeholderFor(st.cc);
+    refs.phone.value = st.phone = ''; refs.phone.value = phonePrefix(st.cc); st.phone = ''; refs.phone.focus(); paintSummary();
+  });
+  refs.phone.addEventListener('focus', () => { if (!refs.phone.value) refs.phone.value = phonePrefix(st.cc); const n = refs.phone.value.length; setTimeout(() => refs.phone.setSelectionRange(n, n), 0); });
+  refs.phone.addEventListener('blur', () => { if (refs.phone.value.replace(/\D/g, '').length <= st.cc.replace(/\D/g, '').length) { refs.phone.value = ''; st.phone = ''; } });
   refs.comment.addEventListener('input', () => { st.comment = refs.comment.value; });
 
   const fs = (n, title, ...body) => h('fieldset', { class: 'step' }, h('legend', {}, stepTitle(n, title)), ...body);
@@ -318,7 +315,7 @@ function initBooking(cfg) {
     fs(4, 'Время', refs.slots),
     fs(5, 'Контакты', h('div', { class: 'fields' },
       h('div', { class: 'field' }, h('label', { for: 'f-name', text: 'Имя' }), refs.name),
-      h('div', { class: 'field' }, h('label', { for: 'f-phone', text: 'Телефон' }), refs.phone),
+      h('div', { class: 'field' }, h('label', { for: 'f-phone', text: 'Телефон' }), h('div', { class: 'phone-row' }, refs.cc, refs.phone)),
       h('div', { class: 'field field--full' }, h('label', { for: 'f-comment', text: 'Комментарий для мастера' }), refs.comment))),
     fs(6, 'Ваша запись', h('div', { class: 'summary' }, refs.sum), refs.err,
       h('div', { class: 'consent' }, refs.consent, h('label', { for: 'f-consent' }, 'Я даю ', h('a', { href: 'consent.html', target: '_blank', rel: 'noopener', text: 'согласие на обработку персональных данных' }), ' (', h('a', { href: 'privacy.html', target: '_blank', rel: 'noopener', text: 'политика конфиденциальности' }), ')')),
@@ -363,7 +360,7 @@ function initBooking(cfg) {
       onclick: () => { st.time = t; st.error = ''; paintSlots(); paintSummary(); },
     }, t)));
   }
-  const valid = () => st.service && st.date && st.time && st.name.trim().length >= 2 && phoneDigits(st.phone).length === 10 && st.consent;
+  const valid = () => st.service && st.date && st.time && st.name.trim().length >= 2 && phoneOk(st.phone, st.cc) && st.consent;
   function row(dt, dd, cls) { return [h('dt', { text: dt }), h('dd', { class: cls, text: dd })]; }
   function paintSummary() {
     const s = svc();

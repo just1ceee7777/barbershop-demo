@@ -310,3 +310,8 @@ p{margin:0}
 .master__body .btn{margin-top:auto;align-self:flex-start}
 .master__body .exp{margin-bottom:auto}
 .master__body .free{margin-bottom:14px}
+
+.phone-row{display:grid;grid-template-columns:minmax(128px,42%) 1fr;gap:8px}
+.phone-row select{font:inherit;font-size:16px;color:var(--text);background:var(--bg);border:1px solid var(--line2);border-radius:var(--r-ctl);padding:12px 8px 12px 12px;min-width:0;width:100%;text-overflow:ellipsis;transition:border-color .15s var(--ease)}
+.phone-row select:focus{outline:0;border-color:var(--brass)}
+@media (max-width:560px){.phone-row{grid-template-columns:1fr}}

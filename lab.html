@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ru" data-theme="sign">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<meta name="theme-color" content="#0f1c17">
+<title>Лаборатория дизайна</title>
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="themes.css">
+<style>
+/* A sandbox for bold ideas. Nothing here is part of a client's site: each block is one move, with a note on when it fits and what it risks. */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:400 17px/1.55 var(--ui);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{width:min(1180px,100% - 48px);margin-inline:auto}
+.intro{padding:72px 0 40px}
+.intro h1{margin:0 0 16px;font:700 clamp(30px,4vw,48px)/1.1 var(--display)}
+.intro p{margin:0;max-width:40em;color:var(--text2)}
+.intro nav{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:24px;font-size:15px}
+.intro nav a{color:var(--brass-text);text-underline-offset:4px}
+.move{padding:88px 0;border-top:1px solid var(--line)}
+.move__tag{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;margin:0 0 40px;color:var(--muted);font-size:14px}
+.move__tag b{font:700 18px/1 var(--display);color:var(--text)}
+.note{margin:48px 0 0;max-width:44em;padding-top:20px;border-top:1px solid var(--line);font-size:15px;color:var(--text2)}
+.note strong{color:var(--text);font-weight:600}
+.paper{background:var(--paper);color:var(--ink)}
+.paper .note{border-top-color:var(--ink-line);color:var(--ink2)}
+.paper .note strong,.paper .move__tag b{color:var(--ink)}
+.paper .move__tag{color:var(--ink2)}
+
+/* 1. type: two voices in one sentence */
+[data-theme=sign] .t1{font:600 clamp(40px,8vw,120px)/.98 'Cormorant Garamond',Georgia,serif;letter-spacing:-.02em;margin:0;max-width:12em}
+[data-theme=sign] .t1 em{font-style:italic;font-weight:500}
+.t1small{display:grid;grid-template-columns:minmax(0,22em) 1fr;gap:24px 48px;align-items:end;margin-top:32px}
+.t1small p{margin:0;font:500 13px/1.5 ui-monospace,'SFMono-Regular',Menlo,monospace;letter-spacing:.02em;color:var(--ink2)}
+.t1small .btn{justify-self:end}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 24px;background:var(--brass);color:var(--brass-ink);font:600 16px/1 var(--ui);text-decoration:none;border-radius:var(--r-ctl);transition:transform .2s cubic-bezier(.23,1,.32,1),background .2s}
+@media (hover:hover) and (pointer:fine){.btn:hover{background:#ee7a45;transform:translateY(-2px)}}
+.btn:active{transform:scale(.97)}
+
+/* 2. a grid of photographs with captions, the pace set by uneven sizes */
+.g2{display:grid;grid-template-columns:repeat(12,1fr);gap:20px}
+.g2 figure{margin:0}
+.g2 img{display:block;width:100%;height:100%;object-fit:cover;border-radius:2px;background:var(--card)}
+.g2 .a{grid-column:1/8;grid-row:1/3;aspect-ratio:4/3.2}
+.g2 .b{grid-column:8/13;aspect-ratio:1}
+.g2 .c{grid-column:8/13;aspect-ratio:1.25}
+.g2 .d{grid-column:2/6;aspect-ratio:1;margin-top:20px}
+.g2 .e{grid-column:6/13;aspect-ratio:2/1;margin-top:20px}
+.g2 .a,.g2 .b,.g2 .c,.g2 .d,.g2 .e{display:flex;flex-direction:column;gap:10px}
+.g2 .a img,.g2 .b img,.g2 .c img,.g2 .d img,.g2 .e img{flex:1;min-height:0}
+.g2 figcaption{display:flex;justify-content:space-between;align-items:center;font:italic 600 22px/1.1 'Cormorant Garamond',Georgia,serif}
+.g2 figcaption i{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--brass);color:var(--brass-ink);font:600 18px/1 var(--ui);font-style:normal;transition:transform .25s cubic-bezier(.23,1,.32,1)}
+@media (hover:hover) and (pointer:fine){.g2 figure:hover figcaption i{transform:rotate(90deg)}}
+
+/* 3. a slow strip of what the shop does */
+.m3{overflow:hidden;border-block:2px solid var(--text);padding:22px 0;margin-inline:calc(50% - 50vw)}
+.m3__row{display:flex;width:max-content;gap:0;font:700 clamp(28px,4.6vw,64px)/1 var(--display)}
+.m3__row span{display:flex;align-items:center;white-space:nowrap}
+.m3__row span::after{content:"";width:.34em;height:.34em;margin:0 .7em;background:var(--brass);border-radius:50%}
+@media (prefers-reduced-motion:no-preference){.m3__row{animation:strip 36s linear infinite}.m3:hover .m3__row{animation-play-state:paused}}
+@keyframes strip{to{transform:translateX(-50%)}}
+
+/* 4. the pole as the object of the page */
+.p4{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:56px;align-items:center}
+.pole{justify-self:center;position:relative;width:150px;height:460px;display:grid;grid-template-rows:26px 1fr 26px}
+.pole i{display:block;background:linear-gradient(90deg,#8f8c80,#eee6d2 45%,#8f8c80);border-radius:6px}
+.pole i:first-child{border-radius:30px 30px 6px 6px}
+.pole i:last-child{border-radius:6px 6px 30px 30px}
+.pole b{display:block;border-inline:6px solid var(--paper);
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpolygon fill='%23e0642b' points='120,0 150,0 30,120 0,120'/%3E%3Cpolygon fill='%23e0642b' points='0,0 30,0 -90,120 -120,120'/%3E%3Cpolygon fill='%23eee6d2' points='150,0 180,0 60,120 30,120'/%3E%3Cpolygon fill='%23eee6d2' points='30,0 60,0 -60,120 -90,120'/%3E%3Cpolygon fill='%238aa596' points='180,0 210,0 90,120 60,120'/%3E%3Cpolygon fill='%238aa596' points='60,0 90,0 -30,120 -60,120'/%3E%3Cpolygon fill='%23eee6d2' points='210,0 240,0 120,120 90,120'/%3E%3Cpolygon fill='%23eee6d2' points='90,0 120,0 0,120 -30,120'/%3E%3C/svg%3E") 0 0/120px 120px;
+  box-shadow:inset 18px 0 22px rgba(255,255,255,.26),inset -22px 0 26px rgba(0,0,0,.45)}
+@media (prefers-reduced-motion:no-preference){.pole b{animation:turn4 3s linear infinite}}
+@keyframes turn4{to{background-position:0 120px}}
+.p4 h2{margin:0 0 20px;font:700 clamp(30px,4.2vw,56px)/1.06 var(--display)}
+.p4 p{margin:0 0 28px;max-width:30em;color:var(--text2)}
+
+/* 5. the time itself is the hero */
+.h5{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:48px;align-items:end}
+.h5 .clock{margin:0;font:800 clamp(110px,19vw,300px)/.8 var(--display);letter-spacing:-.03em;color:var(--ink)}
+.h5 .clock span{color:var(--red2)}
+@media (prefers-reduced-motion:no-preference){.h5 .clock span{animation:tick 1.6s steps(1) infinite}}
+@keyframes tick{50%{opacity:.15}}
+.h5 p{margin:0 0 20px;font:700 clamp(22px,2.4vw,32px)/1.15 var(--display)}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 20px}
+.slots button{height:44px;border:1px solid var(--ink-line);background:#f6f0e1;color:var(--ink);font:600 15px/1 var(--ui);border-radius:var(--r-ctl);cursor:pointer;transition:background .15s,transform .15s}
+.slots button[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+@media (hover:hover) and (pointer:fine){.slots button:hover{background:#e4dbc3}}
+.slots button:active{transform:scale(.96)}
+
+
+/* 6. blocks that slide in as they are scrolled to: a CSS scroll timeline, no script, only where supported and when motion is welcome */
+.s6{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.s6 article{background:var(--card);border-top:4px solid var(--brass);padding:28px 26px 30px;min-height:220px;display:flex;flex-direction:column;gap:10px}
+.s6 h3{margin:0;font:700 24px/1.15 var(--display)}
+.s6 p{margin:0;color:var(--text2);font-size:16px}
+.s6 b{font:800 44px/1 var(--display);color:var(--brass-text)}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion:no-preference) {
+    .s6 article{animation:come linear both;animation-timeline:view();animation-range:entry 0% entry 70%}
+    .s6 article:nth-child(1){--dx:-48px}
+    .s6 article:nth-child(2){--dx:0px;--dy:48px}
+    .s6 article:nth-child(3){--dx:48px}
+    @keyframes come{from{opacity:0;transform:translate(var(--dx,0),var(--dy,24px))}to{opacity:1;transform:none}}
+  }
+}
+@media (max-width:860px){.s6{grid-template-columns:1fr}.s6 article{--dx:0px!important;--dy:32px!important}}
+
+@media (max-width:860px){
+  .t1small,.p4,.h5{grid-template-columns:1fr}
+  .t1small .btn{justify-self:start}
+  .g2{grid-template-columns:1fr 1fr}
+  .g2 .a,.g2 .b,.g2 .c,.g2 .d,.g2 .e{grid-column:auto;grid-row:auto;margin-top:0}
+  .g2 .a,.g2 .e{grid-column:1/-1;aspect-ratio:4/3}
+  .pole{height:320px;width:120px}
+  .move{padding:64px 0}
+}
+:focus-visible{outline:3px solid var(--brass-text);outline-offset:3px}
+</style>
+</head>
+<body>
+<header class="wrap intro">
+  <h1>Лаборатория дизайна</h1>
+  <p>Шесть смелых приёмов, собранных по одному. Это не сайт клиента и не часть страницы записи: здесь выбираем, что стоит перенести. Под каждым приёмом написано, когда он подходит и чем рискует.</p>
+  <nav aria-label="Приёмы"><a href="#m1">1. Два голоса в заголовке</a><a href="#m2">2. Фото-сетка с подписями</a><a href="#m3">3. Бегущая строка</a><a href="#m4">4. Шпала как главный объект</a><a href="#m5">5. Время как герой</a><a href="#m6">6. Блоки выезжают</a></nav>
+</header>
+
+<section class="move paper" id="m1">
+  <div class="wrap">
+    <p class="move__tag"><b>Приём 1</b> Два голоса в заголовке</p>
+    <h2 class="t1">Стрижка к назначенному часу, <em>без очереди и без звонков.</em></h2>
+    <div class="t1small">
+      <p>Запись онлайн, горячее полотенце в конце. Мастер свободен ровно к вашему времени.</p>
+      <a class="btn" href="index.html#booking">Записаться онлайн</a>
+    </div>
+    <p class="note"><strong>Откуда:</strong> редакционный стиль, где прямой и курсивный шрифт чередуются целыми фразами, а подпись набрана мелким моноширинным. <strong>Подходит:</strong> салону, дорогому барбершопу, где важен тон. <strong>Риск:</strong> курсив работает только на крупном размере; выделять одно слово курсивом нельзя, выглядит шаблонно. Для брутального барбершопа слишком нежно.</p>
+  </div>
+</section>
+
+<section class="move" id="m2">
+  <div class="wrap">
+    <p class="move__tag"><b>Приём 2</b> Фото-сетка с подписями</p>
+    <div class="g2">
+      <figure class="a"><img src="photos/barber-0.jpg" alt="Зал: три кресла у кирпичной стены" loading="lazy"><figcaption>Зал, три кресла <i>+</i></figcaption></figure>
+      <figure class="b"><img src="photos/barber-2.jpg" alt="Мастер работает ножницами" loading="lazy"><figcaption>Ножницы <i>+</i></figcaption></figure>
+      <figure class="c"><img src="photos/barber-4.jpg" alt="Инструменты на столе" loading="lazy"><figcaption>Инструмент <i>+</i></figcaption></figure>
+      <figure class="d"><img src="photos/barber-3.jpg" alt="Укладка феном" loading="lazy"><figcaption>Укладка <i>+</i></figcaption></figure>
+      <figure class="e"><img src="photos/barber-5.jpg" alt="Бритьё бороды" loading="lazy"><figcaption>Бритьё <i>+</i></figcaption></figure>
+    </div>
+    <p class="note"><strong>Откуда:</strong> сайт, который ведёт взгляд неровными размерами и подписями курсивом, и кнопка «+» у каждой работы. <strong>Подходит:</strong> везде, где есть хорошие фото. <strong>Риск:</strong> нужны настоящие снимки; на стоковых это выглядит как каталог. Знак «+» стоит делать рабочим (открывает работу, услугу или запись на эту услугу).</p>
+  </div>
+</section>
+
+<section class="move" id="m3" style="padding-bottom:0">
+  <div class="wrap"><p class="move__tag"><b>Приём 3</b> Бегущая строка</p></div>
+  <div class="m3" aria-label="Услуги: стрижка, борода, бритьё, детская стрижка, укладка">
+    <div class="m3__row" aria-hidden="true">
+      <span>Стрижка</span><span>Борода</span><span>Бритьё</span><span>Детская стрижка</span><span>Укладка</span>
+      <span>Стрижка</span><span>Борода</span><span>Бритьё</span><span>Детская стрижка</span><span>Укладка</span>
+    </div>
+  </div>
+  <div class="wrap"><p class="note" style="margin-bottom:88px"><strong>Откуда:</strong> лента-разделитель между блоками, как на афишах. <strong>Подходит:</strong> как переход от первого экрана к прайсу; слова берутся из названий услуг клиента, так что ничего не выдумано. <strong>Риск:</strong> постоянное движение отвлекает от чтения, поэтому: медленно, пауза при наведении, при «уменьшить анимацию» стоит на месте, текст дублируется для скринридера одной подписью.</p></div>
+</section>
+
+<section class="move" id="m4">
+  <div class="wrap">
+    <p class="move__tag"><b>Приём 4</b> Шпала как главный объект</p>
+    <div class="p4">
+      <div class="pole" aria-hidden="true"><i></i><b></b><i></i></div>
+      <div>
+        <h2>Знак, который видно с другой стороны улицы.</h2>
+        <p>Барберская шпала это то, что узнают без подписи. Здесь она не украшение, а главный предмет страницы: вращается, а запись рядом.</p>
+        <a class="btn" href="index.html#booking">Выбрать время</a>
+      </div>
+    </div>
+    <p class="note"><strong>Откуда:</strong> уже сделанный нами рисунок шпалы, увеличенный и переосмысленный как объект. <strong>Подходит:</strong> барбершопу без хороших фото (шпала заменяет их). <strong>Риск:</strong> рисунок есть у всех барбершопов; свой знак клиента (логотип, вывеска) сильнее.</p>
+  </div>
+</section>
+
+<section class="move paper" id="m5">
+  <div class="wrap">
+    <p class="move__tag"><b>Приём 5</b> Время как герой</p>
+    <div class="h5">
+      <p class="clock" role="img" aria-label="14:30">14<span>:</span>30</p>
+      <div>
+        <p>Ближайшее окно сегодня. Выберите своё.</p>
+        <div class="slots" role="group" aria-label="Свободное время">
+          <button type="button" aria-pressed="false">14:30</button><button type="button" aria-pressed="false">15:00</button><button type="button" aria-pressed="false">15:30</button><button type="button" aria-pressed="false">16:30</button>
+        </div>
+        <a class="btn" href="index.html#booking">Записаться</a>
+      </div>
+    </div>
+    <p class="note"><strong>Откуда:</strong> типографика как главный образ (огромные цифры вместо фото) и идея «время, которое можно занять». <strong>Подходит:</strong> тому, у кого нет фото, и всем: время и есть наш продукт. <strong>Риск:</strong> цифры должны быть настоящими (первое свободное окно из расписания), а не нарисованными; мигающее двоеточие отключается при «уменьшить анимацию».</p>
+  </div>
+</section>
+
+<section class="move" id="m6">
+  <div class="wrap">
+    <p class="move__tag"><b>Приём 6</b> Блоки выезжают при прокрутке</p>
+    <div class="s6">
+      <article><b>1</b><h3>Выберите услугу</h3><p>Цена и длительность видны сразу, цена окончательная.</p></article>
+      <article><b>2</b><h3>Выберите мастера</h3><p>Любого свободного или к своему, с ближайшим временем.</p></article>
+      <article><b>3</b><h3>Придите к назначенному часу</h3><p>Напоминание придёт в Telegram, отменить можно по ссылке.</p></article>
+    </div>
+    <p class="note"><strong>Откуда:</strong> то, о чём вы просили: блоки выезжают при прокрутке, каждый со своей стороны. <strong>Подходит:</strong> там, где есть последовательность (шаги записи) или три равных довода. <strong>Риск:</strong> если выезжает каждый блок страницы, это тот самый «шаблонный AI-сайт»; поэтому лучше 1–2 места, а не везде. Плавность без библиотек: это обычная прокрутка браузера плюс CSS. Подменять саму прокрутку («липкие» скролл-библиотеки) я не советую: ломает привычное поведение на телефоне и мешает доступности.</p>
+  </div>
+</section>
+
+<script>
+// Only the time slots in move 5 do anything: one can be chosen.
+document.querySelectorAll('.slots button').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('.slots button').forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+}));
+</script>
+</body>
+</html>
