@@ -1,73 +1,68 @@
 /* Three characters on one markup. data-theme on <html> is set from the preset (content.theme).
-   sign   - a barbershop sign painter: cold ink, signal red, bone white, one blue stripe, letters like a shop front
+   sign   - a barbershop at night: green-black, ivory paper, copper orange, slab letters like a shop front
    atelier - a salon: pale and airy, a quiet plum ink, dusty rose, arched frames
    candy  - a nail bar: bright white, polish colours, wide round letters */
 
 /* ---------------------------------------------------------------- sign */
-/* A barbershop shop front: navy like the glass of the sign, ivory enamel, signal red, one blue stripe that keeps turning like the pole. */
+/* A barbershop at night: deep green-black, ivory paper, one copper orange, a sage stripe that keeps turning like the pole. */
 :root,[data-theme=sign]{
-  --deep:#091322; --bg:#0d1a2d; --card:#13243b; --raised:#1b3050;
-  --line:rgba(242,235,217,.13); --line2:rgba(242,235,217,.26);
-  --text:#f2ebd9; --text2:#cac7bc; --muted:#a3adbd;
-  --brass:#d63a2c; --brass-ink:#fff; --brass-text:#ff7d6e;
-  --paper:#efe6d2; --ink:#14202f; --ink2:#55503f; --ink-line:rgba(20,32,47,.2);
-  --blue:#3a64ae; --red2:#b3281c;
+  --deep:#0a1511; --bg:#0f1c17; --card:#172a23; --raised:#20382f;
+  --line:rgba(238,230,210,.13); --line2:rgba(238,230,210,.26);
+  --text:#eee6d2; --text2:#c4c2b4; --muted:#9fada5;
+  --brass:#e0642b; --brass-ink:#1a0e07; --brass-text:#ff9a62;
+  --paper:#eee6d2; --ink:#12201b; --ink2:#4d4f43; --ink-line:rgba(18,32,27,.2);
+  --sage:#8aa596; --red2:#b4491a;
   --display:'Podkova',Georgia,serif;
   --ui:'Golos Text',system-ui,-apple-system,'Segoe UI',sans-serif;
-  --r-sm:3px; --r-ctl:5px; --r-card:8px; --header-bg:rgba(13,26,45,.94);
+  --r-sm:3px; --r-ctl:5px; --r-card:8px; --header-bg:rgba(15,28,23,.94);
 }
 [data-theme=sign] h1,[data-theme=sign] h2{font-family:var(--display);font-weight:800}
 [data-theme=sign] .hero{background:var(--bg);padding-bottom:112px}
 [data-theme=sign] .hero::before{display:none}
-/* the pole: stripes slide along the bottom edge of the first screen, a whole period per loop so the join never shows */
-[data-theme=sign] .hero::after{content:"";position:absolute;left:0;bottom:0;height:22px;width:calc(100% + 120px);
-  background:repeating-linear-gradient(135deg,var(--brass) 0 20px,var(--paper) 20px 40px,var(--blue) 40px 60px,var(--paper) 60px 80px)}
+/* the pole: stripes slide along the bottom edge of the first screen, exactly one 112px tile per loop (a whole number of pixels, so no rounding seam) */
+[data-theme=sign] .hero::after{content:"";position:absolute;left:0;bottom:0;height:22px;width:calc(100% + 112px);
+  background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22112%22 height=%2222%22 viewBox=%220 0 112 22%22%3E%3Cpolygon fill=%22%23e0642b%22 points=%2222,0 50,0 28,22 0,22%22/%3E%3Cpolygon fill=%22%23e0642b%22 points=%22-90,0 -62,0 -84,22 -112,22%22/%3E%3Cpolygon fill=%22%23eee6d2%22 points=%2250,0 78,0 56,22 28,22%22/%3E%3Cpolygon fill=%22%23eee6d2%22 points=%22-62,0 -34,0 -56,22 -84,22%22/%3E%3Cpolygon fill=%22%238aa596%22 points=%2278,0 106,0 84,22 56,22%22/%3E%3Cpolygon fill=%22%238aa596%22 points=%22-34,0 -6,0 -28,22 -56,22%22/%3E%3Cpolygon fill=%22%23eee6d2%22 points=%22106,0 134,0 112,22 84,22%22/%3E%3Cpolygon fill=%22%23eee6d2%22 points=%22-6,0 22,0 0,22 -28,22%22/%3E%3C/svg%3E") 0 0/112px 22px repeat-x}
 @media (prefers-reduced-motion:no-preference){[data-theme=sign] .hero::after{animation:pole 2.8s linear infinite}}
-@keyframes pole{to{transform:translateX(-113.137px)}}
+@keyframes pole{to{transform:translateX(-112px)}}
 [data-theme=sign] .hero__title{font:800 clamp(34px,4.7vw,70px)/1.04 var(--display);letter-spacing:.005em;max-width:none;text-transform:uppercase}
 [data-theme=sign] .hero__place{font-size:15px;color:var(--text2);margin-bottom:20px}
 [data-theme=sign] .hero__sub{font-size:19px;max-width:30rem}
 [data-theme=sign] .btn{font-weight:600}
 [data-theme=sign] .btn--primary{box-shadow:none}
-[data-theme=sign] .btn--primary:hover{background:#e8493a}
+[data-theme=sign] .btn--primary:hover{background:#ee7a45}
 [data-theme=sign] .btn--secondary{background:var(--raised)}
 [data-theme=sign] .logo{font:800 20px/1 var(--display);letter-spacing:.03em;text-transform:uppercase}
 [data-theme=sign] .nav a:not(.btn){font-size:15px}
 /* the picture beside the headline: the client's photo in an ivory print frame, or a tin sign with the same stripes */
-[data-theme=sign] .art{border:10px solid var(--paper);border-radius:var(--r-card);box-shadow:0 28px 48px rgba(0,0,0,.55);background:var(--paper);width:min(100%,440px)}
-/* no photo yet: a real barber pole, turning. Stripes move by exactly one period (80px tile at 135deg = 113.137px) so the loop has no seam */
+[data-theme=sign] .art{border:6px solid var(--paper);border-radius:var(--r-card);box-shadow:0 28px 48px rgba(0,0,0,.55);background:var(--paper);width:min(100%,440px)}
+/* no photo yet: a real barber pole, turning. The 120px tile repeats seamlessly in both directions and moves by exactly its own height */
 [data-theme=sign] .art--stripes{display:grid;place-items:center;background:var(--card)}
 [data-theme=sign] .art--stripes .art__disc{display:none}
 [data-theme=sign] .art--stripes::before{content:"";width:34%;height:82%;border-radius:999px;border:6px solid var(--paper);
-  background:repeating-linear-gradient(135deg,var(--brass) 0 20px,var(--paper) 20px 40px,var(--blue) 40px 60px,var(--paper) 60px 80px);
+  background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22%3E%3Cpolygon fill=%22%23e0642b%22 points=%22120,0 150,0 30,120 0,120%22/%3E%3Cpolygon fill=%22%23e0642b%22 points=%220,0 30,0 -90,120 -120,120%22/%3E%3Cpolygon fill=%22%23eee6d2%22 points=%22150,0 180,0 60,120 30,120%22/%3E%3Cpolygon fill=%22%23eee6d2%22 points=%2230,0 60,0 -60,120 -90,120%22/%3E%3Cpolygon fill=%22%238aa596%22 points=%22180,0 210,0 90,120 60,120%22/%3E%3Cpolygon fill=%22%238aa596%22 points=%2260,0 90,0 -30,120 -60,120%22/%3E%3Cpolygon fill=%22%23eee6d2%22 points=%22210,0 240,0 120,120 90,120%22/%3E%3Cpolygon fill=%22%23eee6d2%22 points=%2290,0 120,0 0,120 -30,120%22/%3E%3C/svg%3E") 0 0/120px 120px;
   box-shadow:inset 14px 0 18px rgba(255,255,255,.28),inset -16px 0 20px rgba(0,0,0,.4),0 18px 30px rgba(0,0,0,.45)}
 @media (prefers-reduced-motion:no-preference){[data-theme=sign] .art--stripes::before{animation:turn 2.4s linear infinite}}
-@keyframes turn{to{background-position:0 113.137px}}
+@keyframes turn{to{background-position:0 120px}}
 /* round stamp over the corner of the picture, turning slowly */
 .badge{display:none}
 [data-theme=sign] .hero__visual{position:relative}
-[data-theme=sign] .badge{display:grid;place-items:center;position:absolute;z-index:3;top:-22px;right:-26px;width:112px;height:112px;border-radius:50%;background:var(--brass);color:var(--paper);box-shadow:0 10px 22px rgba(0,0,0,.45)}
+[data-theme=sign] .badge{display:grid;place-items:center;position:absolute;z-index:3;top:-22px;right:-26px;width:112px;height:112px;border-radius:50%;background:var(--brass);color:var(--ink);box-shadow:0 10px 22px rgba(0,0,0,.45)}
 [data-theme=sign] .badge svg{position:absolute;inset:0;width:100%;height:100%;fill:currentColor;font:700 10.5px var(--ui);letter-spacing:.06em}
 @media (prefers-reduced-motion:no-preference){[data-theme=sign] .badge svg{animation:spin 24s linear infinite}}
 @keyframes spin{to{transform:rotate(360deg)}}
-[data-theme=sign] .badge i{width:30px;height:30px;border-radius:50%;background:var(--paper);box-shadow:0 0 0 3px var(--brass),0 0 0 5px var(--paper)}
+[data-theme=sign] .badge i{width:30px;height:30px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 3px var(--brass),0 0 0 5px var(--ink)}
 /* grain: ink on paper, light on the dark blocks, so nothing looks like a flat fill */
 :root{--grain-d:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
   --grain-l:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")}
-[data-theme=sign] .hero,[data-theme=sign] .section--alt{background-image:var(--grain-l)}
 [data-theme=sign] .section--paper{background-image:var(--grain-d)}
-/* the paper block has a torn zigzag edge on top, like a receipt */
-[data-theme=sign] .section--paper{position:relative;margin-top:14px}
-[data-theme=sign] .section--paper::before{content:"";position:absolute;left:0;right:0;top:-14px;height:14px;
-  background:linear-gradient(135deg,transparent 7px,var(--paper) 0) 0 0/20px 14px,linear-gradient(225deg,transparent 7px,var(--paper) 0) 0 0/20px 14px}
 [data-theme=sign] .art--photo img{filter:saturate(.92) contrast(1.05)}
-[data-theme=sign] .ticket{max-width:400px;--rot:-2.5deg;box-shadow:0 18px 32px rgba(0,0,0,.5)}
+[data-theme=sign] .ticket{max-width:400px;--rot:0deg;box-shadow:0 18px 32px rgba(0,0,0,.5)}
 [data-theme=sign] .ticket__label{font:800 22px/1.1 var(--display)}
 [data-theme=sign] .ticket__body{border-top:8px solid var(--brass)}
 /* the first screen as a photograph: the shop itself edge to edge, the headline on its dark side, the booking card on the other */
 [data-theme=sign] .hero--cover{background:var(--deep);min-height:min(100svh,880px);display:flex;align-items:flex-end;padding-top:120px}
 [data-theme=sign] .hero--cover::before{display:block;content:"";position:absolute;inset:0;width:auto;height:auto;transform:none;border-radius:0;filter:none;opacity:1;z-index:1;
-  background:linear-gradient(90deg,rgba(9,19,34,.94) 0,rgba(9,19,34,.78) 38%,rgba(9,19,34,.2) 72%,rgba(9,19,34,.05)),linear-gradient(0deg,rgba(9,19,34,.9),transparent 42%)}
+  background:linear-gradient(90deg,rgba(10,21,17,.94) 0,rgba(10,21,17,.78) 38%,rgba(10,21,17,.2) 72%,rgba(10,21,17,.05)),linear-gradient(0deg,rgba(10,21,17,.9),transparent 42%)}
 [data-theme=sign] .hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 40%;z-index:0;transform-origin:70% 50%}
 @media (prefers-reduced-motion:no-preference){[data-theme=sign] .hero__bg{animation:bgin .9s var(--ease) both,drift 26s ease-in-out .9s infinite alternate}}
 @keyframes bgin{from{opacity:0}}
@@ -76,15 +71,16 @@
 [data-theme=sign] .hero--cover .hero__in{grid-template-columns:1.35fr .65fr}
 [data-theme=sign] .hero--cover .hero__title{font-size:clamp(40px,5.4vw,82px);line-height:1;max-width:none}
 [data-theme=sign] .hero--cover .hero__sub{color:var(--text)}
+[data-theme=sign] .hero--cover::after{z-index:3}
 [data-theme=sign] .hero--cover .badge{top:-70px;right:-18px}
 [data-theme=sign] .hero--cover .hero__visual{justify-content:flex-end}
 /* a shop-counter tag: the one thing the shop is known for */
 .hero__concept{margin:0 0 18px}
-[data-theme=sign] .hero__concept{display:inline-block;background:var(--paper);color:var(--ink);font:700 15px/1.2 var(--display);padding:9px 16px 9px 22px;transform:rotate(-1.5deg);
-  clip-path:polygon(0 0,100% 0,100% 100%,0 100%,10px 50%);box-shadow:0 8px 18px rgba(0,0,0,.35)}
+[data-theme=sign] .hero__concept{display:inline-block;background:var(--paper);color:var(--ink);font:700 15px/1.2 var(--display);padding:9px 16px 9px 22px;
+  clip-path:polygon(0 0,100% 0,100% 100%,0 100%,10px 50%)}
 /* sections */
 [data-theme=sign] .section--alt{background:var(--deep)}
-[data-theme=sign] .section__head h2{font:800 clamp(30px,3.8vw,52px)/1.06 var(--display);text-transform:uppercase}
+[data-theme=sign] .section__head h2{font:700 clamp(32px,4vw,56px)/1.05 var(--display)}
 [data-theme=sign] .lead{font-size:17px}
 /* the price list is a printed card: ivory paper and ink, the one light block between the dark ones */
 [data-theme=sign] .section--paper{background:var(--paper);color:var(--ink)}
@@ -100,7 +96,7 @@
 [data-theme=sign] .section--paper :focus-visible{outline-color:var(--red2)}
 [data-theme=sign] .menu li{display:block;padding:20px 0 18px}
 [data-theme=sign] .menu__row{display:flex;align-items:baseline;gap:12px}
-[data-theme=sign] .menu h3{font:800 24px/1.1 var(--display);text-transform:uppercase;letter-spacing:.01em}
+[data-theme=sign] .menu h3{font:700 24px/1.15 var(--display)}
 [data-theme=sign] .leader{flex:1;min-width:24px;border-bottom:2px dotted var(--line2);transform:translateY(-5px)}
 [data-theme=sign] .menu .price{font:800 26px/1 var(--display);color:var(--brass-text)}
 [data-theme=sign] .menu__sub{display:flex;align-items:center;gap:16px;margin-top:8px}
@@ -111,11 +107,11 @@
 [data-theme=sign] .master{padding:28px;gap:16px}
 [data-theme=sign] .avatar{border-radius:var(--r-sm);width:104px;height:128px;font:800 64px/1 var(--display);color:var(--ink);background:var(--paper);border:0;box-shadow:inset 0 -8px 0 var(--brass)}
 [data-theme=sign] .avatar--photo{width:104px;height:128px;border-radius:var(--r-sm);filter:grayscale(1) contrast(1.05);box-shadow:none}
-[data-theme=sign] .master h3{font:800 22px/1.1 var(--display);text-transform:uppercase;letter-spacing:.02em}
+[data-theme=sign] .master h3{font:700 24px/1.1 var(--display)}
 [data-theme=sign] .why{border-top:3px solid var(--text)}
 [data-theme=sign] .why .ico{color:var(--brass-text);width:28px;height:28px}
-[data-theme=sign] .why h3{font:800 22px/1.1 var(--display);text-transform:uppercase;letter-spacing:.01em}
-[data-theme=sign] .review blockquote{font:600 20px/1.35 var(--display)}
+[data-theme=sign] .why h3{font:700 22px/1.15 var(--display)}
+[data-theme=sign] .review blockquote{font:500 19px/1.45 var(--ui)}
 [data-theme=sign] .done h3,[data-theme=sign] .summary .total{font-family:var(--display)}
 /* masters with a photo: a portrait on top, in black and white until the pointer comes, the name and one line of character below */
 [data-theme=sign] .master--photo{padding:0;overflow:hidden;gap:0}
@@ -123,9 +119,12 @@
 [data-theme=sign] .master--photo .master__body{padding:22px 24px 26px}
 [data-theme=sign] .master .note{font:600 17px/1.3 var(--display);color:var(--text)}
 @media (hover:hover) and (pointer:fine){[data-theme=sign] .master--photo .avatar--photo{transition:filter .3s var(--ease)}[data-theme=sign] .master--photo:hover .avatar--photo{filter:none}}
-/* one large sentence on red, between the photographs and the people: the single loud colour moment of the page */
+/* the booking form is a paper slip on the dark page: the variables are flipped for everything inside it */
+[data-theme=sign] .booking{--bg:#eee6d2;--card:#f6f0e1;--raised:#e4dbc3;--text:#12201b;--text2:#3f4a43;--muted:#5d675f;--line:rgba(18,32,27,.15);--line2:rgba(18,32,27,.32);--brass-text:#b4491a;
+  background:var(--paper);color:var(--text);border:0;border-top:8px solid var(--brass);border-radius:var(--r-card);box-shadow:0 24px 48px rgba(0,0,0,.4)}
+/* one large sentence on orange, between the photographs and the people: the single loud colour moment of the page */
 .statement,.closing{display:none}
-[data-theme=sign] .statement{display:block;background:var(--brass) var(--grain-l);color:#fff;padding:96px 0}
+[data-theme=sign] .statement{display:block;background:var(--brass);color:var(--ink);padding:96px 0}
 [data-theme=sign] .statement[hidden],[data-theme=sign] .closing[hidden]{display:none}
 [data-theme=sign] .statement p{margin:0;max-width:19em;font:800 clamp(28px,4.4vw,60px)/1.08 var(--display);text-wrap:balance;letter-spacing:.005em}
 [data-theme=sign] .closing{display:block;background:var(--paper);color:var(--ink);padding:72px 0}
@@ -134,18 +133,18 @@
 /* the visit: a photograph beside the four reasons */
 .why-wrap--photo{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:56px;align-items:start}
 .why-photo{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
-[data-theme=sign] .why-photo{border:8px solid var(--paper);border-radius:var(--r-sm);box-shadow:0 18px 36px rgba(0,0,0,.45);transform:rotate(-1.2deg);filter:saturate(.9) contrast(1.04);position:sticky;top:96px}
+[data-theme=sign] .why-photo{border-radius:var(--r-sm);filter:saturate(.9) contrast(1.04);position:sticky;top:96px}
 /* reviews: the first one is spoken loudly, the others sit under it */
 [data-theme=sign] .reviews{grid-template-columns:1fr 1fr;gap:20px}
 [data-theme=sign] .review{background:var(--card);border-radius:var(--r-sm);border:0;border-top:4px solid var(--brass)}
 [data-theme=sign] .review:first-child{grid-column:1/-1;background:transparent;border-top:0;padding:0 0 12px;gap:20px}
-[data-theme=sign] .review:first-child blockquote{font:800 clamp(24px,3.4vw,44px)/1.15 var(--display);max-width:26em}
+[data-theme=sign] .review:first-child blockquote{font:700 clamp(24px,3.4vw,42px)/1.18 var(--display);max-width:26em}
 [data-theme=sign] .review:first-child blockquote::before{content:"«";color:var(--brass-text);margin-right:.08em}
 [data-theme=sign] .review:first-child blockquote::after{content:"»";color:var(--brass-text);margin-left:.04em}
 [data-theme=sign] .review figcaption{color:var(--muted)}
-/* the work: real photographs in ivory frames, the first one large */
+/* the work: real photographs, the first one large */
 [data-theme=sign] .works{grid-template-columns:repeat(3,1fr);gap:16px}
-[data-theme=sign] .works img{border:6px solid var(--paper);border-radius:var(--r-sm);box-shadow:0 14px 28px rgba(0,0,0,.4);filter:saturate(.92) contrast(1.04);background:var(--paper)}
+[data-theme=sign] .works img{border:0;border-radius:var(--r-sm);box-shadow:none;filter:saturate(.92) contrast(1.04);background:var(--card)}
 [data-theme=sign] .works img:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:auto;height:100%}
 /* the floor: a black and ivory checkerboard above the footer */
 .tiles{display:none}
@@ -348,7 +347,7 @@
   [data-theme=sign] .reviews{grid-template-columns:1fr}
   [data-theme=sign] .hero--cover .hero__visual .ticket{margin:8px 0 0;max-width:none;width:100%}
   [data-theme=sign] .hero--cover .hero__in{grid-template-columns:1fr}
-  [data-theme=sign] .hero--cover::before{background:linear-gradient(0deg,rgba(9,19,34,.96) 0,rgba(9,19,34,.72) 60%,rgba(9,19,34,.5))}
+  [data-theme=sign] .hero--cover::before{background:linear-gradient(0deg,rgba(10,21,17,.96) 0,rgba(10,21,17,.72) 60%,rgba(10,21,17,.5))}
   .hero__visual{align-items:flex-start;margin-top:8px}
   .art{width:min(100%,320px);max-height:none}
   .hero__visual .ticket{margin-top:-72px;margin-left:24px}
@@ -364,7 +363,7 @@
   .art{display:none!important} /* the theme rules for each picture are more specific than this one */
   .badge{display:none!important}
   [data-theme=sign] .hero--cover{padding-top:96px;min-height:0}
-  [data-theme=sign] .hero--cover::before{right:0;bottom:0;top:0;background:linear-gradient(0deg,rgba(9,19,34,.96) 0,rgba(9,19,34,.72) 60%,rgba(9,19,34,.5))}
+  [data-theme=sign] .hero--cover::before{right:0;bottom:0;top:0;background:linear-gradient(0deg,rgba(10,21,17,.96) 0,rgba(10,21,17,.72) 60%,rgba(10,21,17,.5))}
   [data-theme=sign] .hero--cover .hero__title{font-size:clamp(34px,10vw,56px)}
   .art.art--photo{display:block!important;width:100%;aspect-ratio:16/10;max-height:none;border-width:6px}
   .hero__visual{margin-top:0}
