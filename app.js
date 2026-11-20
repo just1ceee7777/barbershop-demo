@@ -134,11 +134,12 @@ function renderMasters(cfg, onPick) {
 // The texts, sections and colors of the page come from the preset (config.content). Everything is set with textContent.
 // Russian typesetting: a one- to three-letter word is glued to the next one, so it never ends a line (the server does the same for the first paint).
 const tie = (t) => String(t).replace(/(^|[\s(«])([А-Яа-яЁёA-Za-z]{1,3})\s+(?=\S)/g, '$1$2\u00a0');
-const SECTION_IDS = ['services', 'masters', 'works', 'why', 'reviews', 'booking', 'contacts'];
+const SECTION_IDS = ['services', 'statement', 'masters', 'works', 'why', 'reviews', 'booking', 'contacts'];
 function renderContent(cfg) {
   const c = cfg.content || {};
   const set = (sel, text) => { const el = $(sel); if (el) el.textContent = tie(text ?? ''); };
   set('#hero-title', c.heroTitle); set('#hero-cta', c.heroCta); set('#hero-cta2', c.heroCta2);
+  set('#statement-text', c.statement); set('#closing-text', c.closing);
   const concept = $('#hero-concept'); if (concept) { concept.textContent = tie(c.concept ?? ''); concept.hidden = !c.concept; }
   set('#services-lead', c.servicesLead); set('#masters-title', c.mastersTitle); set('#masters-lead', c.mastersLead);
   set('#why-title', c.visitTitle); set('#booking-lead', c.bookingLead);
@@ -159,7 +160,11 @@ function renderContent(cfg) {
   }
   // A section is shown only when the preset lists it and it has something to show.
   const listed = (id) => !c.sections || c.sections.includes(id);
-  const filled = { why: (c.why || []).length > 0, reviews: (c.reviews || []).length > 0, works: (cfg.gallery || []).length > 1 };
+  const whyPic = (cfg.gallery || []).length > 2 ? cfg.gallery.at(-1) : '';
+  const wp = $('#why-photo'); if (wp) { wp.hidden = !whyPic; if (whyPic) wp.src = whyPic; }
+  $('.why-wrap')?.classList.toggle('why-wrap--photo', !!whyPic);
+  const filled = { statement: !!c.statement, why: (c.why || []).length > 0, reviews: (c.reviews || []).length > 0, works: (cfg.gallery || []).length > 1 };
+  const closing = $('#closing'); if (closing) closing.hidden = !c.closing;
   for (const id of SECTION_IDS) {
     const show = listed(id) && (id in filled ? filled[id] : true);
     const sec = $(`#${id}`); if (sec) sec.hidden = !show;
