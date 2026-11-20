@@ -7,7 +7,7 @@
     const int = (v, min, max, label) => { const n = v === '' || v == null ? NaN : Number(v); if (!Number.isInteger(n) || n < min || n > max) throw new Error(`${label}: целое число от ${min} до ${max}`); return n; };
     const link = (v, label) => { const s = str(v, 200, label); if (s && !/^https?:\/\/\S+$/.test(s)) throw new Error(`${label}: ссылка должна начинаться с https:// или http://`); return s; };
     // In the demo a photo is a small data: URL kept in this browser; the real site stores files and keeps their path.
-    const photo = (v, label) => { const s = typeof v === 'string' ? v : ''; if (s && !/^data:image\/jpeg;base64,[A-Za-z0-9+/=]{1,400000}$/.test(s)) throw new Error(`${label}: неверный файл`); return s; };
+    const photo = (v, label) => { const s = typeof v === 'string' ? v : ''; if (/^photos\/[a-z]+-\d\.jpg$/.test(s)) return s; if (s && !/^data:image\/jpeg;base64,[A-Za-z0-9+/=]{1,400000}$/.test(s)) throw new Error(`${label}: неверный файл`); return s; };
     const ids = (arr, label, map) => {
       if (!Array.isArray(arr) || !arr.length) throw new Error(`Добавьте хотя бы одну позицию в разделе «${label}»`);
       const seen = new Set();

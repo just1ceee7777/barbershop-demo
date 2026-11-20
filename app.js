@@ -140,7 +140,7 @@ function renderContent(cfg) {
   }
   // A section is shown only when the preset lists it and it has something to show.
   const listed = (id) => !c.sections || c.sections.includes(id);
-  const filled = { why: (c.why || []).length > 0, reviews: (c.reviews || []).length > 0, works: (cfg.gallery || []).length > 0 };
+  const filled = { why: (c.why || []).length > 0, reviews: (c.reviews || []).length > 0, works: (cfg.gallery || []).length > 1 };
   for (const id of SECTION_IDS) {
     const show = listed(id) && (id in filled ? filled[id] : true);
     const sec = $(`#${id}`); if (sec) sec.hidden = !show;
@@ -160,8 +160,9 @@ function renderArt(cfg) {
 }
 
 function renderGallery(cfg) {
-  const photos = cfg.gallery || [];
-  $('#works-grid').replaceChildren(...photos.map((src, i) => h('img', { src, alt: `Работа мастера, фото ${i + 1}`, loading: 'lazy' })));
+  // The first photo already stands beside the headline; the grid shows the rest.
+  const photos = (cfg.gallery || []).slice(1);
+  $('#works-grid').replaceChildren(...photos.map((src, i) => h('img', { src, alt: `Работа мастера, фото ${i + 1}`, loading: 'lazy', decoding: 'async' })));
 }
 
 // Hero card: the nearest real free times for the first service, today or tomorrow.

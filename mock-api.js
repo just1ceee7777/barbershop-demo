@@ -40,7 +40,7 @@
         openTime: p.hours?.[0] || base.openTime, closeTime: p.hours?.[1] || base.closeTime,
         services: Array.isArray(p.services) && p.services.length ? p.services.slice(0, 12) : base.services,
         masters: Array.isArray(p.masters) && p.masters.length ? p.masters.slice(0, 6).map((m) => ({ name: m.name, role: m.role ?? '', experience: '' })) : base.masters,
-        gallery: [],
+        gallery: base.demoPhotos || [],
       });
       const content = { ...base.content, reviews: [], reviewsAreSamples: false, sections: base.content.sections.filter((x) => x !== 'reviews') };
       let h = 5381; for (const ch of raw) h = ((h * 33) ^ ch.charCodeAt(0)) >>> 0;
