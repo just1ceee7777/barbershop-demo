@@ -78,7 +78,13 @@ function renderShop(cfg) {
   const ig = $('#c-ig'), tg = $('#c-tg');
   shop.instagram ? (ig.href = shop.instagram) : ig.remove();
   shop.telegram ? (tg.href = shop.telegram) : tg.remove();
-  $('#map').src = `https://yandex.ru/map-widget/v1/?text=${encodeURIComponent(shop.mapQuery || shop.address)}&z=16`;
+  // The map is a third-party page that sets cookies, so it is only fetched when the visitor asks for it.
+  const q = encodeURIComponent(shop.mapQuery || shop.address);
+  $('#map-link').href = `https://yandex.ru/maps/?text=${q}`;
+  $('#map-show').onclick = () => {
+    const f = h('iframe', { id: 'map', title: 'Карта', referrerpolicy: 'no-referrer-when-downgrade', src: `https://yandex.ru/map-widget/v1/?text=${q}&z=16` });
+    $('#map-box').replaceChildren(f);
+  };
 }
 
 function renderServices(cfg, onPick) {
@@ -229,9 +235,9 @@ function initBooking(cfg) {
       const wd = d === today ? 'Сег' : cap(dt.toLocaleDateString('ru-RU', { weekday: 'short' }).replace('.', ''));
       return h('button', {
         type: 'button', class: 'chip', 'aria-pressed': String(st.date === d),
-        'aria-label': fmtDateLong(d),
+        'aria-label': `${wd} ${dt.getDate()}, ${fmtDateLong(d)}`,
         onclick: () => { st.date = d; st.error = ''; paintDates(); loadSlots(); },
-      }, h('span', { text: wd }), h('b', { text: String(dt.getDate()) }));
+      }, h('span', { text: wd }), ' ', h('b', { text: String(dt.getDate()) }));
     }));
     refs.dates.querySelector('[aria-pressed=true]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
@@ -300,7 +306,7 @@ function initBooking(cfg) {
       h('div', { class: 'summary' }, h('dl', {},
         ...row('Услуга', r.service), ...row('Мастер', r.master),
         ...row('Дата', fmtDateLong(r.date)), ...row('Время', r.time), ...row('Итого', fmtPrice(r.price), 'total'))),
-      r.manageUrl ? h('p', { class: 'muted' }, h('a', { href: r.manageUrl, text: 'Добавить в календарь или отменить запись' })) : null,
+      r.manageUrl ? h('p', { class: 'muted' }, h('a', { href: r.manageUrl, text: 'Добавить в календарь или отменить запись' }), ' Сохраните эту ссылку: другого способа вернуться к записи нет.') : null,
       h('button', { class: 'btn btn--secondary', type: 'button', text: 'Записаться ещё', onclick: reset }));
     root.replaceChildren(card);
     card.setAttribute('tabindex', '-1'); card.focus({ preventScroll: true });

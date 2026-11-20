@@ -2,7 +2,7 @@
 :root{
   --deep:#151311; --bg:#1a1815; --card:#221f1b; --raised:#2c2925;
   --line:rgba(239,233,222,.09); --line2:rgba(239,233,222,.16);
-  --text:#f2ece1; --text2:#b7afa2; --muted:#918a7f;
+  --text:#f2ece1; --text2:#b7afa2; --muted:#a39c90;
   --oxblood:#9e3a2c;
   --brass:#c9a35f; --brass-ink:#1a1408; --brass-text:#d6b475;
   --paper:#ece3d0; --ink:#1f1a14; --ink2:#5e554a; --ink-line:rgba(31,26,20,.14);
@@ -266,3 +266,7 @@ p{margin:0}
 
 .legal dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:16px 0}.legal dt{color:var(--muted)}.legal dd{margin:0;color:var(--text)}
 .legal .photo__row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+
+.map-facade{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:12px;min-height:360px;padding:24px;color:var(--text2)}
+.map-facade p{margin:0;font-size:14px;color:var(--muted)}
+.map-facade a{color:var(--text);text-underline-offset:2px}

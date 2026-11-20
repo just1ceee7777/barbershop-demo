@@ -18,7 +18,7 @@
 
 <header class="header" id="header">
   <div class="container header__in">
-    <a href="#top" class="logo" aria-label="На главную"><span class="logo__mark" data-icon="scissors"></span><span data-shop="name">&nbsp;</span></a>
+    <a href="#top" class="logo"><span class="logo__mark" data-icon="scissors"></span><span data-shop="name">&nbsp;</span></a>
     <nav class="nav" id="nav" aria-label="Основное меню">
       <a href="#services">Услуги</a>
       <a href="#masters">Мастера</a>
@@ -153,7 +153,11 @@
           <a href="#booking" class="btn btn--primary">Записаться</a>
         </div>
         <div class="contacts__map">
-          <iframe id="map" title="Карта" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="about:blank"></iframe>
+          <div class="map-facade" id="map-box">
+            <p>Карта загружается с сервиса Яндекс.Карты только после вашего нажатия.</p>
+            <button type="button" class="btn btn--secondary" id="map-show">Показать карту</button>
+            <a id="map-link" href="#" target="_blank" rel="noopener">Открыть в Яндекс.Картах</a>
+          </div>
         </div>
       </div>
     </div>

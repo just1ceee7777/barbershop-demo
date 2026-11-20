@@ -191,6 +191,7 @@
         if (!['new', 'confirmed', 'done', 'cancelled'].includes(body.status)) return reply(400, { error: 'Неверный статус' });
         const cur = state.bookings.find((b) => b.id === Number(m[1]));
         if (!cur) return reply(404, { error: 'Запись не найдена' });
+        if (body.from != null && body.from !== cur.status) return reply(409, { error: 'Статус записи уже изменился (возможно, клиент отменил её). Список обновлён.' });
         if (cur.status === 'cancelled' && body.status !== 'cancelled') {
           if (!mstById(cur.master_id)) return reply(409, { error: 'Мастер этой записи удалён из настроек, вернуть её нельзя' });
           if (!isFree(active(cur.date), cur.master_id, cur.start_min, cur.duration)) return reply(409, { error: 'Это время у мастера уже занято другой записью' });

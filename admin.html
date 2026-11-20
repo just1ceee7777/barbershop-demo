@@ -49,6 +49,14 @@
       <div class="stat"><span>Выручка за сегодня</span><b id="st-rev">—</b></div>
       <div class="stat"><span>Всего предстоящих</span><b id="st-total">—</b></div>
     </section>
+    <section class="report" aria-label="Отчёт за период">
+      <div class="report__head">
+        <h2>Отчёт за период</h2>
+        <label>Период <select id="rp-days"><option value="7">7 дней</option><option value="30" selected>30 дней</option><option value="90">90 дней</option></select></label>
+        <button id="rp-csv" class="btn btn--secondary btn--sm" type="button">Скачать CSV для Excel</button>
+      </div>
+      <div id="rp-body" class="report__body"><span class="muted">Загрузка…</span></div>
+    </section>
     <section class="filters" aria-label="Фильтры">
       <label>Мастер <select id="f-master"><option value="">Все</option></select></label>
       <label>Статус <select id="f-status">

@@ -7,22 +7,29 @@ const WEEKDAYS = ['воскресенье', 'понедельник', 'втор�
 const longDate = (s) => { const [y, m, d] = s.split('-').map(Number); return `${WEEKDAYS[new Date(y, m - 1, d).getDay()]}, ${d} ${MONTHS[m - 1]}`; };
 
 // Floating local time (no zone) so the event lands at the shop's local hour in whatever zone the client's calendar is in.
-function icsFile(b) {
-  const stamp = (date, hhmm) => `${date.replace(/-/g, '')}T${hhmm.replace(':', '')}00`;
+// The UID is a hash, not the cancel key: a calendar that is shared or synced would otherwise expose the key.
+async function icsFile(b) {
+  const uid = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token)))].slice(0, 12).map((x) => x.toString(16).padStart(2, '0')).join('');
   const [h, m] = b.time.split(':').map(Number);
   const end = h * 60 + m + b.duration;
+  const addDay = (date, n) => { const d = new Date(`${date}T00:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+  const endDate = addDay(b.date, Math.floor(end / 1440)); // a visit that ends at midnight or later ends on the next day
   const endTime = `${String(Math.floor(end / 60) % 24).padStart(2, '0')}:${String(end % 60).padStart(2, '0')}`;
-  const esc = (t) => String(t).replace(/[\;,]/g, (c) => `\\${c}`).replace(/\r?\n/g, '\\n');
+  const stamp = (date, hhmm) => `${date.replace(/-/g, '')}T${hhmm.replace(':', '')}00`;
+  const esc = (t) => String(t).replace(/\\/g, '\\\\').replace(/[;,]/g, (c) => `\\${c}`).replace(/\r?\n/g, '\\n');
+  // RFC 5545: lines are cut at 75 octets and continued with a leading space.
+  const fold = (line) => { const out = []; let cur = '', bytes = 0; for (const ch of line) { const n = new TextEncoder().encode(ch).length; if (bytes + n > 74) { out.push(cur); cur = ' '; bytes = 1; } cur += ch; bytes += n; } out.push(cur); return out.join('\r\n'); };
   return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//booking//RU', 'BEGIN:VEVENT',
-    `UID:${token}@booking`, `DTSTAMP:${new Date().toISOString().replace(/[-:]|\.\d+/g, '')}`,
-    `DTSTART:${stamp(b.date, b.time)}`, `DTEND:${stamp(b.date, endTime)}`,
+    `UID:${uid}@booking`, `DTSTAMP:${new Date().toISOString().replace(/[-:]|\.\d+/g, '')}`,
+    `DTSTART:${stamp(b.date, b.time)}`, `DTEND:${stamp(endDate, endTime)}`,
     `SUMMARY:${esc(`${b.service}, ${b.shop.name}`)}`, `LOCATION:${esc(b.shop.address)}`,
-    `DESCRIPTION:${esc(`Мастер: ${b.master}. Телефон: ${b.shop.phone}`)}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    `DESCRIPTION:${esc(`Мастер: ${b.master}. Телефон: ${b.shop.phone}`)}`, 'END:VEVENT', 'END:VCALENDAR'].map(fold).join('\r\n');
 }
 
 async function load() {
   const res = await fetch(`/api/booking?t=${encodeURIComponent(token)}`);
-  if (!res.ok) return root.replaceChildren(el('h1', 'Запись не найдена'), el('p', 'Проверьте ссылку или позвоните нам.'));
+  if (res.status === 404) return root.replaceChildren(el('h1', 'Запись не найдена'), el('p', 'Проверьте ссылку или позвоните нам.'));
+  if (!res.ok) return root.replaceChildren(el('h1', 'Не удалось загрузить запись'), el('p', 'Попробуйте обновить страницу через минуту.'));
   paint(await res.json());
 }
 
@@ -32,9 +39,9 @@ function paint(b) {
   const msg = el('p', '', { role: 'status' });
   const actions = [];
   if (b.status !== 'cancelled') {
-    actions.push(Object.assign(el('button', 'Добавить в календарь'), { type: 'button', className: 'btn btn--secondary', onclick: () => {
-      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([icsFile(b)], { type: 'text/calendar' })), download: 'zapis.ics' });
-      a.click(); URL.revokeObjectURL(a.href);
+    actions.push(Object.assign(el('button', 'Добавить в календарь'), { type: 'button', className: 'btn btn--secondary', onclick: async () => {
+      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([await icsFile(b)], { type: 'text/calendar' })), download: 'zapis.ics' });
+      a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 10_000); // revoking at once can cancel the download on iOS
     } }));
     if (b.canCancel) actions.push(Object.assign(el('button', 'Отменить запись'), { type: 'button', className: 'btn btn--secondary', onclick: async (e) => {
       if (!confirm('Отменить запись?')) return;

@@ -81,6 +81,7 @@ async function load() {
     await loadConfig().catch(() => {});
     const data = await api(`/api/admin/bookings?from=${today || ''}`);
     bookings = data.bookings; $('#msg').textContent = '';
+    paintReport();
     $('#updated').textContent = `Обновлено ${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
     render();
   } catch (err) {
@@ -90,12 +91,12 @@ async function load() {
   btn.disabled = false;
 }
 
-async function setStatus(id, status, btn) {
+async function setStatus(id, status, btn, from) {
   btn.disabled = true;
-  try { await api(`/api/admin/bookings/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) }); await load(); }
+  try { await api(`/api/admin/bookings/${id}`, { method: 'PATCH', body: JSON.stringify({ status, from }) }); await load(); }
   catch (err) {
     if (err instanceof AuthError) showLogin('Сессия истекла, войдите снова');
-    else { $('#msg').textContent = err.message; btn.disabled = false; }
+    else { $('#msg').textContent = err.message; btn.disabled = false; load().catch(() => {}); }
   }
 }
 
@@ -133,7 +134,7 @@ function render() {
 
 function row(b) {
   const acts = h('div', { class: 'acts' });
-  const btn = (label, status, cls) => acts.append(h('button', { type: 'button', class: cls || '', text: label, onclick: (e) => setStatus(b.id, status, e.currentTarget) }));
+  const btn = (label, status, cls) => acts.append(h('button', { type: 'button', class: cls || '', text: label, onclick: (e) => setStatus(b.id, status, e.currentTarget, b.status) }));
   if (b.status === 'new') btn('Подтвердить', 'confirmed');
   if (b.status === 'new' || b.status === 'confirmed') btn('Выполнено', 'done');
   if (b.status === 'new' || b.status === 'confirmed') btn('Отменить', 'cancelled', 'bad');
@@ -375,6 +376,65 @@ $('#settings-form').addEventListener('submit', async (e) => {
     if (err instanceof AuthError) return showLogin('Сессия истекла, войдите снова. Ваши правки сохранены в форме');
     $('#set-err').textContent = err.message;
   }
+});
+
+/* ---------- report for a period, and the CSV for Excel ---------- */
+const addDaysStr = (d, n) => { const x = new Date(`${d}T00:00:00Z`); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
+async function reportRows() {
+  const days = Number($('#rp-days').value) || 30;
+  const from = addDaysStr(today, -days);
+  const { bookings: all } = await api(`/api/admin/bookings?from=${from}`);
+  return { days, from, rows: all.filter((b) => b.date <= today) }; // the period ends today: future bookings are not "done" yet
+}
+// The visit counts as revenue when it was not cancelled. A price is a copy taken at booking time.
+function summarize(rows) {
+  const live = rows.filter((b) => b.status !== 'cancelled');
+  const sum = (list) => list.reduce((s, b) => s + (Number(b.price) || 0), 0);
+  const group = (key) => Object.entries(live.reduce((m, b) => { const g = (m[b[key]] ||= { n: 0, rev: 0 }); g.n++; g.rev += Number(b.price) || 0; return m; }, {}))
+    .sort((a, b) => b[1].n - a[1].n);
+  const phones = new Map(); for (const b of live) phones.set(b.phone.replace(/\D/g, ''), (phones.get(b.phone.replace(/\D/g, '')) || 0) + 1);
+  return { total: rows.length, live: live.length, cancelled: rows.length - live.length, revenue: sum(live), byService: group('service'), byMaster: group('master'),
+    returning: [...phones.values()].filter((n) => n > 1).length, clients: phones.size };
+}
+async function paintReport() {
+  const box = $('#rp-body');
+  try {
+    const { rows } = await reportRows();
+    const r = summarize(rows);
+    if (!r.total) return box.replaceChildren(h('span', { class: 'muted', text: 'За этот период записей нет' }));
+    const stat = (label, value) => h('div', { class: 'stat' }, h('span', { text: label }), h('b', { text: value }));
+    const list = (title, entries) => h('div', { class: 'report__list' }, h('h3', { text: title }),
+      h('ol', {}, entries.slice(0, 5).map(([name, g]) => h('li', {}, h('span', { text: name }), h('b', { text: `${g.n} · ${fmtPrice(g.rev)}` })))));
+    box.replaceChildren(
+      h('div', { class: 'stats stats--4' },
+        stat('Записей', String(r.live)), stat('Выручка', fmtPrice(r.revenue)),
+        stat('Отмен', `${r.cancelled}${r.total ? ` (${Math.round((r.cancelled / r.total) * 100)}%)` : ''}`),
+        stat('Клиентов вернулось', `${r.returning} из ${r.clients}`)),
+      h('div', { class: 'report__lists' }, list('Услуги', r.byService), list('Мастера', r.byMaster)));
+  } catch (err) { if (err instanceof AuthError) showLogin('Сессия истекла, войдите снова'); else box.replaceChildren(h('span', { class: 'err', text: err.message })); }
+}
+// Excel in a Russian locale wants ';' as the separator and a BOM for UTF-8. A cell that starts with = + - @ could run as a
+// formula, so it gets a leading apostrophe; phone numbers (digits, spaces, + and brackets only) are left as they are.
+const csvCell = (v) => {
+  let s = String(v ?? '');
+  if (/^[=+\-@\t\r]/.test(s) && !/^\+?[\d\s()-]+$/.test(s)) s = `'${s}`;
+  return /[";\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+};
+function csvOf(rows) {
+  const head = ['Дата', 'Время', 'Услуга', 'Мастер', 'Цена', 'Статус', 'Имя', 'Телефон', 'Комментарий', 'Создана'];
+  const lines = rows.slice().sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))
+    .map((b) => [b.date, b.time, b.service, b.master, b.price ?? '', STATUS[b.status] || b.status, b.name, b.phone, b.comment, b.createdAt].map(csvCell).join(';'));
+  return `﻿${[head.join(';'), ...lines].join('\r\n')}\r\n`;
+}
+$('#rp-days').addEventListener('change', paintReport);
+$('#rp-csv').addEventListener('click', async (e) => {
+  e.target.disabled = true;
+  try {
+    const { days, rows } = await reportRows();
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csvOf(rows)], { type: 'text/csv;charset=utf-8' })), download: `zapisi-${today}-${days}d.csv` });
+    a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 10_000);
+  } catch (err) { $('#msg').textContent = err.message; }
+  e.target.disabled = false;
 });
 
 if (token()) start(); else showLogin();
