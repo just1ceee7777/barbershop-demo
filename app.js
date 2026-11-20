@@ -93,10 +93,13 @@ function renderShop(cfg) {
 }
 
 function renderServices(cfg, onPick) {
+  // A price board: the name, a leader line and the price on one row; the description, the duration and the button under it.
   $('#services-list').replaceChildren(...cfg.services.map((s) => h('li', {},
-    h('div', { class: 'text' }, h('h3', { text: s.name }), h('p', { class: 'desc', text: s.description })),
-    h('div', { class: 'meta' }, h('span', { class: 'dur', text: fmtDur(s.duration) }), h('span', { class: 'price', text: fmtPrice(s.price) })),
-    h('button', { class: 'btn btn--secondary btn--sm', type: 'button', 'aria-label': `Выбрать: ${s.name}`, onclick: () => onPick({ service: s.id }), text: 'Выбрать' }))));
+    h('div', { class: 'menu__row' }, h('h3', { text: s.name }), h('span', { class: 'leader', 'aria-hidden': 'true' }), h('span', { class: 'price', text: fmtPrice(s.price) })),
+    h('div', { class: 'menu__sub' },
+      h('p', { class: 'desc', text: s.description }),
+      h('span', { class: 'dur', text: fmtDur(s.duration) }),
+      h('button', { class: 'btn btn--secondary btn--sm', type: 'button', 'aria-label': `Выбрать: ${s.name}`, onclick: () => onPick({ service: s.id }), text: 'Выбрать' })))));
 }
 
 function renderMasters(cfg, onPick) {
@@ -123,7 +126,8 @@ function renderContent(cfg) {
     return h('article', {}, ico, h('h3', { text: w.title }), h('p', { text: w.text }));
   }));
   $('#reviews-list').replaceChildren(...(c.reviews || []).map((r) => h('figure', { class: 'review' }, h('blockquote', { text: r.text }), h('figcaption', { text: r.name }))));
-  $('#pole').hidden = c.visual !== 'pole';
+  document.documentElement.dataset.theme = c.theme || 'sign';
+  renderArt(cfg);
   const a = c.accent;
   if (a && /^#[0-9a-f]{6}$/i.test(a.main) && /^#[0-9a-f]{6}$/i.test(a.text) && /^#[0-9a-f]{6}$/i.test(a.ink)) {
     const root = document.documentElement.style;
@@ -137,6 +141,17 @@ function renderContent(cfg) {
     const sec = $(`#${id}`); if (sec) sec.hidden = !show;
     document.querySelectorAll(`a[data-nav="${id}"]`).forEach((link) => { link.hidden = !show || !(c.nav?.[id] ?? link.textContent); if (c.nav?.[id]) link.textContent = c.nav[id]; });
   }
+}
+
+// The first screen's picture: the client's own first photo when there is one, otherwise the niche's own graphic.
+// A real photo is always better than the graphic, so the graphic is only a stand-in.
+function renderArt(cfg) {
+  const c = cfg.content || {}, art = $('#art'), photo = (cfg.gallery || [])[0];
+  art.className = `art art--${photo ? 'photo' : (c.art || 'none')}`;
+  art.hidden = !photo && (c.art || 'none') === 'none';
+  if (photo) return art.replaceChildren(h('img', { src: photo, alt: '', width: '840', height: '1050', fetchpriority: 'high' }));
+  const disc = h('span', { class: 'art__disc' }); disc.innerHTML = Object.hasOwn(ICONS, c.logoIcon) ? ICONS[c.logoIcon] : ICONS.scissors;
+  art.replaceChildren(...(c.art === 'swatches' ? ['a', 'b', 'c', 'd', 'e', 'f'].map((k) => h('span', { class: `drop drop--${k}` })) : [disc]));
 }
 
 function renderGallery(cfg) {

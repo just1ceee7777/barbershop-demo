@@ -27,6 +27,7 @@ async function icsFile(b) {
 }
 
 async function load() {
+  fetch('/api/config').then((r) => r.json()).then((c) => { if (c.content?.theme) document.documentElement.dataset.theme = c.content.theme; }).catch(() => {}); // the demo's niche can change after the page was built
   const res = await fetch(`/api/booking?t=${encodeURIComponent(token)}`);
   if (res.status === 404) return root.replaceChildren(el('h1', 'Запись не найдена'), el('p', 'Проверьте ссылку или позвоните нам.'));
   if (!res.ok) return root.replaceChildren(el('h1', 'Не удалось загрузить запись'), el('p', 'Попробуйте обновить страницу через минуту.'));

@@ -5,6 +5,7 @@ const page = document.body.dataset.page;
 
 try {
   const cfg = await fetch('/api/config').then((r) => r.json());
+  document.documentElement.dataset.theme = cfg.content?.theme || document.documentElement.dataset.theme || 'sign';
   const p = cfg.privacy || {};
   const shop = cfg.shop.name;
   const months = p.retentionMonths || 12;

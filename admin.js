@@ -327,7 +327,7 @@ function paintSettings(after) {
       ]))),
       h('button', { type: 'button', class: 'btn btn--secondary btn--sm add', text: 'Добавить мастера',
         onclick: () => { d.masters.push({ name: '', role: '', experience: '', photo: '' }); setDirty(true); paintSettings(() => focusLast('master')); } })),
-    section('Наши работы', 'Фото стрижек на сайте, до 8 штук. Пока фото нет, блок на сайте скрыт',
+    section('Наши работы', 'Фото работ на сайте, до 8 штук. Первое фото показывается на первом экране вместо рисунка. Пока фото нет, блок «Наши работы» скрыт',
       h('div', { class: 'gallery' }, (d.gallery ||= []).map((src, i) => h('div', { class: 'gallery__item' },
         h('img', { src, alt: `Фото ${i + 1}` }),
         h('button', { type: 'button', class: 'icon-btn icon-btn--bad', 'aria-label': `Удалить фото ${i + 1}`, text: '×',
