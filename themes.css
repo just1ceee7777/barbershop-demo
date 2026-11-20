@@ -35,7 +35,6 @@
 [data-theme=sign] .nav a:not(.btn){font-size:15px}
 /* the picture beside the headline: the client's photo in an ivory print frame, or a tin sign with the same stripes */
 [data-theme=sign] .art{border:10px solid var(--paper);border-radius:var(--r-card);box-shadow:0 28px 48px rgba(0,0,0,.55);background:var(--paper);width:min(100%,440px)}
-@media (prefers-reduced-motion:no-preference){@keyframes sheet{to{background-position-x:203.6px}}
 /* no photo yet: a real barber pole, turning. Stripes move by exactly one period (80px tile at 135deg = 113.137px) so the loop has no seam */
 [data-theme=sign] .art--stripes{display:grid;place-items:center;background:var(--card)}
 [data-theme=sign] .art--stripes .art__disc{display:none}
@@ -114,7 +113,8 @@
   --text:#241a2c; --text2:#5a4d63; --muted:#6a5d74;
   --brass:#a83f69; --brass-ink:#fff; --brass-text:#a83f69;
   --paper:#ffffff; --ink:#241a2c; --ink2:#5a4d63; --ink-line:rgba(36,26,44,.12);
-  --display:'Tenor Sans','Palatino Linotype',serif;
+  --plum:#2b1a35; --plum2:#3a2447; --rose:#e9c7d5; --cream:#f6ecef;
+  --display:'Cormorant Garamond','Palatino Linotype',Georgia,serif;
   --ui:'Golos Text',system-ui,-apple-system,'Segoe UI',sans-serif;
   --r-sm:12px; --r-ctl:14px; --r-card:28px;
 }
@@ -123,8 +123,8 @@
 [data-theme=atelier] .hero::before{display:none}
 [data-theme=atelier] .header.scrolled,[data-theme=atelier] .header{background:rgba(247,245,249,.92)}
 [data-theme=atelier] .nav{background:var(--bg)}
-[data-theme=atelier] .hero__title{font:400 clamp(40px,5.6vw,80px)/1.08 var(--display);letter-spacing:-.01em;max-width:12ch}
-[data-theme=atelier] .logo{font:400 22px/1 var(--display);letter-spacing:.02em}
+[data-theme=atelier] .hero__title{font:600 clamp(48px,6.6vw,96px)/.98 var(--display);letter-spacing:-.015em;max-width:11ch}
+[data-theme=atelier] .logo{font:700 28px/1 var(--display);letter-spacing:.04em}
 [data-theme=atelier] .btn{border-radius:999px;font-weight:500}
 [data-theme=atelier] .btn--primary{box-shadow:none}
 [data-theme=atelier] .btn--primary:hover{background:#932f57}
@@ -132,7 +132,7 @@
 [data-theme=atelier] .btn--secondary:hover{background:var(--raised)}
 [data-theme=atelier] .btn--sm{border-radius:999px}
 [data-theme=atelier] .section--alt{background:var(--deep);border-color:transparent}
-[data-theme=atelier] .section__head h2{font:400 clamp(34px,4.4vw,56px)/1.08 var(--display);letter-spacing:-.01em}
+[data-theme=atelier] .section__head h2{font:600 clamp(40px,5vw,68px)/1 var(--display);letter-spacing:-.015em}
 /* arched frame: the client's photo, or three nested arches */
 [data-theme=atelier] .art{border-radius:999px 999px var(--r-card) var(--r-card);background:#ead7e0;box-shadow:none;width:min(100%,380px)}
 [data-theme=atelier] .art--arch{display:grid;place-items:center}
@@ -146,20 +146,20 @@
 [data-theme=atelier] .menu{border-top:1px solid var(--line2)}
 [data-theme=atelier] .menu li{display:block;padding:24px 0;border-bottom:1px solid var(--line)}
 [data-theme=atelier] .menu__row{display:flex;align-items:baseline;gap:16px}
-[data-theme=atelier] .menu h3{font:400 24px/1.2 var(--display)}
+[data-theme=atelier] .menu h3{font:600 30px/1.1 var(--display)}
 [data-theme=atelier] .leader{flex:1}
-[data-theme=atelier] .menu .price{font:400 22px/1 var(--display);color:var(--brass-text)}
+[data-theme=atelier] .menu .price{font:600 30px/1 var(--display);color:var(--brass-text)}
 [data-theme=atelier] .menu__sub{display:flex;align-items:center;gap:16px;margin-top:6px}
 [data-theme=atelier] .menu__sub .desc{flex:1;margin:0}
 [data-theme=atelier] .master{background:#fff;border-color:transparent;box-shadow:0 10px 30px rgba(36,26,44,.07);align-items:center;text-align:center}
 [data-theme=atelier] .master .btn{align-self:center}
-[data-theme=atelier] .avatar{width:96px;height:112px;border-radius:999px 999px 14px 14px;background:#ead7e0;border:0;font:400 40px/1 var(--display);color:var(--brass)}
+[data-theme=atelier] .avatar{width:96px;height:112px;border-radius:999px 999px 14px 14px;background:#ead7e0;border:0;font:600 48px/1 var(--display);color:var(--brass)}
 [data-theme=atelier] .avatar--photo{width:96px;height:112px;border-radius:999px 999px 14px 14px}
-[data-theme=atelier] .master h3{font:400 22px/1.2 var(--display)}
+[data-theme=atelier] .master h3{font:600 28px/1.1 var(--display)}
 [data-theme=atelier] .why .ico{color:var(--brass);width:24px;height:24px}
-[data-theme=atelier] .why h3{font:400 21px/1.25 var(--display)}
+[data-theme=atelier] .why h3{font:600 26px/1.1 var(--display)}
 [data-theme=atelier] .review{background:#fff;border-color:transparent;box-shadow:0 10px 30px rgba(36,26,44,.07)}
-[data-theme=atelier] .review blockquote{font:400 20px/1.4 var(--display)}
+[data-theme=atelier] .review blockquote{font:500 25px/1.3 var(--display)}
 [data-theme=atelier] .booking{background:#fff;border-color:transparent;box-shadow:0 18px 50px rgba(36,26,44,.1)}
 [data-theme=atelier] .opt,[data-theme=atelier] .chip,[data-theme=atelier] .slot,[data-theme=atelier] .field input,[data-theme=atelier] .field textarea{background:var(--bg)}
 [data-theme=atelier] .slot,[data-theme=atelier] .chip{border-radius:999px}
@@ -172,6 +172,30 @@
 [data-theme=atelier] .works img{border-radius:var(--r-sm);border-color:transparent}
 [data-theme=atelier] .contacts__map{border-color:var(--line)}
 [data-theme=atelier] .map-facade{background:#fff}
+
+
+/* the price list is a dark plum band, the one deep block between pale ones; the stamp turns over the corner of the arch */
+[data-theme=atelier] .section--paper{background:var(--plum) var(--grain-l);color:var(--cream)}
+[data-theme=atelier] .section--paper .section__head h2{color:var(--cream)}
+[data-theme=atelier] .section--paper .lead,[data-theme=atelier] .section--paper .desc,[data-theme=atelier] .section--paper .dur{color:#cdbbd3}
+[data-theme=atelier] .section--paper .menu{border-top-color:rgba(246,236,239,.35)}
+[data-theme=atelier] .section--paper .menu li{border-bottom-color:rgba(246,236,239,.16)}
+[data-theme=atelier] .section--paper .menu h3{color:var(--cream)}
+[data-theme=atelier] .section--paper .leader{border-bottom:1px solid rgba(246,236,239,.3);transform:translateY(-6px)}
+[data-theme=atelier] .section--paper .menu .price{color:var(--rose)}
+[data-theme=atelier] .section--paper .btn--secondary{background:transparent;color:var(--cream);border-color:rgba(246,236,239,.5)}
+[data-theme=atelier] .section--paper .btn--secondary:hover{background:var(--cream);color:var(--plum)}
+[data-theme=atelier] .section--paper :focus-visible{outline-color:var(--rose)}
+[data-theme=atelier] .hero__visual,[data-theme=candy] .hero__visual{position:relative}
+[data-theme=atelier] .badge,[data-theme=candy] .badge{display:grid;place-items:center;position:absolute;z-index:3;width:112px;height:112px;border-radius:50%;box-shadow:0 10px 22px rgba(36,26,44,.25)}
+[data-theme=atelier] .badge svg,[data-theme=candy] .badge svg{position:absolute;inset:0;width:100%;height:100%;fill:currentColor;font:600 10.5px var(--ui);letter-spacing:.06em}
+@media (prefers-reduced-motion:no-preference){[data-theme=atelier] .badge svg,[data-theme=candy] .badge svg{animation:spin 24s linear infinite}}
+[data-theme=atelier] .badge{top:70px;right:-30px;background:var(--plum);color:var(--cream)}
+[data-theme=atelier] .badge i,[data-theme=candy] .badge i{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--rose)}
+[data-theme=atelier] .works{grid-template-columns:repeat(3,1fr);gap:16px}
+[data-theme=atelier] .works img{aspect-ratio:4/5;border-radius:999px 999px var(--r-sm) var(--r-sm);box-shadow:none}
+[data-theme=atelier] .works img:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:auto;height:100%;border-radius:var(--r-card)}
+[data-theme=atelier] .tiles{display:block;height:10px;background:repeating-linear-gradient(90deg,var(--rose) 0 24px,transparent 24px 48px)}
 
 /* --------------------------------------------------------------- candy */
 [data-theme=candy]{
@@ -192,6 +216,7 @@
 [data-theme=candy] .nav{background:var(--bg)}
 [data-theme=candy] .hero__title{font:600 clamp(32px,4.6vw,64px)/1.12 var(--display);letter-spacing:-.025em;max-width:14ch}
 [data-theme=candy] .logo{font:600 17px/1 var(--display);letter-spacing:-.01em}
+@media (min-width:861px){[data-theme=atelier] .nav,[data-theme=candy] .nav{background:transparent}}
 [data-theme=candy] .btn{border-radius:999px;font-weight:600}
 [data-theme=candy] .btn--primary{box-shadow:none}
 [data-theme=candy] .btn--primary:hover{background:#4a31bd}
@@ -244,6 +269,25 @@
 [data-theme=candy] .works img{border-radius:var(--r-card);border-color:transparent}
 [data-theme=candy] .map-facade{background:#fff}
 
+
+/* photo in a soft arch, a turning sticker, tinted bands, tilted prints */
+[data-theme=candy] .art--photo{display:block;border-radius:50% 50% 28px 28px;overflow:hidden;aspect-ratio:4/5;box-shadow:0 22px 40px rgba(33,22,74,.2)}
+[data-theme=candy] .badge{top:36px;right:-26px;background:var(--coral);color:#fff;transform:rotate(8deg)}
+[data-theme=candy] .badge svg{font-weight:700}
+[data-theme=candy] .section--paper{background:#ffe9ef}
+[data-theme=candy] .section--paper .menu li{border-color:transparent;box-shadow:0 6px 18px rgba(33,22,74,.07)}
+[data-theme=candy] .menu li:nth-child(5n+1){border-left:8px solid var(--brass)}
+[data-theme=candy] .menu li:nth-child(5n+2){border-left:8px solid var(--coral)}
+[data-theme=candy] .menu li:nth-child(5n+3){border-left:8px solid var(--mint)}
+[data-theme=candy] .menu li:nth-child(5n+4){border-left:8px solid var(--sun)}
+[data-theme=candy] .menu li:nth-child(5n+5){border-left:8px solid var(--pink)}
+[data-theme=candy] .works{grid-template-columns:repeat(3,1fr);gap:18px}
+[data-theme=candy] .works img{aspect-ratio:1;border:6px solid #fff;box-shadow:0 12px 26px rgba(33,22,74,.16);border-radius:var(--r-sm)}
+[data-theme=candy] .works img:nth-child(odd){transform:rotate(-1.6deg)}
+[data-theme=candy] .works img:nth-child(even){transform:rotate(1.6deg)}
+[data-theme=candy] .works img:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:auto;height:100%;border-radius:var(--r-card)}
+[data-theme=candy] .tiles{display:block;height:14px;background:linear-gradient(90deg,var(--brass) 0 20%,var(--coral) 0 40%,var(--sun) 0 60%,var(--mint) 0 80%,var(--sky) 0)}
+
 /* ---------------------------------------------------------------- shared */
 .menu__row{display:flex;align-items:baseline;gap:12px}
 .menu__sub{display:flex;align-items:center;gap:16px;margin-top:6px}
@@ -262,10 +306,10 @@
   .menu__sub .desc{flex:1 1 100%}
   [data-theme=sign] .menu h3{font-size:20px}
   [data-theme=sign] .menu .price{font-size:22px}
-  [data-theme=sign] .works{grid-template-columns:1fr 1fr}
+  [data-theme=sign] .works,[data-theme=atelier] .works,[data-theme=candy] .works{grid-template-columns:1fr 1fr}
   /* on a phone the booking card is the useful part of the first screen; the picture waits for the desktop */
   .art{display:none!important} /* the theme rules for each picture are more specific than this one */
-  [data-theme=sign] .badge{display:none}
+  .badge{display:none!important}
   .art.art--photo{display:block!important;width:100%;aspect-ratio:16/10;max-height:none;border-width:6px}
   .hero__visual{margin-top:0}
   .hero__visual .ticket{margin:0 auto}
