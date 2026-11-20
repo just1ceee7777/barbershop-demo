@@ -5,8 +5,8 @@
   --text:#efe9de; --text2:#aaa398; --muted:#8a847a;
   --brass:#c9a35f; --brass-ink:#1a1408; --brass-text:#d6b475;
   --ok:#4cc38a; --danger:#e5484d;
-  --ui:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
-  --display:'Fraunces',Georgia,serif;
+  --ui:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --display:'Playfair Display',Georgia,serif;
   --ease:cubic-bezier(.22,1,.36,1);
 }
 *{box-sizing:border-box}
@@ -159,3 +159,13 @@ input:focus,select:focus{outline:0;border-color:var(--brass)}
   .icon-btn{width:40px;height:40px}
 }
 .savebar__status:focus{outline:0}
+
+.photo{gap:8px}.photo__label{font-size:13px;color:var(--text2)}
+.photo__row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.photo__thumb,.photo__empty{width:56px;height:56px;border-radius:50%;object-fit:cover;border:1px solid var(--line2);flex:none}
+.photo__empty{display:grid;place-items:center;color:var(--muted);font-size:22px}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:12px}
+.gallery:empty{display:none}
+.gallery__item{position:relative}
+.gallery__item img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--line2)}
+.gallery__item .icon-btn{position:absolute;top:6px;right:6px}

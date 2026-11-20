@@ -90,11 +90,19 @@ function renderServices(cfg, onPick) {
 
 function renderMasters(cfg, onPick) {
   $('#masters-grid').replaceChildren(...cfg.masters.map((m) => h('article', { class: 'master' },
-    h('div', { class: 'avatar', 'aria-hidden': 'true', text: m.name.trim().slice(0, 1).toUpperCase() }),
+    m.photo ? h('img', { class: 'avatar avatar--photo', src: m.photo, alt: m.name, loading: 'lazy', width: '96', height: '96' })
+      : h('div', { class: 'avatar', 'aria-hidden': 'true', text: m.name.trim().slice(0, 1).toUpperCase() }),
     h('h3', { text: m.name }),
     h('span', { class: 'role', text: m.role }),
     h('span', { class: 'exp', text: m.experience }),
     h('button', { class: 'btn btn--secondary btn--sm', type: 'button', 'aria-label': `Записаться, мастер ${m.name}`, onclick: () => onPick({ master: m.id }), text: 'Записаться' }))));
+}
+
+function renderGallery(cfg) {
+  const photos = cfg.gallery || [];
+  $('#works').hidden = !photos.length;
+  document.querySelectorAll('a[href="#works"]').forEach((a) => { a.hidden = !photos.length; });
+  $('#works-grid').replaceChildren(...photos.map((src, i) => h('img', { src, alt: `Работа мастера, фото ${i + 1}`, loading: 'lazy' })));
 }
 
 // Hero card: the nearest real free times for the first service, today or tomorrow.
@@ -141,7 +149,7 @@ const phoneDigits = (v) => v.replace(/\D/g, '').replace(/^[78]/, '');
 
 function initBooking(cfg) {
   const root = $('#booking-root');
-  const st = { service: null, master: 'any', date: cfg.dates[0], time: null, slots: null, loading: false, name: '', phone: '', comment: '', submitting: false, error: '' };
+  const st = { service: null, master: 'any', date: cfg.dates[0], time: null, slots: null, loading: false, name: '', phone: '', comment: '', consent: false, submitting: false, error: '' };
   const svc = () => cfg.services.find((s) => s.id === st.service);
   const mst = () => (st.master === 'any' ? null : cfg.masters.find((m) => m.id === st.master));
   let reqId = 0;
@@ -173,6 +181,8 @@ function initBooking(cfg) {
   refs.name = h('input', { id: 'f-name', type: 'text', autocomplete: 'name', maxlength: '60', required: true, placeholder: 'Как к вам обращаться' });
   refs.phone = h('input', { id: 'f-phone', type: 'tel', inputmode: 'tel', autocomplete: 'tel', required: true, placeholder: '+7 (___) ___-__-__' });
   refs.comment = h('textarea', { id: 'f-comment', maxlength: '500', placeholder: 'Например, хочу оставить длину сверху' });
+  refs.consent = h('input', { id: 'f-consent', type: 'checkbox', required: true });
+  refs.consent.addEventListener('change', () => { st.consent = refs.consent.checked; paintSummary(); });
   refs.sum = h('dl');
   refs.err = h('p', { class: 'err', role: 'alert', 'aria-live': 'assertive' });
   refs.submit = h('button', { class: 'btn btn--primary submit', type: 'submit', text: 'Записаться' });
@@ -193,7 +203,9 @@ function initBooking(cfg) {
       h('div', { class: 'field' }, h('label', { for: 'f-name', text: 'Имя' }), refs.name),
       h('div', { class: 'field' }, h('label', { for: 'f-phone', text: 'Телефон' }), refs.phone),
       h('div', { class: 'field field--full' }, h('label', { for: 'f-comment', text: 'Комментарий для мастера' }), refs.comment))),
-    fs(6, 'Ваша запись', h('div', { class: 'summary' }, refs.sum), refs.err, refs.submit));
+    fs(6, 'Ваша запись', h('div', { class: 'summary' }, refs.sum), refs.err,
+      h('div', { class: 'consent' }, refs.consent, h('label', { for: 'f-consent' }, 'Я даю ', h('a', { href: 'consent.html', target: '_blank', rel: 'noopener', text: 'согласие на обработку персональных данных' }), ' (', h('a', { href: 'privacy.html', target: '_blank', rel: 'noopener', text: 'политика конфиденциальности' }), ')')),
+      refs.submit));
   root.replaceChildren(form);
   root.removeAttribute('aria-busy');
 
@@ -232,7 +244,7 @@ function initBooking(cfg) {
       onclick: () => { st.time = t; st.error = ''; paintSlots(); paintSummary(); },
     }, t)));
   }
-  const valid = () => st.service && st.date && st.time && st.name.trim().length >= 2 && phoneDigits(st.phone).length === 10;
+  const valid = () => st.service && st.date && st.time && st.name.trim().length >= 2 && phoneDigits(st.phone).length === 10 && st.consent;
   function row(dt, dd, cls) { return [h('dt', { text: dt }), h('dd', { class: cls, text: dd })]; }
   function paintSummary() {
     const s = svc();
@@ -254,7 +266,7 @@ function initBooking(cfg) {
     try {
       const r = await api('/api/bookings', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: st.name.trim(), phone: st.phone, serviceId: st.service, masterId: st.master, date: st.date, time: st.time, comment: st.comment.trim(), price: svc().price }),
+        body: JSON.stringify({ name: st.name.trim(), phone: st.phone, serviceId: st.service, masterId: st.master, date: st.date, time: st.time, comment: st.comment.trim(), price: svc().price, consent: true }),
       });
       showDone(r);
     } catch (err) {
@@ -326,6 +338,7 @@ async function main() {
   renderShop(cfg);
   renderServices(cfg, pick);
   renderMasters(cfg, pick);
+  renderGallery(cfg);
   widget = initBooking(cfg);
   renderTicket(cfg, pick);
   // A tab left open past midnight would offer yesterday's dates; reload when the shop's day has changed.

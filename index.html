@@ -4,14 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Барбершоп — онлайн-запись</title>
-<meta name="description" content="Мужские стрижки и уход за бородой. Онлайн-запись на удобное время.">
+<meta name="description" content="Демо-версия сайта с онлайн-записью.">
 <meta name="theme-color" content="#161513">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23161513'/%3E%3Ccircle cx='10' cy='10' r='3.5' fill='none' stroke='%23c9a35f' stroke-width='2'/%3E%3Ccircle cx='10' cy='22' r='3.5' fill='none' stroke='%23c9a35f' stroke-width='2'/%3E%3Cpath d='M13 12l12 10M13 20l12-10' stroke='%23c9a35f' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="styles.css">
-<script>window.__DEMO_CONFIG__={"timezone":"Europe/Moscow","slotStepMinutes":30,"daysAhead":14,"defaults":{"shop":{"name":"BLADE & BEARD","tagline":"Мужские стрижки и уход за бородой","phone":"+7 (900) 123-45-67","address":"Москва, ул. Примерная, 12","instagram":"https://instagram.com/","telegram":"https://t.me/","mapQuery":"Москва, ул. Примерная, 12"},"openTime":"10:00","closeTime":"21:00","services":[{"id":"haircut","name":"Мужская стрижка","duration":60,"price":1800,"description":"Консультация, мытьё головы, стрижка, укладка"},{"id":"fade","name":"Фейд / андеркат","duration":60,"price":2000,"description":"Плавный переход машинкой и ножницами"},{"id":"beard","name":"Оформление бороды","duration":30,"price":1200,"description":"Форма, контуры, горячее полотенце"},{"id":"combo","name":"Стрижка + борода","duration":90,"price":2700,"description":"Полный комплекс со скидкой"},{"id":"kids","name":"Детская стрижка","duration":30,"price":1200,"description":"Для мальчиков до 12 лет"},{"id":"shave","name":"Королевское бритьё","duration":60,"price":1900,"description":"Опасная бритва, распаривание, уход"}],"masters":[{"id":"alex","name":"Алексей","role":"Топ-барбер","experience":"8 лет опыта"},{"id":"dmitry","name":"Дмитрий","role":"Барбер","experience":"5 лет опыта"},{"id":"artem","name":"Артём","role":"Барбер","experience":"3 года опыта"}]}}</script>
+<script>window.__DEMO_CONFIG__={"privacy":{"operator":"ИП Иванов Иван Иванович","inn":"000000000000","email":"info@example.ru","retentionMonths":12},"timezone":"Europe/Moscow","slotStepMinutes":30,"daysAhead":14,"defaults":{"shop":{"name":"BLADE & BEARD","tagline":"Мужские стрижки и уход за бородой","phone":"+7 (900) 123-45-67","address":"Москва, ул. Примерная, 12","instagram":"https://instagram.com/","telegram":"https://t.me/","mapQuery":"Москва, ул. Примерная, 12"},"openTime":"10:00","closeTime":"21:00","services":[{"id":"haircut","name":"Мужская стрижка","duration":60,"price":1800,"description":"Консультация, мытьё головы, стрижка, укладка"},{"id":"fade","name":"Фейд / андеркат","duration":60,"price":2000,"description":"Плавный переход машинкой и ножницами"},{"id":"beard","name":"Оформление бороды","duration":30,"price":1200,"description":"Форма, контуры, горячее полотенце"},{"id":"combo","name":"Стрижка + борода","duration":90,"price":2700,"description":"Полный комплекс со скидкой"},{"id":"kids","name":"Детская стрижка","duration":30,"price":1200,"description":"Для мальчиков до 12 лет"},{"id":"shave","name":"Королевское бритьё","duration":60,"price":1900,"description":"Опасная бритва, распаривание, уход"}],"masters":[{"id":"alex","name":"Алексей","role":"Топ-барбер","experience":"8 лет опыта"},{"id":"dmitry","name":"Дмитрий","role":"Барбер","experience":"5 лет опыта"},{"id":"artem","name":"Артём","role":"Барбер","experience":"3 года опыта"}]}}</script>
 <script src="mock-api.js"></script>
 <link rel="stylesheet" href="demo.css">
 </head>
@@ -24,6 +22,7 @@
     <nav class="nav" id="nav" aria-label="Основное меню">
       <a href="#services">Услуги</a>
       <a href="#masters">Мастера</a>
+      <a href="#works" hidden>Работы</a>
       <a href="#why">Визит</a>
       <a href="#reviews">Отзывы</a>
       <a href="#contacts">Контакты</a>
@@ -77,6 +76,15 @@
         <p class="lead">Цена окончательная. Нажмите «Выбрать», и услуга подставится в запись.</p>
       </header>
       <ul class="menu" id="services-list"></ul>
+    </div>
+  </section>
+
+  <section class="section" id="works" hidden>
+    <div class="container">
+      <header class="section__head">
+        <h2>Наши работы</h2>
+      </header>
+      <div class="works" id="works-grid"></div>
     </div>
   </section>
 
@@ -155,6 +163,7 @@
 <footer class="footer">
   <div class="container footer__in">
     <span>© <span id="year"></span> <span data-shop="name"></span></span>
+    <a href="privacy.html">Политика конфиденциальности</a>
     <a href="#top">Наверх</a>
   </div>
 </footer>

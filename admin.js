@@ -232,6 +232,43 @@ function itemRow(list, i, kind, cells) {
         onclick: () => { list.splice(i, 1); setDirty(true); paintSettings(() => focusItem(kind, i, 'del')); }, text: '×' })));
 }
 
+// Photos are shrunk in the browser first (phone photos are several MB), then sent as plain JPEG bytes.
+const PHOTO_MAX_SIDE = window.__DEMO_CONFIG__ ? 800 : 1600;
+async function shrinkPhoto(file) {
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, PHOTO_MAX_SIDE / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas');
+  c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  return new Promise((ok, no) => c.toBlob((b) => (b ? ok(b) : no(new Error('Не удалось обработать фото'))), 'image/jpeg', window.__DEMO_CONFIG__ ? 0.7 : 0.85));
+}
+async function uploadPhoto(file) {
+  if (!file.type.startsWith('image/')) throw new Error('Нужна фотография');
+  const blob = await shrinkPhoto(file);
+  const r = await api('/api/admin/upload', { method: 'POST', headers: { 'Content-Type': 'application/octet-stream' }, body: blob });
+  return r.path;
+}
+// A picker for one photo stored at obj[key] (a master) or one slot of a list.
+function photoPicker(label, obj, key, { onUploaded } = {}) {
+  const id = `fld-${Math.random().toString(36).slice(2, 8)}`;
+  const msg = h('small', { class: 'photo__msg', role: 'status' });
+  const input = h('input', { id, type: 'file', accept: 'image/jpeg,image/png,image/webp', hidden: true, onchange: async (e) => {
+    const f = e.target.files[0]; e.target.value = '';
+    if (!f) return;
+    msg.textContent = 'Загружаем…';
+    try { const p = await uploadPhoto(f); if (onUploaded) onUploaded(p); else obj[key] = p; setDirty(true); paintSettings(); }
+    catch (err) { if (err instanceof AuthError) return showLogin('Сессия истекла, войдите снова'); msg.textContent = err.message; }
+  } });
+  return h('div', { class: 'fld fld--wide photo' },
+    h('span', { class: 'photo__label', text: label }),
+    h('div', { class: 'photo__row' },
+      obj[key] ? h('img', { class: 'photo__thumb', src: obj[key], alt: '' }) : h('span', { class: 'photo__empty', 'aria-hidden': 'true', text: '+' }),
+      input,
+      h('button', { type: 'button', class: 'btn btn--secondary btn--sm', text: obj[key] ? 'Заменить' : 'Загрузить фото', onclick: () => input.click() }),
+      obj[key] ? h('button', { type: 'button', class: 'btn btn--secondary btn--sm', text: 'Убрать', onclick: () => { obj[key] = ''; setDirty(true); paintSettings(); } }) : null),
+    msg);
+}
+
 function durationSelect(svc) {
   const id = `fld-${Math.random().toString(36).slice(2, 8)}`;
   const opts = DURATIONS.includes(svc.duration) ? DURATIONS : [...DURATIONS, svc.duration].sort((a, b) => a - b);
@@ -285,9 +322,16 @@ function paintSettings(after) {
         field('Имя', m, 'name', { max: 40, required: true }),
         field('Должность', m, 'role', { max: 60, placeholder: 'Барбер' }),
         field('Опыт', m, 'experience', { max: 60, placeholder: '5 лет опыта' }),
+        photoPicker('Фото', m, 'photo'),
       ]))),
       h('button', { type: 'button', class: 'btn btn--secondary btn--sm add', text: 'Добавить мастера',
-        onclick: () => { d.masters.push({ name: '', role: '', experience: '' }); setDirty(true); paintSettings(() => focusLast('master')); } })),
+        onclick: () => { d.masters.push({ name: '', role: '', experience: '', photo: '' }); setDirty(true); paintSettings(() => focusLast('master')); } })),
+    section('Наши работы', 'Фото стрижек на сайте, до 8 штук. Пока фото нет, блок на сайте скрыт',
+      h('div', { class: 'gallery' }, (d.gallery ||= []).map((src, i) => h('div', { class: 'gallery__item' },
+        h('img', { src, alt: `Фото ${i + 1}` }),
+        h('button', { type: 'button', class: 'icon-btn icon-btn--bad', 'aria-label': `Удалить фото ${i + 1}`, text: '×',
+          onclick: () => { d.gallery.splice(i, 1); setDirty(true); paintSettings(); } })))),
+      d.gallery.length < 8 ? photoPicker('Добавить фото', {}, 'v', { onUploaded: (p) => d.gallery.push(p) }) : null),
     h('div', { class: 'savebar' },
       h('p', { id: 'set-status', class: 'savebar__status', 'aria-live': 'polite', tabindex: '-1' }),
       h('p', { id: 'set-err', class: 'err', role: 'alert' }),

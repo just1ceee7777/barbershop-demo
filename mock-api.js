@@ -19,7 +19,8 @@
 
   /* ---------- state ---------- */
   let state;
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* private mode: keep in memory */ } }
+  // Returns false when the browser refused to store it (quota, private mode): the data then lives in memory only.
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); return true; } catch { return false; } }
   function seed() {
     const s = { settings: { ...clone(CFG.defaults), version: 0 }, bookings: [], nextId: 1, tokens: [] };
     // A few plausible bookings so the admin panel isn't empty on first visit.
@@ -70,6 +71,8 @@
     const str = (v, max, label, req) => { const s = typeof v === 'string' ? v.trim() : ''; if (req && !s) throw new Error(`Заполните поле «${label}»`); if (s.length > max) throw new Error(`Поле «${label}» длиннее ${max} символов`); return s; };
     const int = (v, min, max, label) => { const n = v === '' || v == null ? NaN : Number(v); if (!Number.isInteger(n) || n < min || n > max) throw new Error(`${label}: целое число от ${min} до ${max}`); return n; };
     const link = (v, label) => { const s = str(v, 200, label); if (s && !/^https?:\/\/\S+$/.test(s)) throw new Error(`${label}: ссылка должна начинаться с https:// или http://`); return s; };
+    // In the demo a photo is a small data: URL kept in this browser; the real site stores files and keeps their path.
+    const photo = (v, label) => { const s = typeof v === 'string' ? v : ''; if (s && !/^data:image\/jpeg;base64,[A-Za-z0-9+/=]{1,400000}$/.test(s)) throw new Error(`${label}: неверный файл`); return s; };
     const ids = (arr, label, map) => {
       if (!Array.isArray(arr) || !arr.length) throw new Error(`Добавьте хотя бы одну позицию в разделе «${label}»`);
       const seen = new Set();
@@ -90,7 +93,10 @@
     if (day < 60) throw new Error('Закрытие должно быть хотя бы на час позже открытия');
     v.services = ids(input.services, 'Услуги', (s, n) => ({ name: str(s.name, 60, `Название услуги ${n}`, true), description: str(s.description, 200, `Описание услуги ${n}`),
       duration: int(s.duration, 15, Math.min(480, day), `Длительность услуги ${n} в минутах`), price: int(s.price, 0, 1e6, `Цена услуги ${n}`) }));
-    v.masters = ids(input.masters, 'Мастера', (m, n) => ({ name: str(m.name, 40, `Имя мастера ${n}`, true), role: str(m.role, 60, `Должность мастера ${n}`), experience: str(m.experience, 60, `Опыт мастера ${n}`) }));
+    v.masters = ids(input.masters, 'Мастера', (m, n) => ({ name: str(m.name, 40, `Имя мастера ${n}`, true), role: str(m.role, 60, `Должность мастера ${n}`), experience: str(m.experience, 60, `Опыт мастера ${n}`), photo: photo(m.photo, `Фото мастера ${n}`) }));
+    const gal = Array.isArray(input.gallery) ? input.gallery : [];
+    if (gal.length > 8) throw new Error('В галерее не больше 8 фото');
+    v.gallery = gal.map((p) => photo(p, 'Фото галереи'));
     return v;
   }
 
@@ -103,7 +109,7 @@
     const q = url.searchParams;
     if (route === 'GET /api/config') {
       const today = nowInShopTz().date;
-      return reply(200, { shop: S().shop, services: S().services, masters: S().masters, openTime: S().openTime, closeTime: S().closeTime,
+      return reply(200, { shop: S().shop, services: S().services, masters: S().masters, gallery: S().gallery || [], openTime: S().openTime, closeTime: S().closeTime, privacy: { ...CFG.privacy, telegram: false },
         dates: Array.from({ length: CFG.daysAhead }, (_, i) => addDays(today, i)) });
     }
     if (route === 'GET /api/slots') {
@@ -114,6 +120,7 @@
       return reply(200, { slots: freeSlots(date, sv.duration, m).map((s) => s.time) });
     }
     if (route === 'POST /api/bookings') {
+      if (body.consent !== true) return reply(400, { error: 'Нужно согласие на обработку персональных данных' });
       const name = String(body.name || '').trim(), phone = String(body.phone || '').trim(), comment = String(body.comment || '').trim();
       const sv = svcById(body.serviceId), mid = String(body.masterId || 'any'), date = String(body.date || ''), time = String(body.time || '');
       if (name.length < 2 || name.length > 60) return reply(400, { error: 'Укажите имя' });
@@ -127,7 +134,7 @@
       if (!slot) return reply(409, { error: 'Это время уже заняли. Выберите другое.' });
       const m = mstById(slot.masters[0]);
       const b = { id: state.nextId++, name, phone, comment, status: 'new', date, start_min: toMin(time), duration: sv.duration,
-        service_id: sv.id, service_name: sv.name, price: sv.price, master_id: m.id, master_name: m.name, created_at: new Date().toISOString() };
+        service_id: sv.id, service_name: sv.name, price: sv.price, master_id: m.id, master_name: m.name, created_at: new Date().toISOString(), consent_at: new Date().toISOString() };
       state.bookings.push(b); save();
       return reply(201, { id: b.id, date, time, service: sv.name, price: sv.price, master: m.name });
     }
@@ -159,7 +166,9 @@
         const open = toMin(v.openTime), close = toMin(v.closeTime);
         const outside = state.bookings.filter((b) => upcoming(b, today) && (b.start_min < open || b.start_min + b.duration > close));
         if (outside.length) return reply(409, { error: `Предстоящих записей вне новых часов работы: ${outside.length}, первая ${outside[0].date} в ${toHHMM(outside[0].start_min)}. Перенесите или отмените их, потом меняйте часы.` });
-        v.version = S().version + 1; state.settings = v; save();
+        const prev = state.settings;
+        v.version = S().version + 1; state.settings = v;
+        if (!save()) { state.settings = prev; return reply(507, { error: 'Не хватило места в браузере. Уберите часть фото или уменьшите их число.' }); }
         return reply(200, v);
       }
       const m = url.pathname.match(/^\/api\/admin\/bookings\/(\d+)$/);
@@ -182,6 +191,12 @@
   window.fetch = async (input, init = {}) => {
     const url = new URL(typeof input === 'string' ? input : input.url, location.href);
     if (url.origin !== location.origin || !url.pathname.startsWith('/api/')) return realFetch(input, init);
+    if (url.pathname === '/api/admin/upload') {
+      const t = String(new Headers(init.headers || {}).get('Authorization') || '').replace(/^Bearer /, '');
+      if (!state.tokens.includes(t)) return reply(401, { error: 'Нужна авторизация' });
+      const dataUrl = await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = no; r.readAsDataURL(init.body); });
+      return reply(201, { path: dataUrl });
+    }
     let body = {};
     try { body = init.body ? JSON.parse(init.body) : {}; } catch { return reply(400, { error: 'Ошибка запроса' }); }
     if (!body || typeof body !== 'object') return reply(400, { error: 'Ошибка запроса' });
