@@ -14,7 +14,7 @@
 <body>
 <header class="head" id="head"><div class="wrap head__in">
   <a class="logo" href="#top" translate="no">BLADE &amp; BEARD</a>
-  <nav aria-label="Разделы"><a href="#price">Цены</a><a href="#works">Работы</a><a href="#contacts">Контакты</a><a class="btn btn--main" href="#book">Записаться</a></nav>
+  <nav aria-label="Разделы"><a href="#price">Цены</a><a href="#works">Работы</a><a href="#contacts">Контакты</a><a class="btn btn--main" data-book href="https://just1ceee7777.github.io/barbershop-demo/">Записаться</a></nav>
 </div></header>
 <main id="top">
 <section class="hero hero--type" id="book">
@@ -24,13 +24,13 @@
       <p class="tag">Бритьё опасной бритвой и горячее полотенце</p>
       <h1><span class="l">Стрижка и борода</span><span class="l">ровно в назначенное</span><span class="l">время</span></h1>
       <p class="hero__sub">Три мастера, запись на любое свободное время онлайн, без звонков.</p>
-      <div class="hero__cta"><a class="btn btn--main" href="#price">Записаться онлайн</a><a class="btn btn--ghost" href="tel:+79001234567">+7 (900) 123-45-67</a></div>
+      <div class="hero__cta"><a class="btn btn--main" data-book href="https://just1ceee7777.github.io/barbershop-demo/">Записаться онлайн</a><a class="btn btn--ghost" href="tel:+79001234567">+7 (900) 123-45-67</a></div>
     </div>
     <aside class="card" aria-labelledby="card-t">
       <h2 id="card-t">Свободное время</h2>
       <p class="card__meta"><span>Мужская стрижка · 1 ч</span><span>1 800 ₽</span></p>
       <div class="slots" role="group" aria-label="Время"><button type="button" class="slot" style="--i:0" aria-pressed="false">11:00</button><button type="button" class="slot" style="--i:1" aria-pressed="false">11:30</button><button type="button" class="slot" style="--i:2" aria-pressed="false" disabled>12:00</button><button type="button" class="slot" style="--i:3" aria-pressed="false">12:30</button><button type="button" class="slot" style="--i:4" aria-pressed="false">13:00</button><button type="button" class="slot" style="--i:5" aria-pressed="false" disabled>13:30</button><button type="button" class="slot" style="--i:6" aria-pressed="false">14:00</button><button type="button" class="slot" style="--i:7" aria-pressed="false">14:30</button></div>
-      <a class="btn btn--main" id="card-cta" href="tel:+79001234567" data-base="Записаться онлайн">Записаться онлайн</a>
+      <a class="btn btn--main" id="card-cta" data-book href="https://just1ceee7777.github.io/barbershop-demo/" data-base="Записаться онлайн">Записаться онлайн</a>
       <p class="card__meta" style="margin:12px 0 0;font-size:13px"><span>Макет: время показано для примера</span></p>
     </aside>
   </div>
@@ -44,7 +44,7 @@
 <section class="sec" id="works"><div class="wrap"><h2 class="big">Работы</h2><div class="works"><figure><img src="assets/photos/barber-1.jpg" alt="Контур бритвой" loading="eager" decoding="async"><figcaption>Контур бритвой</figcaption></figure><figure><img src="assets/photos/barber-2.jpg" alt="Ножницы" loading="lazy" decoding="async"><figcaption>Ножницы</figcaption></figure><figure><img src="assets/photos/barber-4.jpg" alt="Инструмент" loading="lazy" decoding="async"><figcaption>Инструмент</figcaption></figure><figure><img src="assets/photos/barber-5.jpg" alt="Укладка" loading="lazy" decoding="async"><figcaption>Укладка</figcaption></figure><figure><img src="assets/photos/barber-6.jpg" alt="Бритьё бороды" loading="lazy" decoding="async"><figcaption>Бритьё бороды</figcaption></figure><figure><img src="assets/photos/barber-3.jpg" alt="Рабочее место" loading="lazy" decoding="async"><figcaption>Рабочее место</figcaption></figure></div></div></section>
 <section class="say"><div class="wrap"><p style="--n:6"><span style="--i:0">Назначено</span> <span style="--i:1">на 14:30 —</span> <span style="--i:2">значит,</span> <span style="--i:3">в 14:30</span> <span style="--i:4">вы уже</span> <span style="--i:5">в кресле.</span></p></div></section>
 <section class="sec paper" id="contacts"><div class="wrap end">
-  <div><h2>Кресло свободно сегодня? Посмотрите время и запишитесь за минуту.</h2><a class="btn btn--main" href="tel:+79001234567">Записаться онлайн</a></div>
+  <div><h2>Кресло свободно сегодня? Посмотрите время и запишитесь за минуту.</h2><a class="btn btn--main" data-book href="https://just1ceee7777.github.io/barbershop-demo/">Записаться онлайн</a></div>
   <dl class="facts">
     <div><dt>Адрес</dt><dd>Москва, ул. Примерная, 12</dd></div>
     <div><dt>Телефон</dt><dd><a href="tel:+79001234567">+7 (900) 123-45-67</a></dd></div>
@@ -53,6 +53,25 @@
 </div></section>
 </main>
 <footer class="foot"><div class="wrap"><span translate="no">© BLADE &amp; BEARD</span><span>Макет сайта, не окончательная версия</span></div></footer>
+<dialog class="book" id="book-dialog" aria-labelledby="book-t">
+  <form method="dialog" class="book__form" id="book-form" novalidate>
+    <button type="button" class="book__x" id="book-x" aria-label="Закрыть">×</button>
+    <h2 id="book-t">Запись</h2>
+    <label>Услуга<select name="svc" id="book-svc"><option value="0">Мужская стрижка, 1 800 ₽</option><option value="1">Фейд / андеркат, 2 000 ₽</option><option value="2">Оформление бороды, 1 200 ₽</option><option value="3">Стрижка и борода, 2 700 ₽</option><option value="4">Детская стрижка, 1 200 ₽</option><option value="5">Королевское бритьё, 1 900 ₽</option></select></label>
+    <label>Время<select name="time" id="book-time"><option value="11:00">Сегодня, 11:00</option><option value="11:30">Сегодня, 11:30</option><option value="12:00" disabled>Сегодня, 12:00 (занято)</option><option value="12:30">Сегодня, 12:30</option><option value="13:00">Сегодня, 13:00</option><option value="13:30" disabled>Сегодня, 13:30 (занято)</option><option value="14:00">Сегодня, 14:00</option><option value="14:30">Сегодня, 14:30</option></select></label>
+    <label>Имя<input name="name" id="book-name" autocomplete="name" maxlength="60" placeholder="Как к вам обращаться"></label>
+    <label>Телефон<input name="phone" id="book-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" placeholder="+7 900 000-00-00"></label>
+    <p class="book__err" id="book-err" role="alert"></p>
+    <button type="submit" class="btn btn--main">Записаться</button>
+    <p class="book__note">Макет: заявка никуда не отправляется. В готовом сайте она сразу приходит администратору.</p>
+  </form>
+  <div class="book__done" id="book-done" hidden>
+    <h2>Готово (макет)</h2>
+    <p id="book-sum"></p>
+    <p><a class="btn btn--ghost" href="https://just1ceee7777.github.io/barbershop-demo/" target="_blank" rel="noopener">Посмотреть настоящую запись</a></p>
+    <button type="button" class="btn btn--main" id="book-close">Закрыть</button>
+  </div>
+</dialog>
 <script>
 (function () {
   var head = document.getElementById('head');
@@ -63,6 +82,31 @@
     buttons.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
     cta.textContent = cta.dataset.base + ' на ' + b.textContent;
   }); });
+  // Every "book" button opens the same small window. Without scripts the link still works (phone or the full booking page).
+  var dlg = document.getElementById('book-dialog'), form = document.getElementById('book-form'), done = document.getElementById('book-done');
+  var err = document.getElementById('book-err'), timeSel = document.getElementById('book-time');
+  if (dlg && typeof dlg.showModal === 'function') {
+    var reset = function () { form.hidden = false; done.hidden = true; err.textContent = ''; };
+    document.querySelectorAll('[data-book]').forEach(function (a) { a.addEventListener('click', function (e) {
+      e.preventDefault(); reset();
+      var picked = document.querySelector('.slot[aria-pressed=true]'); if (picked) timeSel.value = picked.textContent;
+      dlg.showModal(); document.getElementById('book-name').focus();
+    }); });
+    var close = function () { dlg.close(); };
+    document.getElementById('book-x').addEventListener('click', close);
+    document.getElementById('book-close').addEventListener('click', close);
+    dlg.addEventListener('click', function (e) { if (e.target === dlg) close(); });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = document.getElementById('book-name').value.trim(), phone = document.getElementById('book-phone').value;
+      var digits = phone.replace(/\D/g, '').length;
+      if (name.length < 2) { err.textContent = 'Введите имя'; return; }
+      if (digits < 10 || digits > 15) { err.textContent = 'Проверьте телефон: от 10 до 15 цифр'; return; }
+      var svc = document.getElementById('book-svc'), label = svc.options[svc.selectedIndex].text;
+      document.getElementById('book-sum').textContent = name + ', ' + label + ', сегодня в ' + timeSel.value + '. Так выглядит подтверждение; на настоящем сайте оно приходит сразу и с напоминанием.';
+      form.hidden = true; done.hidden = false;
+    });
+  }
 })();
 </script>
 </body>
