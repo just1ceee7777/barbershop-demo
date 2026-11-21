@@ -1,0 +1,136 @@
+/* Landing kit: one page, any small local business. The look comes from the variables the generator writes into :root (see scripts/make-landing.mjs);
+   everything below only uses them, so a new business is a new profile, not new CSS.
+   Motion: transform and opacity only, one curve, off for people who asked for less motion. */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:400 17px/1.55 var(--ui);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent-text);outline-offset:3px}
+.wrap{width:min(1180px,100% - 48px);margin-inline:auto}
+h1,h2,h3{font-family:var(--display);margin:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:52px;padding:0 28px;border:1.5px solid transparent;border-radius:var(--r);font:600 16px/1 var(--ui);text-decoration:none;cursor:pointer;transition:transform .25s var(--ease),background-color .2s,color .2s,border-color .2s}
+.btn--main{background:var(--accent);color:var(--accent-ink)}
+.btn--ghost{background:transparent;color:var(--text);border-color:var(--line2)}
+.btn:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){.btn--main:hover{transform:translateY(-2px);background:var(--accent-hover)}.btn--ghost:hover{border-color:var(--text)}}
+
+/* header */
+.head{position:fixed;inset:0 0 auto;z-index:20;transition:background-color .25s}
+.head.is-solid{background:var(--head)}
+.head__in{display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font:var(--logo);letter-spacing:.02em;text-decoration:none}
+.head nav{display:flex;align-items:center;gap:28px;font-size:15px}
+.head nav a:not(.btn){text-decoration:none;opacity:.85}
+.head .btn{height:42px;padding:0 20px;font-size:15px}
+
+/* first screen: the photograph, the headline on its calm side, the booking card on the other */
+.hero{position:relative;min-height:min(100svh,900px);display:flex;align-items:flex-end;padding:120px 0 96px;background:var(--deep);overflow:hidden;isolation:isolate}
+.hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--focus,60% 40%);z-index:-2}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgb(var(--deep-rgb)/.94) 0,rgb(var(--deep-rgb)/.78) 38%,rgb(var(--deep-rgb)/.2) 72%,rgb(var(--deep-rgb)/.05)),linear-gradient(0deg,rgb(var(--deep-rgb)/.9),transparent 42%)}
+.hero__in{display:grid;grid-template-columns:1.35fr .65fr;gap:56px;align-items:end;width:min(1180px,100% - 48px);margin-inline:auto}
+.tag{display:inline-block;margin:0 0 20px;padding:9px 16px 9px 22px;background:var(--paper);color:var(--ink);font:var(--tag);clip-path:polygon(0 0,100% 0,100% 100%,0 100%,10px 50%)}
+.hero h1{font:var(--h1);text-transform:var(--case);letter-spacing:var(--h1-track);margin:0 0 24px;text-wrap:balance}
+.hero h1 .l{display:block}
+.hero__sub{margin:0 0 32px;max-width:30em;font-size:19px;color:var(--text)}
+.hero__cta{display:flex;flex-wrap:wrap;gap:12px}
+
+/* the booking card: the real shape of what the product does */
+.card{position:relative;justify-self:end;width:min(100%,380px);background:var(--paper);color:var(--ink);border-top:8px solid var(--accent);border-radius:var(--r-card);padding:24px 24px 22px;box-shadow:0 22px 40px rgb(0 0 0/.45)}
+.card::before{content:"";position:absolute;inset:-16px;border:1.5px dashed rgb(var(--text-rgb)/.5);pointer-events:none;border-radius:calc(var(--r-card) + 4px)}
+.card h2{font:var(--h3);margin:0 0 4px}
+.card__meta{display:flex;justify-content:space-between;gap:12px;margin:0 0 18px;font-size:14px;color:var(--ink2)}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 18px}
+.slot{height:44px;border:1px solid var(--ink-line);background:rgb(255 255 255/.45);color:var(--ink);border-radius:var(--r-ctl);font:600 15px/1 var(--ui);cursor:pointer;transition:background-color .15s,color .15s,transform .15s}
+.slot[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.slot[disabled]{opacity:.38;text-decoration:line-through;cursor:not-allowed}
+.slot:active:not([disabled]){transform:scale(.95)}
+@media (hover:hover) and (pointer:fine){.slot:not([disabled]):not([aria-pressed=true]):hover{background:rgb(255 255 255/.85)}}
+.card .btn{width:100%}
+.ornament{position:absolute;left:0;right:0;bottom:0;height:22px;overflow:hidden}
+.ornament i{display:block;width:calc(100% + 112px);height:100%;background:var(--ornament) 0 0/112px 22px repeat-x}
+
+/* a slow strip of what the shop does */
+.strip{overflow:hidden;border-block:2px solid var(--text);padding:22px 0;background:var(--bg)}
+.strip__row{display:flex;width:max-content;font:var(--strip)}
+.strip__row span{display:flex;align-items:center;white-space:nowrap}
+.strip__row span::after{content:"";width:.34em;height:.34em;margin:0 .7em;background:var(--accent);border-radius:50%}
+
+/* sections: dark, paper, one loud colour */
+.sec{padding:112px 0}
+.sec h2.big{font:var(--h2);text-transform:var(--case);letter-spacing:var(--h2-track);margin:0 0 56px;text-wrap:balance}
+.paper{background:var(--paper);color:var(--ink)}
+.menu{list-style:none;margin:0;padding:0;border-top:3px solid var(--ink)}
+.menu li{display:grid;grid-template-columns:1fr auto;gap:2px 20px;padding:22px 0 20px;border-bottom:1px solid var(--ink-line)}
+.menu .row{display:flex;align-items:baseline;gap:14px;grid-column:1/-1}
+.menu h3{font:var(--h3)}
+.menu .dots{flex:1;min-width:24px;border-bottom:2px dotted rgb(var(--ink-rgb)/.4);transform:translateY(-5px)}
+.menu .price{font:var(--price);color:var(--accent-deep)}
+.menu p{margin:0;color:var(--ink2);font-size:16px}
+.menu .dur{color:var(--ink2);font-size:15px;text-align:right}
+.split{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:64px;align-items:start}
+.split h2.big{margin:0;position:sticky;top:110px}
+.split .lead{margin:16px 0 0;color:var(--ink2);max-width:22em}
+
+.works{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.works figure{margin:0;display:flex;flex-direction:column;gap:10px}
+.works img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:var(--r);background:var(--card)}
+.works figcaption{font:var(--caption)}
+.works figure:first-child{grid-column:span 2;grid-row:span 2}
+.works figure:first-child img{aspect-ratio:auto;flex:1;min-height:0;height:100%}
+
+.say{background:var(--accent);color:var(--accent-ink);padding:104px 0}
+.say p{margin:0;max-width:19em;font:var(--h2);text-wrap:balance}
+
+.end{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px;align-items:end}
+.end h2{font:var(--h2);margin:0 0 28px;text-wrap:balance}
+.facts{margin:0;display:grid;gap:18px}
+.facts div{display:grid;grid-template-columns:7em 1fr;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--ink-line)}
+.facts dt{color:var(--ink2);font-size:15px}
+.facts dd{margin:0;font:600 19px/1.35 var(--ui)}
+.facts a{text-decoration:none}
+.foot{padding:28px 0;background:var(--deep);color:var(--muted);font-size:14px}
+.foot .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* motion: the first screen is staged, everything else holds still until it is scrolled to */
+@media (prefers-reduced-motion:no-preference){
+  .hero__bg{animation:bgin .9s var(--ease) both,drift 26s ease-in-out .9s infinite alternate}
+  .hero .tag,.hero h1 .l,.hero__sub,.hero__cta{animation:rise .7s var(--ease) both}
+  .hero .tag{animation-delay:.25s}
+  .hero h1 .l:nth-child(1){animation-delay:.35s}.hero h1 .l:nth-child(2){animation-delay:.45s}.hero h1 .l:nth-child(3){animation-delay:.55s}.hero h1 .l:nth-child(n+4){animation-delay:.65s}
+  .hero__sub{animation-delay:.75s}.hero__cta{animation-delay:.85s}
+  .card{animation:print .8s .95s var(--ease) both}
+  .slot{animation:fade .4s var(--ease) both;animation-delay:calc(1.3s + var(--i) * 60ms)}
+  .ornament i{animation:band 2.8s linear infinite}
+  .strip__row{animation:strip 36s linear infinite}
+  .strip:hover .strip__row{animation-play-state:paused}
+}
+@keyframes bgin{from{opacity:0}}
+@keyframes drift{to{transform:scale(1.07)}}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}}
+@keyframes print{from{opacity:0;transform:translateY(34px)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes band{to{transform:translateX(-112px)}}
+@keyframes strip{to{transform:translateX(-50%)}}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion:no-preference) {
+    .say{view-timeline:--lit block}
+    .say p span{animation:lit linear both;animation-timeline:--lit;animation-range:cover calc(2% + var(--i) * 20% / var(--n)) cover calc(28% + var(--i) * 22% / var(--n))}
+    @keyframes lit{from{opacity:.18}to{opacity:1}}
+    .works figure{animation:come linear both;animation-timeline:view();animation-range:entry 0% entry 70%}
+    .works figure:nth-child(3n+1){--dx:-40px}.works figure:nth-child(3n+2){--dy:40px}.works figure:nth-child(3n){--dx:40px}
+    @keyframes come{from{opacity:0;transform:translate(var(--dx,0),var(--dy,20px))}}
+  }
+}
+
+@media (max-width:960px){
+  .hero{padding:104px 0 72px;min-height:0}
+  .hero::before{background:linear-gradient(0deg,rgb(var(--deep-rgb)/.96) 0,rgb(var(--deep-rgb)/.72) 60%,rgb(var(--deep-rgb)/.5))}
+  .hero__in{grid-template-columns:1fr;gap:40px}
+  .card{justify-self:stretch;width:100%}.card::before{display:none}
+  .split,.end{grid-template-columns:1fr;gap:32px}.split h2.big{position:static}
+  .sec{padding:80px 0}.say{padding:72px 0}
+  .head nav a:not(.btn){display:none}
+  .works{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){.works{grid-template-columns:1fr}.works figure:first-child{grid-column:auto;grid-row:auto}.works figure:first-child img{aspect-ratio:4/3;height:auto}.hero__cta .btn{width:100%}}
