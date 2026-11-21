@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Макет за две минуты</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;background:#0f1c17;color:#eee6d2}
+a{color:#ff9a62}
+.app{display:grid;grid-template-columns:minmax(320px,440px) minmax(0,1fr);min-height:100vh}
+form{padding:24px 24px 120px;overflow:auto;max-height:100vh;border-right:1px solid rgba(238,230,210,.15)}
+h1{font-size:24px;margin:0 0 4px}
+.lead{margin:0 0 20px;color:#9fada5;font-size:14px}
+fieldset{border:0;padding:0;margin:0 0 22px}
+legend{font-weight:700;margin:0 0 10px;font-size:15px;color:#ff9a62}
+label{display:grid;gap:5px;margin:0 0 12px;font-size:13px;color:#9fada5}
+input,select,textarea{font:inherit;font-size:15px;color:#eee6d2;background:#172a23;border:1px solid rgba(238,230,210,.26);border-radius:5px;padding:10px 12px;width:100%;min-width:0}
+textarea{min-height:64px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid #ff9a62;outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.svc{display:grid;grid-template-columns:1fr 90px 70px 36px;gap:6px;margin:0 0 6px}
+.svc input{padding:8px 9px;font-size:14px}
+button{font:600 15px/1 inherit;border:0;border-radius:5px;padding:11px 16px;cursor:pointer;background:#e0642b;color:#1a0e07}
+button.ghost{background:transparent;color:#eee6d2;border:1px solid rgba(238,230,210,.3)}
+button.x{padding:0;background:transparent;color:#9fada5;border:1px solid rgba(238,230,210,.2)}
+.bar{position:fixed;left:0;bottom:0;width:min(440px,100%);padding:14px 24px;background:#0a1511;border-top:1px solid rgba(238,230,210,.15);display:flex;gap:8px;flex-wrap:wrap;z-index:3}
+.err{color:#ff9a62;font-size:14px;min-height:1.3em;margin:0 0 8px}
+.hint{font-size:12.5px;color:#9fada5;margin:-6px 0 12px}
+.photos{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.photos img{width:56px;height:56px;object-fit:cover;border-radius:4px}
+.pane{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;background:#0a1511}
+.tabs{display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid rgba(238,230,210,.15)}
+.tabs button{padding:8px 12px;font-size:14px}
+.tabs button[aria-pressed=true]{background:#eee6d2;color:#12201b}
+.frame{flex:1;display:grid;place-items:start center;overflow:auto;padding:14px}
+iframe{border:0;background:#fff;width:100%;height:100%;border-radius:6px}
+iframe.phone{width:390px;max-width:100%}
+@media (max-width:900px){.app{grid-template-columns:1fr}form{max-height:none;border-right:0}.pane{position:static;height:80vh}.bar{width:100%}}
+</style>
+</head>
+<body>
+<div class="app">
+<form id="f" novalidate autocomplete="off">
+  <h1>Макет за две минуты</h1>
+  <p class="lead">Заполните данные компании: справа сразу видно страницу. Это макет «пример дизайна»: время и запись показаны для примера. Ничего не отправляется на сервер.</p>
+
+  <fieldset><legend>Компания</legend>
+    <label>Название<input id="name" maxlength="60" value="BLADE &amp; BEARD"></label>
+    <label>Чем занимаются, одной строкой<input id="tagline" maxlength="120" value="Барбершоп"></label>
+    <div class="row"><label>Телефон<input id="phone" value="+7 (900) 123-45-67" inputmode="tel"></label><label>Адрес<input id="address" value="Москва, ул. Примерная, 12"></label></div>
+    <div class="row"><label>Открытие<input id="open" type="time" value="10:00"></label><label>Закрытие<input id="close" type="time" value="21:00"></label></div>
+  </fieldset>
+
+  <fieldset><legend>Вид и первый экран</legend>
+    <div class="row">
+      <label>Вид<select id="look"><option value="night">Ночь (тёмный, медь)</option><option value="blush">Роза (светлый, слива)</option></select></label>
+      <label>Первый экран<select id="variant"><option value="split">Фото и карточка записи</option><option value="phone">Телефон с перепиской</option><option value="center">Заголовок по центру</option><option value="type">Гигантские слова</option></select></label>
+    </div>
+    <label>Фраза-ценник над заголовком (чем особенны)<input id="concept" maxlength="140" value="Бритьё опасной бритвой и горячее полотенце"></label>
+    <label>Заголовок (каждая строка с новой строки)<textarea id="title">Стрижка и борода
+ровно в назначенное
+время</textarea></label>
+    <label>Подзаголовок<input id="sub" maxlength="160" value="Три мастера, запись на любое свободное время онлайн, без звонков."></label>
+    <label>Фото первого экрана<select id="heroStock"></select></label>
+    <label>или своё фото<input id="heroFile" type="file" accept="image/jpeg,image/png,image/webp"></label>
+    <p class="hint">Свои фото сжимаются в браузере до 1600 px и никуда не загружаются.</p>
+  </fieldset>
+
+  <fieldset><legend>Услуги и цены</legend>
+    <div id="svcs"></div>
+    <button type="button" class="ghost" id="addSvc">Добавить услугу</button>
+  </fieldset>
+
+  <fieldset><legend>Работы (до 6 фото)</legend>
+    <label>Фото работ<input id="galFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+    <div class="photos" id="galThumbs"></div>
+    <label>Подпись под фото через запятую<input id="galCaps" placeholder="Контур, Ножницы, Укладка"></label>
+  </fieldset>
+
+  <fieldset><legend>Тексты</legend>
+    <label>Фраза на цветной полосе<input id="statement" maxlength="140" value="Назначено на 14:30 — значит, в 14:30 вы уже в кресле."></label>
+    <label>Финальный призыв<input id="closing" maxlength="140" value="Кресло свободно сегодня? Посмотрите время и запишитесь за минуту."></label>
+    <label>Кнопка записи<input id="cta" maxlength="40" value="Записаться онлайн"></label>
+    <label>Ссылка на настоящую запись (необязательно)<input id="bookingUrl" placeholder="https://…" inputmode="url"></label>
+  </fieldset>
+
+  <p class="err" id="err" role="alert"></p>
+  <div class="bar">
+    <button type="button" id="dlHtml">Скачать страницу</button>
+    <button type="button" class="ghost" id="dlJson">Скачать профиль</button>
+    <button type="button" class="ghost" id="open">Открыть отдельно</button>
+  </div>
+</form>
+
+<section class="pane" aria-label="Просмотр">
+  <div class="tabs" role="group" aria-label="Размер просмотра"><button type="button" id="tabD" aria-pressed="true">Компьютер</button><button type="button" id="tabM" aria-pressed="false">Телефон</button></div>
+  <div class="frame"><iframe id="view" title="Просмотр макета"></iframe></div>
+</section>
+</div>
+
+<script type="module">
+import { renderLanding, validate } from './render.js';
+const $ = (id) => document.getElementById(id);
+const STOCK = [['', 'Без фото'], ['barber-0.jpg', 'Барбершоп: зал'], ['barber-1.jpg', 'Барбершоп: бритьё'], ['barber-2.jpg', 'Барбершоп: ножницы'], ['salon-1.jpg', 'Салон: укладка'], ['salon-2.jpg', 'Салон: работа'], ['nails-1.jpg', 'Маникюр']];
+$('heroStock').innerHTML = STOCK.map(([v, t]) => `<option value="${v}">${t}</option>`).join('');
+$('heroStock').value = 'barber-0.jpg';
+const stockGallery = ['barber-1.jpg', 'barber-2.jpg', 'barber-4.jpg', 'barber-5.jpg'];
+
+// Own photos: read in the browser, shrunk to 1600 px as JPEG, kept in memory as data URLs. Nothing is uploaded.
+const own = { hero: '', gallery: [] };
+async function shrink(file) {
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error('Нужен файл JPEG, PNG или WebP');
+  if (file.size > 20 * 1024 * 1024) throw new Error('Файл больше 20 МБ');
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.82);
+}
+const say = (t) => { $('err').textContent = t || ''; };
+$('heroFile').addEventListener('change', async (e) => { try { own.hero = e.target.files[0] ? await shrink(e.target.files[0]) : ''; say(''); } catch (x) { own.hero = ''; say(x.message); } update(); });
+$('galFiles').addEventListener('change', async (e) => {
+  try { own.gallery = []; for (const f of [...e.target.files].slice(0, 6)) own.gallery.push(await shrink(f)); say(''); } catch (x) { own.gallery = []; say(x.message); }
+  $('galThumbs').replaceChildren(...own.gallery.map((u) => Object.assign(document.createElement('img'), { src: u, alt: '' })));
+  update();
+});
+
+const svcs = [['Мужская стрижка', 1800, 60], ['Оформление бороды', 1200, 30], ['Стрижка и борода', 2700, 90], ['Королевское бритьё', 1900, 60]];
+function svcRow([name = '', price = 1000, dur = 60] = []) {
+  const d = document.createElement('div'); d.className = 'svc';
+  d.innerHTML = '<input class="sn" maxlength="60" placeholder="Услуга" aria-label="Название услуги"><input class="sp" type="number" min="0" step="100" aria-label="Цена, рублей"><input class="sd" type="number" min="15" step="15" aria-label="Длительность, минут"><button type="button" class="x" aria-label="Убрать услугу">×</button>';
+  d.querySelector('.sn').value = name; d.querySelector('.sp').value = price; d.querySelector('.sd').value = dur;
+  d.querySelector('.x').addEventListener('click', () => { d.remove(); update(); });
+  $('svcs').append(d);
+}
+svcs.forEach(svcRow);
+$('addSvc').addEventListener('click', () => { svcRow(); update(); $('svcs').lastChild.querySelector('.sn').focus(); });
+
+function profile() {
+  const photo = (stock) => stock;
+  const caps = $('galCaps').value.split(',').map((s) => s.trim());
+  const gallery = own.gallery.length ? own.gallery.map((_, i) => ({ src: `own-${i}.jpg`, caption: caps[i] || '' })) : stockGallery.slice(0, 4).map((s, i) => ({ src: s, caption: caps[i] || '' }));
+  const hero = { variant: $('variant').value, title: $('title').value.trim(), sub: $('sub').value.trim(), concept: $('concept').value.trim() };
+  if (own.hero) hero.photo = 'own-hero.jpg'; else if ($('heroStock').value) hero.photo = $('heroStock').value;
+  const p = {
+    look: $('look').value, name: $('name').value.trim(), tagline: $('tagline').value.trim(), phone: $('phone').value.trim(), address: $('address').value.trim(),
+    hours: [$('open').value, $('close').value], cta: $('cta').value.trim() || 'Записаться онлайн', hero,
+    services: [...document.querySelectorAll('.svc')].map((r) => ({ name: r.querySelector('.sn').value.trim(), price: Number(r.querySelector('.sp').value), duration: Number(r.querySelector('.sd').value) })).filter((s) => s.name),
+    gallery, statement: $('statement').value.trim(), closing: $('closing').value.trim(),
+  };
+  if ($('bookingUrl').value.trim()) p.bookingUrl = $('bookingUrl').value.trim();
+  return p;
+}
+// A photo name in the profile becomes a picture: our own shrunk ones from memory, stock ones from the shared folder.
+const photoUrl = (src) => (src === 'own-hero.jpg' ? own.hero : /^own-(\d)\.jpg$/.test(src) ? own.gallery[Number(src.match(/(\d)/)[1])] : `assets/photos/${src}`);
+let html = '';
+function update() {
+  try {
+    const p = profile(); validate(p);
+    if (!/^https?:\/\//.test(p.bookingUrl || 'https://x')) throw new Error('Ссылка на запись должна начинаться с http:// или https://');
+    html = renderLanding(p, photoUrl); say('');
+    $('view').srcdoc = html;
+  } catch (e) { say(e.message.replace(/^Профиль: /, '')); }
+}
+let t; $('f').addEventListener('input', () => { clearTimeout(t); t = setTimeout(update, 250); });
+$('f').addEventListener('submit', (e) => e.preventDefault());
+$('tabD').addEventListener('click', () => { $('view').className = ''; $('tabD').setAttribute('aria-pressed', 'true'); $('tabM').setAttribute('aria-pressed', 'false'); });
+$('tabM').addEventListener('click', () => { $('view').className = 'phone'; $('tabM').setAttribute('aria-pressed', 'true'); $('tabD').setAttribute('aria-pressed', 'false'); });
+
+const save = (name, text, type) => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([text], { type })), download: name }); a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); };
+const slug = () => ($('name').value.trim().toLowerCase().replace(/[^a-zа-я0-9]+/gi, '-').replace(/^-|-$/g, '') || 'maket');
+// The downloaded page is one file: the styles are put inside, the fonts and stock photos are linked from this site's address.
+async function standalone() {
+  const base = new URL('.', location.href).href;
+  let css = await (await fetch('assets/landing.css')).text();
+  let fonts = (await (await fetch('assets/fonts.css')).text()).replace(/url\(fonts\//g, `url(${base}assets/fonts/`);
+  return html.replace('<link rel="stylesheet" href="assets/fonts.css">', `<style>${fonts}</style>`).replace('<link rel="stylesheet" href="assets/landing.css">', `<style>${css}</style>`).replace(/(src|href)="assets\/photos\//g, `$1="${base}assets/photos/`);
+}
+$('dlHtml').addEventListener('click', async () => { try { update(); if (!html) return; save(`${slug()}.html`, await standalone(), 'text/html'); } catch { say('Не удалось собрать файл'); } });
+$('dlJson').addEventListener('click', () => { const p = profile(); save(`${slug()}.json`, JSON.stringify(p, null, 2), 'application/json'); say(own.hero || own.gallery.length ? 'В профиле стоят имена own-hero.jpg и own-0.jpg…: положите свои фото в папку под этими именами' : ''); });
+$('open').addEventListener('click', async () => { try { update(); const w = window.open(URL.createObjectURL(new Blob([await standalone()], { type: 'text/html' })), '_blank', 'noopener'); if (!w) say('Браузер заблокировал новое окно'); } catch { say('Не удалось открыть'); } });
+update();
+</script>
+</body>
+</html>
