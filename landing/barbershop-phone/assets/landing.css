@@ -177,3 +177,9 @@ h1,h2,h3{font-family:var(--display);margin:0}
 .hero--type .ornament{display:none}
 @media (prefers-reduced-motion:no-preference){.msg{animation:fade .45s var(--ease) both;animation-delay:calc(1.1s + var(--i) * .5s)}}
 @media (max-width:960px){.hero--center .slots{grid-template-columns:repeat(4,1fr)}.hero--phone .phone{margin-top:8px}}
+
+/* touch: nothing slides past the screen edge, and small links get a finger-sized target */
+.sec,.say,.hero{overflow-x:clip}
+.logo{display:inline-block;padding:12px 0}
+.facts a{display:inline-block;padding:10px 0}
+@media (max-width:960px){.works figure{--dx:0px!important}}
