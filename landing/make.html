@@ -103,10 +103,19 @@ iframe.phone{width:390px;max-width:100%}
 <script type="module">
 import { renderLanding, validate } from './render.js';
 const $ = (id) => document.getElementById(id);
-const STOCK = [['', 'Без фото'], ['barber-0.jpg', 'Барбершоп: зал'], ['barber-1.jpg', 'Барбершоп: бритьё'], ['barber-2.jpg', 'Барбершоп: ножницы'], ['salon-1.jpg', 'Салон: укладка'], ['salon-2.jpg', 'Салон: работа'], ['nails-1.jpg', 'Маникюр']];
-$('heroStock').innerHTML = STOCK.map(([v, t]) => `<option value="${v}">${t}</option>`).join('');
-$('heroStock').value = 'barber-0.jpg';
-const stockGallery = ['barber-1.jpg', 'barber-2.jpg', 'barber-4.jpg', 'barber-5.jpg'];
+// Stock photos are shown only for the niche of the chosen look: a barbershop must not offer a manicure.
+const STOCK = {
+  night: { hero: [['', 'Без фото'], ['barber-0.jpg', 'Зал, кресла'], ['barber-1.jpg', 'Бритьё'], ['barber-2.jpg', 'Ножницы'], ['barber-3.jpg', 'Рабочее место'], ['barber-4.jpg', 'Инструмент']], gallery: ['barber-1.jpg', 'barber-2.jpg', 'barber-4.jpg', 'barber-5.jpg'] },
+  blush: { hero: [['', 'Без фото'], ['salon-1.jpg', 'Укладка'], ['salon-2.jpg', 'Работа мастера'], ['salon-3.jpg', 'Интерьер'], ['salon-4.jpg', 'Мастер и клиент']], gallery: ['salon-2.jpg', 'salon-3.jpg', 'salon-4.jpg'] },
+  candy: { hero: [['', 'Без фото'], ['nails-1.jpg', 'Маникюр'], ['nails-2.jpg', 'Руки, цвет'], ['nails-3.jpg', 'Нежный маникюр']], gallery: ['nails-2.jpg', 'nails-3.jpg', 'nails-1.jpg'] },
+};
+const stock = () => STOCK[$('look').value] || STOCK.night;
+function fillStock() {
+  $('heroStock').innerHTML = stock().hero.map(([v, t]) => `<option value="${v}">${t}</option>`).join('');
+  $('heroStock').value = stock().hero[1][0]; // the first real photo of this niche
+}
+fillStock();
+$('look').addEventListener('change', fillStock);
 
 // Own photos: read in the browser, shrunk to 1600 px as JPEG, kept in memory as data URLs. Nothing is uploaded.
 const own = { hero: '', gallery: [] };
@@ -141,7 +150,7 @@ $('addSvc').addEventListener('click', () => { svcRow(); update(); $('svcs').last
 function profile() {
   const photo = (stock) => stock;
   const caps = $('galCaps').value.split(',').map((s) => s.trim());
-  const gallery = own.gallery.length ? own.gallery.map((_, i) => ({ src: `own-${i}.jpg`, caption: caps[i] || '' })) : stockGallery.slice(0, 4).map((s, i) => ({ src: s, caption: caps[i] || '' }));
+  const gallery = own.gallery.length ? own.gallery.map((_, i) => ({ src: `own-${i}.jpg`, caption: caps[i] || '' })) : stock().gallery.map((s, i) => ({ src: s, caption: caps[i] || '' }));
   const hero = { variant: $('variant').value, title: $('title').value.trim(), sub: $('sub').value.trim(), concept: $('concept').value.trim() };
   if (own.hero) hero.photo = 'own-hero.jpg'; else if ($('heroStock').value) hero.photo = $('heroStock').value;
   const p = {
