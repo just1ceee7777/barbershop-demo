@@ -39,7 +39,7 @@ function ornamentTile(c) {
   return `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${W}' height='${H}' viewBox='0 0 ${W} ${H}'>${p}</svg>`).replace(/'/g, '%27')}")`;
 }
 
-export const HERO_VARIANTS = ['split', 'phone', 'center', 'type'];
+export const HERO_VARIANTS = ['split', 'phone', 'center', 'type', 'strip'];
 
 export function validate(p) {
   const need = (cond, msg) => { if (!cond) throw new Error(`Профиль: ${msg}`); };
@@ -51,7 +51,8 @@ export function validate(p) {
   for (const s of p.services) need(s.name && Number.isFinite(s.price) && s.price >= 0 && Number.isFinite(s.duration) && s.duration >= 15, `услуга «${s.name}»: название, цена, длительность от 15 минут`);
   need(p.hero && p.hero.title, 'hero.title');
   need(HERO_VARIANTS.includes(p.hero.variant || 'split'), `hero.variant: один из ${HERO_VARIANTS.join(', ')}`);
-  need(p.hero.photo || ['phone', 'center', 'type'].includes(p.hero.variant || 'split'), 'hero.photo нужен для варианта split');
+  need(p.hero.photo || ['phone', 'center', 'type'].includes(p.hero.variant || 'split'), 'hero.photo нужен для вариантов split и strip');
+  if (p.masters != null) { need(Array.isArray(p.masters) && p.masters.length <= 6, 'masters: список до 6 человек'); for (const m of p.masters) need(m && m.name && String(m.name).length <= 40, 'у каждого мастера есть имя до 40 знаков'); }
   for (const k of Object.keys(p.colors || {})) need(hex.test(p.colors[k]), `цвет ${k} в формате #rrggbb`);
   return p;
 }
@@ -83,7 +84,8 @@ export function renderLanding(profile, photoUrl) {
   const words = tie(p.statement || '').split(' ').filter(Boolean);
   const statement = words.map((w, i) => `${i ? ' ' : ''}<span style="--i:${i}">${esc(w)}</span>`).join('');
   const strip = [...p.services.map((s) => s.name), ...p.services.map((s) => s.name)].map((n) => `<span>${esc(n)}</span>`).join('');
-  const menu = p.services.map((s) => `<li><div class="row"><h3>${esc(s.name)}</h3><i class="dots"></i><span class="price">${rub(s.price)}</span></div>${s.desc ? `<p>${esc(s.desc)}</p>` : '<span></span>'}<span class="dur">${s.duration >= 60 ? `${Math.floor(s.duration / 60)}\u00a0ч${s.duration % 60 ? ` ${s.duration % 60}\u00a0мин` : ''}` : `${s.duration}\u00a0мин`}</span></li>`).join('');
+  const menu = p.services.map((s) => `<li${s.popular ? ' class="pop"' : ''}><div class="row"><h3>${esc(s.name)}${s.popular ? ' <em class="badge">Популярно</em>' : ''}</h3><i class="dots"></i><span class="price">${rub(s.price)}</span></div>${s.desc ? `<p>${esc(s.desc)}</p>` : '<span></span>'}<span class="dur">${s.duration >= 60 ? `${Math.floor(s.duration / 60)}\u00a0ч${s.duration % 60 ? ` ${s.duration % 60}\u00a0мин` : ''}` : `${s.duration}\u00a0мин`}</span></li>`).join('');
+  const masters = (p.masters || []).length ? `<section class="sec" id="masters"><div class="wrap"><h2 class="big">${esc(p.mastersTitle || 'Мастера')}</h2><div class="masters masters--${Math.min(p.masters.length, 3)}">${p.masters.map((m, i) => `<article class="master${i === 0 ? ' master--lead' : ''}">${m.photo ? `<img src="${photo(m.photo)}" alt="${esc(m.name)}" loading="lazy" decoding="async">` : `<div class="master__letter" aria-hidden="true">${esc(String(m.name).trim().slice(0, 1).toUpperCase())}</div>`}<div class="master__text"><h3>${esc(m.name)}</h3>${m.role ? `<p class="master__role">${esc(m.role)}</p>` : ''}${m.note ? `<p class="master__note">${esc(tie(m.note))}</p>` : ''}</div></article>`).join('')}</div></div></section>` : '';
   const gallery = (p.gallery || []).slice(0, 7).map((g, i) => `<figure><img src="${photo(g.src)}" alt="${esc(g.alt || g.caption || '')}" loading="${i ? 'lazy' : 'eager'}" decoding="async"><figcaption>${esc(g.caption || '')}</figcaption></figure>`).join('');
   const tel = String(p.phone || '').replace(/[^\d+]/g, '');
   const cta = p.cta || 'Записаться онлайн';
@@ -100,6 +102,12 @@ export function renderLanding(profile, photoUrl) {
       <a class="btn btn--main" id="card-cta" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}" data-base="${esc(cta)}">${esc(cta)}</a>
       <p class="card__meta" style="margin:12px 0 0;font-size:13px"><span>Макет: время показано для примера</span></p>
     </aside>`;
+  const bar = `<div class="bar" role="group" aria-label="Быстрая запись">
+      <span class="bar__svc"><small>Услуга</small>${esc(svc0.name)}\u00a0· ${rub(svc0.price)}</span>
+      <span class="bar__day"><small>Дата</small>Сегодня</span>
+      <span class="bar__slots">${free.map((t) => `<button type="button" class="slot" aria-pressed="false">${t}</button>`).join('')}</span>
+      <a class="btn btn--main" id="card-cta" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}" data-base="${esc(cta)}">${esc(cta)}</a>
+    </div>`;
   // A phone with the booking assistant's conversation. The words come from the profile (hero.chat) or are built from its own services and free times.
   const chat = p.hero.chat || [
     ['in', 'Здравствуйте! Есть время сегодня?'],
@@ -130,11 +138,11 @@ ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
 <body>
 <header class="head" id="head"><div class="wrap head__in">
   <a class="logo" href="#top" translate="no">${esc(p.name)}</a>
-  <nav aria-label="Разделы"><a href="#price">Цены</a>${gallery ? '<a href="#works">Работы</a>' : ''}<a href="#contacts">Контакты</a><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">Записаться</a></nav>
+  <nav aria-label="Разделы"><a href="#price">Цены</a>${gallery ? '<a href="#works">Работы</a>' : ''}${masters ? '<a href="#masters">Мастера</a>' : ''}<a href="#contacts">Контакты</a><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">Записаться</a></nav>
 </div></header>
 <main id="top">
 <section class="hero hero--${variant}" id="book">
-  ${heroPhoto && ['split', 'center'].includes(variant) ? `<img class="hero__bg" src="${heroPhoto}" alt="" width="1800" height="1100" fetchpriority="high">` : ''}
+  ${heroPhoto && ['split', 'center', 'strip'].includes(variant) ? `<img class="hero__bg" src="${heroPhoto}" alt="" width="1800" height="1100" fetchpriority="high">` : ''}
   <div class="hero__in">
     <div class="hero__text">
       ${p.hero.concept ? `<p class="tag">${esc(tie(p.hero.concept))}</p>` : ''}
@@ -142,7 +150,7 @@ ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
       ${p.hero.sub ? `<p class="hero__sub">${esc(tie(p.hero.sub))}</p>` : ''}
       <div class="hero__cta"><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a><a class="btn btn--ghost" href="tel:${esc(tel)}">${esc(p.phone || 'Позвонить')}</a></div>
     </div>
-    ${variant === 'phone' ? phone : card}
+    ${variant === 'phone' ? phone : variant === 'strip' ? bar : card}
   </div>
   ${look.ornament ? '<div class="ornament" aria-hidden="true"><i></i></div>' : ''}
 </section>
@@ -152,17 +160,19 @@ ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
   <ul class="menu">${menu}</ul>
 </div></section>
 ${gallery ? `<section class="sec" id="works"><div class="wrap"><h2 class="big">${esc(p.worksTitle || 'Работы')}</h2><div class="works">${gallery}</div></div></section>` : ''}
+${masters}
 ${statement ? `<section class="say"><div class="wrap"><p style="--n:${words.length}">${statement}</p></div></section>` : ''}
 <section class="sec paper" id="contacts"><div class="wrap end">
   <div><h2>${esc(tie(p.closing || 'Выберите время, остальное мы берём на себя.'))}</h2><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a></div>
-  <dl class="facts">
+  <div>${p.facade ? `<img class="facade" src="${photo(p.facade)}" alt="Вход в ${esc(p.name)}" loading="lazy" decoding="async">` : ''}<dl class="facts">
     ${p.address ? `<div><dt>Адрес</dt><dd>${esc(p.address)}</dd></div>` : ''}
     ${p.phone ? `<div><dt>Телефон</dt><dd><a href="tel:${esc(tel)}">${esc(p.phone)}</a></dd></div>` : ''}
     <div><dt>Часы</dt><dd>Ежедневно, ${esc(p.hours[0])}–${esc(p.hours[1])}</dd></div>
-  </dl>
+  </dl>${p.address ? `<p class="route"><a class="btn btn--ghost" href="https://yandex.ru/maps/?text=${encodeURIComponent(p.address)}" target="_blank" rel="noopener">Построить маршрут</a></p>` : ''}</div>
 </div></section>
 </main>
 <footer class="foot"><div class="wrap"><span translate="no">© ${esc(p.name)}</span><span>Макет сайта, не окончательная версия</span></div></footer>
+<div class="sticky" id="sticky" aria-hidden="true"><span class="sticky__t"><b translate="no">${esc(p.name)}</b><small>от ${rub(Math.min(...p.services.map((x) => x.price)))}</small></span><a class="btn btn--main" data-book tabindex="-1" href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a></div>
 <dialog class="book" id="book-dialog" aria-labelledby="book-t">
   <form method="dialog" class="book__form" id="book-form" novalidate>
     <button type="button" class="book__x" id="book-x" aria-label="Закрыть">×</button>
@@ -186,7 +196,9 @@ ${statement ? `<section class="say"><div class="wrap"><p style="--n:${words.leng
 (function () {
   var head = document.getElementById('head');
   var solid = function () { head.classList.toggle('is-solid', window.scrollY > 40); };
-  solid(); window.addEventListener('scroll', solid, { passive: true });
+  var sticky = document.getElementById('sticky'), heroEl = document.querySelector('.hero');
+  var shell = function () { var on = window.scrollY > (heroEl ? heroEl.offsetHeight * 0.8 : 600); sticky.classList.toggle('is-on', on); sticky.setAttribute('aria-hidden', on ? 'false' : 'true'); sticky.querySelector('a').tabIndex = on ? 0 : -1; };
+  solid(); shell(); window.addEventListener('scroll', function () { solid(); shell(); }, { passive: true });
   var cta = document.getElementById('card-cta'), buttons = document.querySelectorAll('.slot');
   buttons.forEach(function (b) { b.addEventListener('click', function () {
     buttons.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });

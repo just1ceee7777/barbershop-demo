@@ -42,17 +42,19 @@
   <ul class="menu"><li><div class="row"><h3>Мужская стрижка</h3><i class="dots"></i><span class="price">1 800 ₽</span></div><p>Консультация, мытьё головы, стрижка, укладка</p><span class="dur">1 ч</span></li><li><div class="row"><h3>Фейд / андеркат</h3><i class="dots"></i><span class="price">2 000 ₽</span></div><p>Плавный переход машинкой и ножницами</p><span class="dur">1 ч</span></li><li><div class="row"><h3>Оформление бороды</h3><i class="dots"></i><span class="price">1 200 ₽</span></div><p>Форма, контуры, горячее полотенце</p><span class="dur">30 мин</span></li><li><div class="row"><h3>Стрижка и борода</h3><i class="dots"></i><span class="price">2 700 ₽</span></div><p>Полный комплекс со скидкой</p><span class="dur">1 ч 30 мин</span></li><li><div class="row"><h3>Детская стрижка</h3><i class="dots"></i><span class="price">1 200 ₽</span></div><p>Для мальчиков до 12 лет</p><span class="dur">30 мин</span></li><li><div class="row"><h3>Королевское бритьё</h3><i class="dots"></i><span class="price">1 900 ₽</span></div><p>Опасная бритва, распаривание, уход</p><span class="dur">1 ч</span></li></ul>
 </div></section>
 <section class="sec" id="works"><div class="wrap"><h2 class="big">Работы</h2><div class="works"><figure><img src="assets/photos/barber-1.jpg" alt="Контур бритвой" loading="eager" decoding="async"><figcaption>Контур бритвой</figcaption></figure><figure><img src="assets/photos/barber-2.jpg" alt="Ножницы" loading="lazy" decoding="async"><figcaption>Ножницы</figcaption></figure><figure><img src="assets/photos/barber-4.jpg" alt="Инструмент" loading="lazy" decoding="async"><figcaption>Инструмент</figcaption></figure><figure><img src="assets/photos/barber-5.jpg" alt="Укладка" loading="lazy" decoding="async"><figcaption>Укладка</figcaption></figure><figure><img src="assets/photos/barber-6.jpg" alt="Бритьё бороды" loading="lazy" decoding="async"><figcaption>Бритьё бороды</figcaption></figure><figure><img src="assets/photos/barber-3.jpg" alt="Рабочее место" loading="lazy" decoding="async"><figcaption>Рабочее место</figcaption></figure></div></div></section>
+
 <section class="say"><div class="wrap"><p style="--n:6"><span style="--i:0">Назначено</span> <span style="--i:1">на 14:30 —</span> <span style="--i:2">значит,</span> <span style="--i:3">в 14:30</span> <span style="--i:4">вы уже</span> <span style="--i:5">в кресле.</span></p></div></section>
 <section class="sec paper" id="contacts"><div class="wrap end">
   <div><h2>Кресло свободно сегодня? Посмотрите время и запишитесь за минуту.</h2><a class="btn btn--main" data-book href="https://just1ceee7777.github.io/barbershop-demo/">Записаться онлайн</a></div>
-  <dl class="facts">
+  <div><dl class="facts">
     <div><dt>Адрес</dt><dd>Москва, ул. Примерная, 12</dd></div>
     <div><dt>Телефон</dt><dd><a href="tel:+79001234567">+7 (900) 123-45-67</a></dd></div>
     <div><dt>Часы</dt><dd>Ежедневно, 10:00–21:00</dd></div>
-  </dl>
+  </dl><p class="route"><a class="btn btn--ghost" href="https://yandex.ru/maps/?text=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0%2C%20%D1%83%D0%BB.%20%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80%D0%BD%D0%B0%D1%8F%2C%2012" target="_blank" rel="noopener">Построить маршрут</a></p></div>
 </div></section>
 </main>
 <footer class="foot"><div class="wrap"><span translate="no">© BLADE &amp; BEARD</span><span>Макет сайта, не окончательная версия</span></div></footer>
+<div class="sticky" id="sticky" aria-hidden="true"><span class="sticky__t"><b translate="no">BLADE &amp; BEARD</b><small>от 1 200 ₽</small></span><a class="btn btn--main" data-book tabindex="-1" href="https://just1ceee7777.github.io/barbershop-demo/">Записаться онлайн</a></div>
 <dialog class="book" id="book-dialog" aria-labelledby="book-t">
   <form method="dialog" class="book__form" id="book-form" novalidate>
     <button type="button" class="book__x" id="book-x" aria-label="Закрыть">×</button>
@@ -76,7 +78,9 @@
 (function () {
   var head = document.getElementById('head');
   var solid = function () { head.classList.toggle('is-solid', window.scrollY > 40); };
-  solid(); window.addEventListener('scroll', solid, { passive: true });
+  var sticky = document.getElementById('sticky'), heroEl = document.querySelector('.hero');
+  var shell = function () { var on = window.scrollY > (heroEl ? heroEl.offsetHeight * 0.8 : 600); sticky.classList.toggle('is-on', on); sticky.setAttribute('aria-hidden', on ? 'false' : 'true'); sticky.querySelector('a').tabIndex = on ? 0 : -1; };
+  solid(); shell(); window.addEventListener('scroll', function () { solid(); shell(); }, { passive: true });
   var cta = document.getElementById('card-cta'), buttons = document.querySelectorAll('.slot');
   buttons.forEach(function (b) { b.addEventListener('click', function () {
     buttons.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
