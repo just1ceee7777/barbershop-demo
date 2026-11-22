@@ -2,11 +2,13 @@
    everything below only uses them, so a new business is a new profile, not new CSS.
    Motion: transform and opacity only, one curve, off for people who asked for less motion. */
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--text);font:400 17px/1.55 var(--ui);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--text);font:400 17px/1.55 var(--ui);-webkit-font-smoothing:antialiased;overflow-x:clip}
 img{display:block;max-width:100%}
 a{color:inherit}
 :focus-visible{outline:3px solid var(--accent-text);outline-offset:3px}
+.card :focus-visible,.bar :focus-visible,.book :focus-visible,.paper :focus-visible{outline-color:var(--ink)}
+.hero--type .card :focus-visible{outline-color:#fff}
 .wrap{width:min(1180px,100% - 48px);margin-inline:auto}
 h1,h2,h3{font-family:var(--display);margin:0}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:52px;padding:0 28px;border:1.5px solid transparent;border-radius:var(--r);font:600 16px/1 var(--ui);text-decoration:none;cursor:pointer;transition:transform .25s var(--ease),background-color .2s,color .2s,border-color .2s}
@@ -73,7 +75,7 @@ h1,h2,h3{font-family:var(--display);margin:0}
 .split h2.big{margin:0;position:sticky;top:110px}
 .split .lead{margin:16px 0 0;color:var(--ink2);max-width:22em}
 
-.works{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.works{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .works figure{margin:0;display:flex;flex-direction:column;gap:10px}
 .works img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:var(--r);background:var(--card)}
 .works figcaption{font:var(--caption)}
@@ -129,12 +131,12 @@ h1,h2,h3{font-family:var(--display);margin:0}
   .hero::before{background:linear-gradient(0deg,rgb(var(--deep-rgb)/.96) 0,rgb(var(--deep-rgb)/.72) 60%,rgb(var(--deep-rgb)/.5))}
   .hero__in{grid-template-columns:1fr;gap:40px}
   .card{justify-self:stretch;width:100%}.card::before{display:none}
-  .split,.end{grid-template-columns:1fr;gap:32px}.split h2.big{position:static}
+  .split,.end{grid-template-columns:minmax(0,1fr);gap:32px}.split h2.big{position:static}
   .sec{padding:80px 0}.say{padding:72px 0}
   .head nav a:not(.btn){display:none}
-  .works{grid-template-columns:1fr 1fr}
+  .works{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-@media (max-width:560px){.works{grid-template-columns:1fr}.works figure:first-child{grid-column:auto;grid-row:auto}.works figure:first-child img{aspect-ratio:4/3;height:auto}.hero__cta .btn{width:100%}}
+@media (max-width:560px){.works{grid-template-columns:minmax(0,1fr)}.works figure:first-child{grid-column:auto;grid-row:auto}.works figure:first-child img{aspect-ratio:4/3;height:auto}.hero__cta .btn{width:100%}}
 
 /* hero variants: the same text and card, three other compositions (set with hero.variant in the profile) */
 /* phone: the booking assistant's conversation on a phone, on a flat dark field; the photo, if any, is left out */
@@ -209,8 +211,8 @@ h1,h2,h3{font-family:var(--display);margin:0}
 /* people: one large portrait and the others beside it; with a single photo missing, a big letter takes its place */
 .masters{display:grid;gap:18px}
 .masters--1{grid-template-columns:minmax(0,520px)}
-.masters--2{grid-template-columns:1.4fr 1fr}
-.masters--3{grid-template-columns:1.5fr 1fr;grid-template-rows:auto auto}
+.masters--2{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+.masters--3{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);grid-template-rows:auto auto}
 .master{margin:0;display:flex;flex-direction:column;gap:12px}
 .master img,.master__letter{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r);background:var(--card)}
 .master__letter{display:grid;place-items:center;font:700 clamp(64px,10vw,140px)/1 var(--display);color:var(--accent-text)}
@@ -245,4 +247,13 @@ h1,h2,h3{font-family:var(--display);margin:0}
 @media (min-width:961px){.sticky{left:auto;right:24px;bottom:24px;width:min(380px,calc(100% - 48px));border:1px solid var(--line2);border-radius:var(--r-card);padding:10px 14px}}
 @media (prefers-reduced-motion:reduce){.sticky{transition:none}}
 .foot{padding-bottom:calc(28px + 64px)}
-@media (max-width:960px){.masters--2,.masters--3{grid-template-columns:1fr}.masters--3 .master--lead{grid-row:auto}.masters--3 .master--lead img,.masters--3 .master--lead .master__letter{min-height:0;aspect-ratio:4/3}.bar{grid-template-columns:1fr 1fr;gap:12px}.bar__slots,.bar .btn{grid-column:1/-1}.bar .btn{width:100%}}
+@media (max-width:960px){.masters--2,.masters--3{grid-template-columns:minmax(0,1fr)}.masters--3 .master--lead{grid-row:auto}.masters--3 .master--lead img,.masters--3 .master--lead .master__letter{min-height:0;aspect-ratio:4/3}.bar{grid-template-columns:1fr 1fr;gap:12px}.bar__slots,.bar .btn{grid-column:1/-1}.bar .btn{width:100%}}
+
+/* narrow phones: the header and the first button never wrap */
+.logo,.btn{white-space:nowrap}
+@media (max-width:360px){.head .btn{display:none}.head nav a[href^=tel]{white-space:nowrap}.hero__cta .btn{padding:0 16px}.logo{font-size:.9em}}
+a[href^="tel:"]{white-space:nowrap}
+.hero h1{overflow-wrap:break-word}
+@media (max-width:380px){.hero h1,.hero--type h1{font-size:clamp(22px,7.4vw,30px)}}
+h2,h3{overflow-wrap:break-word}
+@media (max-width:380px){.say h2,.sec h2{font-size:clamp(24px,8vw,32px)}}

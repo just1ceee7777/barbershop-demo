@@ -128,6 +128,7 @@ export function renderLanding(profile, photoUrl) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
+<meta name="description" content="${esc(`${title}${p.address ? `, ${p.address}` : ''}. Услуги, цены и онлайн-запись на удобное время.`)}">
 <meta name="theme-color" content="${esc(c.deep)}">
 <title>${esc(title)}</title>
 ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
