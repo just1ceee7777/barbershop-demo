@@ -31,6 +31,18 @@ export const LOOKS = {
     ornament: false,
     light: true, // the page itself is light, the first screen and the loud band are still dark / accent
   },
+  jade: { // mineral grey-green, deep jade, one accent, thin geometric letters: a salon that does not look like a rose
+    c: { bg: '#eef1ee', deep: '#17211f', card: '#ffffff', text: '#17211f', muted: '#56635e', accent: '#2f5d50', accentInk: '#ffffff', accentText: '#2f5d50', accentDeep: '#2f5d50', paper: '#f8faf8', ink: '#17211f', ink2: '#4a5853', sage: '#cfdad2' },
+    type: { display: "'Tenor Sans','Century Gothic',sans-serif", logo: "400 22px/1 'Tenor Sans','Century Gothic',sans-serif", tag: "400 15px/1.3 'Tenor Sans','Century Gothic',sans-serif", h1: "400 clamp(40px,5.2vw,76px)/1.04 'Tenor Sans','Century Gothic',sans-serif", h2: "400 clamp(32px,4.2vw,56px)/1.08 'Tenor Sans','Century Gothic',sans-serif", h3: "400 22px/1.2 'Tenor Sans','Century Gothic',sans-serif", price: "400 24px/1 'Tenor Sans','Century Gothic',sans-serif", strip: "400 clamp(28px,4.4vw,60px)/1 'Tenor Sans','Century Gothic',sans-serif", caption: "italic 600 22px/1.1 'Cormorant Garamond',Georgia,serif", case: 'none', h1Track: '-.01em', h2Track: '-.005em', r: '4px', rCtl: '999px', rCard: '20px' },
+    ornament: false,
+    light: true,
+  },
+  street: { // a poster: bone paper, black, one signal orange, tall narrow capitals
+    c: { bg: '#e3e4e1', deep: '#0e0e0e', card: '#ffffff', text: '#0e0e0e', muted: '#55554f', accent: '#ff4a1f', accentInk: '#0e0e0e', accentText: '#b8290a', accentDeep: '#b8290a', paper: '#f6f5f1', ink: '#0e0e0e', ink2: '#3d3d3a', sage: '#0e0e0e' },
+    type: { display: "'Yanone Kaffeesatz','Arial Narrow',sans-serif", logo: "700 28px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", tag: "700 19px/1.1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h1: "700 clamp(56px,9vw,150px)/.88 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h2: "700 clamp(44px,6vw,92px)/.92 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h3: "700 30px/1.05 'Yanone Kaffeesatz','Arial Narrow',sans-serif", price: "700 36px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", strip: "700 clamp(40px,6vw,88px)/.9 'Yanone Kaffeesatz','Arial Narrow',sans-serif", caption: "italic 600 22px/1.1 'Cormorant Garamond',Georgia,serif", case: 'uppercase', h1Type: 'clamp(56px,11vw,190px)', h1Track: '.005em', h2Track: '.005em', r: '0', rCtl: '0', rCard: '0' },
+    ornament: false,
+    light: true,
+  },
 };
 
 function ornamentTile(c) {
@@ -39,7 +51,7 @@ function ornamentTile(c) {
   return `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${W}' height='${H}' viewBox='0 0 ${W} ${H}'>${p}</svg>`).replace(/'/g, '%27')}")`;
 }
 
-export const HERO_VARIANTS = ['split', 'phone', 'center', 'type', 'strip'];
+export const HERO_VARIANTS = ['split', 'phone', 'center', 'type', 'strip', 'frame'];
 
 export function validate(p) {
   const need = (cond, msg) => { if (!cond) throw new Error(`Профиль: ${msg}`); };
@@ -65,15 +77,16 @@ export function renderLanding(profile, photoUrl) {
   const t = look.type;
   const vars = {
     '--bg': c.bg, '--deep': c.deep, '--deep-rgb': rgb(c.deep), '--card': c.card, '--text': c.text, '--text-rgb': rgb(c.text), '--muted': c.muted,
-    '--line2': `rgb(${rgb(c.text)} / .26)`, '--head': `rgb(${rgb(c.deep)} / .94)`,
+    '--line2': `rgb(${rgb(c.text)} / .26)`, '--head': `rgb(${rgb({ frame: c.bg, type: c.accent }[p.hero.variant] || c.deep)} / .94)`,
     '--accent': c.accent, '--accent-ink': c.accentInk, '--accent-text': c.accentText, '--accent-hover': c.accent, '--accent-deep': c.accentDeep,
     '--paper': c.paper, '--ink': c.ink, '--ink2': c.ink2, '--ink-rgb': rgb(c.ink), '--ink-line': `rgb(${rgb(c.ink)} / .2)`,
     '--display': t.display, '--ui': "'Golos Text',system-ui,-apple-system,'Segoe UI',sans-serif", '--logo': t.logo, '--tag': t.tag, '--h1': t.h1, '--h2': t.h2, '--h3': t.h3, '--price': t.price, '--strip': t.strip, '--caption': t.caption,
-    '--case': t.case, '--h1-track': t.h1Track, '--h2-track': t.h2Track, '--r': t.r, '--r-ctl': t.rCtl, '--r-card': t.rCard, '--ease': 'cubic-bezier(.23,1,.32,1)',
+    '--h1-type': t.h1Type || 'clamp(40px,7.6vw,128px)', '--case': t.case, '--h1-track': t.h1Track, '--h2-track': t.h2Track, '--r': t.r, '--r-ctl': t.rCtl, '--r-card': t.rCard, '--ease': 'cubic-bezier(.23,1,.32,1)',
     '--ornament': look.ornament ? ornamentTile(c) : 'none', '--focus': p.hero.focus || '60% 40%',
   };
   // On a light look the page body is light but the dark parts (first screen, strip text) keep light text: those are set per block below.
   const light = Boolean(look.light);
+  const darkHero = !['frame', 'type'].includes(p.hero.variant || 'split');
   const photo = (src) => photoUrl(String(src));
 
   const open = mm(p.hours[0]); const step = 30; const first = open + 60;
@@ -123,7 +136,7 @@ export function renderLanding(profile, photoUrl) {
     </div>`;
 
   const html = `<!doctype html>
-<html lang="ru"${light ? ' data-look="light"' : ''}>
+<html lang="ru"${light ? ' data-look="light"' : ''} data-hero="${variant}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -134,7 +147,7 @@ export function renderLanding(profile, photoUrl) {
 ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
 <link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="assets/landing.css">
-<style>:root{${Object.entries(vars).map(([k, v]) => `${k}:${v}`).join(';')}}${light ? 'body{background:var(--bg);color:var(--text)}.head{color:#fff}.hero{color:#fff}.hero__sub{color:#fff}.btn--ghost{color:#fff;border-color:rgb(255 255 255/.45)}.strip{border-color:var(--ink)}.strip__row{color:var(--ink)}' : ''}</style>
+<style>:root{${Object.entries(vars).map(([k, v]) => `${k}:${v}`).join(';')}}${light ? `body{background:var(--bg);color:var(--text)}${darkHero ? '.head{color:#fff}.hero{color:#fff}.hero__sub{color:#fff}.btn--ghost{color:#fff;border-color:rgb(255 255 255/.45)}' : ''}.strip{border-color:var(--ink)}.strip__row{color:var(--ink)}` : ''}${parseInt(t.rCard) >= 14 ? '.card,.bar,.book__form,.book__done{border-top:0}' : ''}</style>
 </head>
 <body>
 <header class="head" id="head"><div class="wrap head__in">
@@ -151,7 +164,7 @@ ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
       ${p.hero.sub ? `<p class="hero__sub">${esc(tie(p.hero.sub))}</p>` : ''}
       <div class="hero__cta"><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a><a class="btn btn--ghost" href="tel:${esc(tel)}">${esc(p.phone || 'Позвонить')}</a></div>
     </div>
-    ${variant === 'phone' ? phone : variant === 'strip' ? bar : card}
+    ${variant === 'phone' ? phone : variant === 'strip' ? bar : variant === 'frame' ? `<div class="frame"><img class="frame__img" src="${heroPhoto}" alt="" width="900" height="1100" fetchpriority="high">${card}</div>` : card}
   </div>
   ${look.ornament ? '<div class="ornament" aria-hidden="true"><i></i></div>' : ''}
 </section>
