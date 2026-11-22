@@ -164,7 +164,7 @@ ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
   <a class="logo" href="#top" translate="no">${esc(p.name)}</a>
   <nav aria-label="Разделы"><a href="#price">Цены</a>${gallery ? '<a href="#works">Работы</a>' : ''}${masters ? '<a href="#masters">Мастера</a>' : ''}<a href="#contacts">Контакты</a><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">Записаться</a></nav>
 </div></header>
-<main id="top">
+<main id="top" data-open="${esc(p.hours[0])}" data-close="${esc(p.hours[1])}" data-taken="${[...taken].join(',')}">
 <section class="hero hero--${variant}" id="book">
   ${heroPhoto && ['split', 'center', 'strip'].includes(variant) ? `<img class="hero__bg" src="${heroPhoto}" alt="" width="1800" height="1100" fetchpriority="high">` : ''}
   <div class="hero__in">
@@ -174,6 +174,7 @@ ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
       ${p.hero.sub ? `<p class="hero__sub">${esc(tie(p.hero.sub))}</p>` : ''}
       <div class="hero__cta"><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a><a class="btn btn--ghost" href="tel:${esc(tel)}">${esc(p.phone || 'Позвонить')}</a></div>
     </div>
+    ${variant === 'type' ? `<p class="hero__time" aria-hidden="true"><small>Сегодня свободно</small><b data-next>${free[0] || ''}</b></p>` : ''}
     ${variant === 'phone' ? phone : variant === 'strip' ? bar : variant === 'frame' ? `<div class="frame"><img class="frame__img" src="${heroPhoto}" alt="" width="900" height="1100" fetchpriority="high">${card}</div>` : card}
   </div>
   ${look.ornament ? '<div class="ornament" aria-hidden="true"><i></i></div>' : ''}
@@ -195,7 +196,7 @@ ${statement ? `<section class="say"><div class="wrap"><p style="--n:${words.leng
   </dl>${p.address ? `<p class="route"><a class="btn btn--ghost" href="https://yandex.ru/maps/?text=${encodeURIComponent(p.address)}" target="_blank" rel="noopener">Построить маршрут</a></p>` : ''}</div>
 </div></section>
 </main>
-<footer class="foot"><div class="wrap"><span translate="no">© ${esc(p.name)}</span><span>Макет сайта, не окончательная версия</span></div></footer>
+<footer class="foot"><div class="wrap"><span translate="no">© ${esc(p.name)}</span><span>Макет сайта, не окончательная версия${p.ownerLink ? ' · <a href="owner.html">Экран владельца, пример</a>' : ''}</span></div></footer>
 <div class="sticky" id="sticky" aria-hidden="true"><span class="sticky__t"><b translate="no">${esc(p.name)}</b><small>от ${rub(Math.min(...p.services.map((x) => x.price)))}</small></span><a class="btn btn--main" data-book tabindex="-1" href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a></div>
 <dialog class="book" id="book-dialog" aria-labelledby="book-t">
   <form method="dialog" class="book__form" id="book-form" novalidate>
@@ -220,6 +221,20 @@ ${statement ? `<section class="say"><div class="wrap"><p style="--n:${words.leng
 document.querySelectorAll('[data-pick]').forEach(function(root){var tabs=[].slice.call(root.querySelectorAll('[role=tab]')),panels=[].slice.call(root.querySelectorAll('[role=tabpanel]'));
 function show(i,focus){tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1});panels.forEach(function(x,k){x.hidden=k!==i});if(focus)tabs[i].focus()}
 tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){var n={ArrowDown:1,ArrowRight:1,ArrowUp:-1,ArrowLeft:-1}[e.key];if(n){e.preventDefault();show((i+n+tabs.length)%tabs.length,true)}else if(e.key==='Home'){e.preventDefault();show(0,true)}else if(e.key==='End'){e.preventDefault();show(tabs.length-1,true)}})})});
+</script>
+<script>
+(function(){var m=document.getElementById('top');if(!m)return;function mm(t){var a=t.split(':');return +a[0]*60+ +a[1]}function f(n){return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
+var open=mm(m.dataset.open),close=mm(m.dataset.close),taken=(m.dataset.taken||'').split(',').filter(Boolean).map(Number);
+var d=new Date(),now=d.getHours()*60+d.getMinutes(),start=Math.ceil((now+30)/30)*30,day='Сегодня';
+if(now+30<open){start=open+60}else if(start+7*30>close){start=open+60;day='Завтра'}
+var nodes=[].slice.call(document.querySelectorAll('.slots .slot'));
+nodes.forEach(function(b,i){if(b.parentNode.classList.contains('bar__slots'))return;b.textContent=f(start+i*30)});
+var free=nodes.filter(function(b,i){return !b.disabled&&!b.parentNode.classList.contains('bar__slots')});
+var first=free[0]?free[0].textContent:f(start);
+[].forEach.call(document.querySelectorAll('[data-next]'),function(n){n.textContent=first});
+[].forEach.call(document.querySelectorAll('.hero__time small'),function(n){n.textContent=day==='Сегодня'?'Сегодня свободно':'Завтра свободно'});
+var t=document.getElementById('card-t');if(t)t.textContent=day==='Сегодня'?'Свободное время сегодня':'Свободное время завтра';
+})();
 </script>
 <script>
 (function () {

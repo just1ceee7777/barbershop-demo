@@ -17,7 +17,7 @@
   <a class="logo" href="#top" translate="no">BLADE &amp; BEARD</a>
   <nav aria-label="Разделы"><a href="#price">Цены</a><a href="#works">Работы</a><a href="#masters">Мастера</a><a href="#contacts">Контакты</a><a class="btn btn--main" data-book href="booking.html">Записаться</a></nav>
 </div></header>
-<main id="top">
+<main id="top" data-open="10:00" data-close="21:00" data-taken="2,5">
 <section class="hero hero--type" id="book">
   
   <div class="hero__in">
@@ -27,6 +27,7 @@
       <p class="hero__sub">Три мастера, запись на любое свободное время онлайн, без звонков.</p>
       <div class="hero__cta"><a class="btn btn--main" data-book href="booking.html">Записаться онлайн</a><a class="btn btn--ghost" href="tel:+79001234567">+7 (900) 123-45-67</a></div>
     </div>
+    <p class="hero__time" aria-hidden="true"><small>Сегодня свободно</small><b data-next>11:00</b></p>
     <aside class="card" aria-labelledby="card-t">
       <h2 id="card-t">Свободное время</h2>
       <p class="card__meta"><span>Мужская стрижка · 1 ч</span><span>1 800 ₽</span></p>
@@ -57,7 +58,7 @@
   </dl><p class="route"><a class="btn btn--ghost" href="https://yandex.ru/maps/?text=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0%2C%20%D1%83%D0%BB.%20%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80%D0%BD%D0%B0%D1%8F%2C%2012" target="_blank" rel="noopener">Построить маршрут</a></p></div>
 </div></section>
 </main>
-<footer class="foot"><div class="wrap"><span translate="no">© BLADE &amp; BEARD</span><span>Макет сайта, не окончательная версия</span></div></footer>
+<footer class="foot"><div class="wrap"><span translate="no">© BLADE &amp; BEARD</span><span>Макет сайта, не окончательная версия · <a href="owner.html">Экран владельца, пример</a></span></div></footer>
 <div class="sticky" id="sticky" aria-hidden="true"><span class="sticky__t"><b translate="no">BLADE &amp; BEARD</b><small>от 1 200 ₽</small></span><a class="btn btn--main" data-book tabindex="-1" href="booking.html">Записаться онлайн</a></div>
 <dialog class="book" id="book-dialog" aria-labelledby="book-t">
   <form method="dialog" class="book__form" id="book-form" novalidate>
@@ -82,6 +83,20 @@
 document.querySelectorAll('[data-pick]').forEach(function(root){var tabs=[].slice.call(root.querySelectorAll('[role=tab]')),panels=[].slice.call(root.querySelectorAll('[role=tabpanel]'));
 function show(i,focus){tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1});panels.forEach(function(x,k){x.hidden=k!==i});if(focus)tabs[i].focus()}
 tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){var n={ArrowDown:1,ArrowRight:1,ArrowUp:-1,ArrowLeft:-1}[e.key];if(n){e.preventDefault();show((i+n+tabs.length)%tabs.length,true)}else if(e.key==='Home'){e.preventDefault();show(0,true)}else if(e.key==='End'){e.preventDefault();show(tabs.length-1,true)}})})});
+</script>
+<script>
+(function(){var m=document.getElementById('top');if(!m)return;function mm(t){var a=t.split(':');return +a[0]*60+ +a[1]}function f(n){return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
+var open=mm(m.dataset.open),close=mm(m.dataset.close),taken=(m.dataset.taken||'').split(',').filter(Boolean).map(Number);
+var d=new Date(),now=d.getHours()*60+d.getMinutes(),start=Math.ceil((now+30)/30)*30,day='Сегодня';
+if(now+30<open){start=open+60}else if(start+7*30>close){start=open+60;day='Завтра'}
+var nodes=[].slice.call(document.querySelectorAll('.slots .slot'));
+nodes.forEach(function(b,i){if(b.parentNode.classList.contains('bar__slots'))return;b.textContent=f(start+i*30)});
+var free=nodes.filter(function(b,i){return !b.disabled&&!b.parentNode.classList.contains('bar__slots')});
+var first=free[0]?free[0].textContent:f(start);
+[].forEach.call(document.querySelectorAll('[data-next]'),function(n){n.textContent=first});
+[].forEach.call(document.querySelectorAll('.hero__time small'),function(n){n.textContent=day==='Сегодня'?'Сегодня свободно':'Завтра свободно'});
+var t=document.getElementById('card-t');if(t)t.textContent=day==='Сегодня'?'Свободное время сегодня':'Свободное время завтра';
+})();
 </script>
 <script>
 (function () {

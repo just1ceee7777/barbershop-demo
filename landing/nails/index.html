@@ -17,7 +17,7 @@
   <a class="logo" href="#top" translate="no">NAIL LAB</a>
   <nav aria-label="Разделы"><a href="#price">Цены</a><a href="#works">Работы</a><a href="#contacts">Контакты</a><a class="btn btn--main" data-book href="tel:+79003334455">Записаться</a></nav>
 </div></header>
-<main id="top">
+<main id="top" data-open="10:00" data-close="20:00" data-taken="2,5">
 <section class="hero hero--split" id="book">
   <img class="hero__bg" src="assets/photos/nails-1.jpg" alt="" width="1800" height="1100" fetchpriority="high">
   <div class="hero__in">
@@ -27,6 +27,7 @@
       <p class="hero__sub">Два мастера, свободное время видно сразу, запись занимает минуту.</p>
       <div class="hero__cta"><a class="btn btn--main" data-book href="tel:+79003334455">Записаться онлайн</a><a class="btn btn--ghost" href="tel:+79003334455">+7 (900) 333-44-55</a></div>
     </div>
+    
     <aside class="card" aria-labelledby="card-t">
       <h2 id="card-t">Свободное время</h2>
       <p class="card__meta"><span>Маникюр классический · 1 ч</span><span>1 500 ₽</span></p>
@@ -79,6 +80,20 @@
 document.querySelectorAll('[data-pick]').forEach(function(root){var tabs=[].slice.call(root.querySelectorAll('[role=tab]')),panels=[].slice.call(root.querySelectorAll('[role=tabpanel]'));
 function show(i,focus){tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1});panels.forEach(function(x,k){x.hidden=k!==i});if(focus)tabs[i].focus()}
 tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){var n={ArrowDown:1,ArrowRight:1,ArrowUp:-1,ArrowLeft:-1}[e.key];if(n){e.preventDefault();show((i+n+tabs.length)%tabs.length,true)}else if(e.key==='Home'){e.preventDefault();show(0,true)}else if(e.key==='End'){e.preventDefault();show(tabs.length-1,true)}})})});
+</script>
+<script>
+(function(){var m=document.getElementById('top');if(!m)return;function mm(t){var a=t.split(':');return +a[0]*60+ +a[1]}function f(n){return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
+var open=mm(m.dataset.open),close=mm(m.dataset.close),taken=(m.dataset.taken||'').split(',').filter(Boolean).map(Number);
+var d=new Date(),now=d.getHours()*60+d.getMinutes(),start=Math.ceil((now+30)/30)*30,day='Сегодня';
+if(now+30<open){start=open+60}else if(start+7*30>close){start=open+60;day='Завтра'}
+var nodes=[].slice.call(document.querySelectorAll('.slots .slot'));
+nodes.forEach(function(b,i){if(b.parentNode.classList.contains('bar__slots'))return;b.textContent=f(start+i*30)});
+var free=nodes.filter(function(b,i){return !b.disabled&&!b.parentNode.classList.contains('bar__slots')});
+var first=free[0]?free[0].textContent:f(start);
+[].forEach.call(document.querySelectorAll('[data-next]'),function(n){n.textContent=first});
+[].forEach.call(document.querySelectorAll('.hero__time small'),function(n){n.textContent=day==='Сегодня'?'Сегодня свободно':'Завтра свободно'});
+var t=document.getElementById('card-t');if(t)t.textContent=day==='Сегодня'?'Свободное время сегодня':'Свободное время завтра';
+})();
 </script>
 <script>
 (function () {
