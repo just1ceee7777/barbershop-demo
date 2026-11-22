@@ -40,10 +40,11 @@ export const LOOKS = {
     grade: 'saturate(.86) contrast(.98) brightness(1.02)',
   },
   street: { // a poster: bone paper, black, one signal orange, tall narrow capitals
-    c: { bg: '#e3e4e1', deep: '#0e0e0e', card: '#ffffff', text: '#0e0e0e', muted: '#55554f', accent: '#ff4a1f', accentInk: '#0e0e0e', accentText: '#b8290a', accentDeep: '#b8290a', paper: '#f6f5f1', ink: '#0e0e0e', ink2: '#3d3d3a', sage: '#0e0e0e' },
-    type: { display: "'Yanone Kaffeesatz','Arial Narrow',sans-serif", logo: "700 28px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", tag: "700 19px/1.1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h1: "700 clamp(56px,9vw,150px)/.88 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h2: "700 clamp(44px,6vw,92px)/.92 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h3: "700 30px/1.05 'Yanone Kaffeesatz','Arial Narrow',sans-serif", price: "700 36px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", strip: "700 clamp(40px,6vw,88px)/.9 'Yanone Kaffeesatz','Arial Narrow',sans-serif", caption: "italic 600 22px/1.1 'Cormorant Garamond',Georgia,serif", case: 'uppercase', h1Type: 'clamp(56px,11vw,190px)', h1Track: '.005em', h2Track: '.005em', r: '0', rCtl: '0', rCard: '0' },
+    c: { bg: '#e3e4e1', deep: '#0e0e0e', card: '#ffffff', text: '#0e0e0e', muted: '#55554f', accent: '#ff4a1f', accentInk: '#0e0e0e', accentText: '#0e0e0e', accentDeep: '#0e0e0e', paper: '#f6f5f1', ink: '#0e0e0e', ink2: '#3d3d3a', sage: '#0e0e0e' },
+    type: { display: "'Yanone Kaffeesatz','Arial Narrow',sans-serif", logo: "700 28px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", tag: "700 19px/1.1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h1: "700 clamp(56px,9vw,150px)/.88 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h2: "700 clamp(44px,6vw,92px)/.92 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h3: "700 30px/1.05 'Yanone Kaffeesatz','Arial Narrow',sans-serif", price: "700 36px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", strip: "700 clamp(40px,6vw,88px)/.9 'Yanone Kaffeesatz','Arial Narrow',sans-serif", caption: "500 16px/1.35 var(--ui)", case: 'uppercase', h1Type: 'clamp(56px,11vw,190px)', h1Track: '.005em', h2Track: '.005em', r: '0', rCtl: '0', rCard: '0' },
     ornament: false,
     light: true,
+    quiet: true,
     grade: 'grayscale(1) contrast(1.12)',
   },
 };
@@ -80,7 +81,7 @@ export function renderLanding(profile, photoUrl) {
   const t = look.type;
   const vars = {
     '--bg': c.bg, '--deep': c.deep, '--deep-rgb': rgb(c.deep), '--card': c.card, '--text': c.text, '--text-rgb': rgb(c.text), '--muted': c.muted,
-    '--line2': `rgb(${rgb(c.text)} / .26)`, '--head': `rgb(${rgb({ frame: c.bg, type: c.accent }[p.hero.variant] || c.deep)} / .94)`,
+    '--line2': `rgb(${rgb(c.text)} / .26)`, '--head': `rgb(${rgb({ frame: c.bg, type: look.quiet ? c.bg : c.accent }[p.hero.variant] || c.deep)} / .94)`,
     '--accent': c.accent, '--accent-ink': c.accentInk, '--accent-text': c.accentText, '--accent-hover': c.accent, '--accent-deep': c.accentDeep,
     '--paper': c.paper, '--ink': c.ink, '--ink2': c.ink2, '--ink-rgb': rgb(c.ink), '--ink-line': `rgb(${rgb(c.ink)} / .2)`,
     '--display': t.display, '--ui': "'Golos Text',system-ui,-apple-system,'Segoe UI',sans-serif", '--logo': t.logo, '--tag': t.tag, '--h1': t.h1, '--h2': t.h2, '--h3': t.h3, '--price': t.price, '--strip': t.strip, '--caption': t.caption,
@@ -101,7 +102,7 @@ export function renderLanding(profile, photoUrl) {
   const statement = words.map((w, i) => `${i ? ' ' : ''}<span style="--i:${i}">${esc(w)}</span>`).join('');
   const strip = [...p.services.map((s) => s.name), ...p.services.map((s) => s.name)].map((n) => `<span>${esc(n)}</span>`).join('');
   const menu = p.services.map((s) => `<li${s.popular ? ' class="pop"' : ''}><div class="row"><h3>${esc(s.name)}${s.popular ? ' <em class="badge">Популярно</em>' : ''}</h3><i class="dots"></i><span class="price">${rub(s.price)}</span></div>${s.desc ? `<p>${esc(s.desc)}</p>` : '<span></span>'}<span class="dur">${s.duration >= 60 ? `${Math.floor(s.duration / 60)}\u00a0ч${s.duration % 60 ? ` ${s.duration % 60}\u00a0мин` : ''}` : `${s.duration}\u00a0мин`}</span></li>`).join('');
-  const masters = (p.masters || []).length ? `<section class="sec" id="masters"><div class="wrap"><h2 class="big">${esc(p.mastersTitle || 'Мастера')}</h2><div class="masters masters--${Math.min(p.masters.length, 3)}${p.mastersView === 'stack' ? ' masters--stack' : ''}">${p.masters.map((m, i) => `<article class="master${i === 0 ? ' master--lead' : ''}" style="--i:${i}">${m.photo ? `<img src="${photo(m.photo)}" alt="${esc(m.name)}" loading="lazy" decoding="async">` : `<div class="master__letter" aria-hidden="true">${esc(String(m.name).trim().slice(0, 1).toUpperCase())}</div>`}<div class="master__text"><h3>${esc(m.name)}</h3>${m.role ? `<p class="master__role">${esc(m.role)}</p>` : ''}${m.note ? `<p class="master__note">${esc(tie(m.note))}</p>` : ''}</div></article>`).join('')}</div></div></section>` : '';
+  const masters = (p.masters || []).length ? `<section class="sec" id="masters"><div class="wrap"><h2 class="big">${esc(p.mastersTitle || 'Мастера')}</h2><div class="masters masters--${Math.min(p.masters.length, 3)}${p.mastersView === 'stack' ? ' masters--stack' : ''}">${p.masters.map((m, i) => `<article class="master${i === 0 ? ' master--lead' : ''}${m.photo ? '' : ' master--plain'}" style="--i:${i}">${m.photo ? `<img src="${photo(m.photo)}" alt="${esc(m.name)}" loading="lazy" decoding="async">` : ''}<div class="master__text"><h3>${esc(m.name)}</h3>${m.role ? `<p class="master__role">${esc(m.role)}</p>` : ''}${m.note ? `<p class="master__note">${esc(tie(m.note))}</p>` : ''}</div></article>`).join('')}</div></div></section>` : '';
   const gallery = (p.gallery || []).slice(0, 7).map((g, i) => `<figure><img src="${photo(g.src)}" alt="${esc(g.alt || g.caption || '')}" loading="${i ? 'lazy' : 'eager'}" decoding="async"><figcaption>${esc(g.caption || '')}</figcaption></figure>`).join('');
   const tel = String(p.phone || '').replace(/[^\d+]/g, '');
   const cta = p.cta || 'Записаться онлайн';
@@ -146,7 +147,7 @@ export function renderLanding(profile, photoUrl) {
     </div>`;
 
   const html = `<!doctype html>
-<html lang="ru"${light ? ' data-look="light"' : ''} data-hero="${variant}">
+<html lang="ru" data-name="${p.look || 'night'}"${light ? ' data-look="light"' : ''} data-hero="${variant}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

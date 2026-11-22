@@ -365,3 +365,28 @@ h2,h3{text-wrap:balance}
 .own :focus-visible{outline:3px solid var(--accent-text);outline-offset:3px}
 .own__note{margin:32px 0 0;color:var(--muted);font-size:14px;max-width:44em}
 @media (max-width:700px){.own__stats{grid-template-columns:minmax(0,1fr)}.own__row{grid-template-columns:56px repeat(auto-fit,minmax(0,1fr))}.own__cell{padding:8px 10px}.own__cell b{font-size:14px}}
+
+/* street: one loud accent, used sparingly. Bone first screen, black statement, black bar, no marquee. */
+html[data-name=street] .hero--type{background:var(--bg);color:var(--ink)}
+html[data-name=street] .hero--type .tag{background:var(--deep);color:var(--paper)}
+html[data-name=street] .hero--type .hero__sub{color:var(--ink2)}
+html[data-name=street] .hero--type .btn--main{background:var(--accent);color:var(--accent-ink)}
+html[data-name=street] .hero--type .btn--ghost{color:var(--ink);border-color:var(--ink)}
+html[data-name=street] .hero--type .card{background:var(--deep);color:#fff}
+html[data-name=street] .hero--type .card .btn{background:var(--accent);color:var(--accent-ink)}
+html[data-name=street] .hero--type .hero__time small{color:var(--ink)}
+html[data-name=street] .hero--type .hero__time b{color:var(--accent);-webkit-text-stroke:0}
+html[data-name=street] .hero--type :focus-visible{outline-color:var(--ink)}
+html[data-name=street] .head .btn--main,html[data-name=street][data-hero=type] .head .btn--main{background:var(--deep);color:var(--paper)}
+html[data-name=street] .strip{display:none}
+html[data-name=street] .say{background:var(--deep);color:var(--paper)}
+html[data-name=street] .sticky{background:var(--deep);color:var(--paper)}
+html[data-name=street] .sticky .btn--main{background:var(--accent);color:var(--accent-ink)}
+html[data-name=street] .sticky__t small{color:rgb(255 255 255/.7)}
+html[data-name=street] .foot{background:var(--deep)}
+.master--plain{background:transparent}
+.masters.masters--stack .master--plain{grid-template-columns:minmax(0,1fr);min-height:0}
+.masters.masters--stack .master--plain .master__text{padding:clamp(28px,4vw,56px)}
+.masters.masters--stack .master--plain h3{font-size:clamp(48px,7vw,104px);line-height:.95}
+html[data-name=street] .hero--type .hero__time{top:-64px}
+html[data-name=street] .hero--type .hero__time b{font-size:clamp(88px,13vw,208px)}
