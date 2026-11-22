@@ -14,7 +14,7 @@ h1,h2,h3{font-family:var(--display);margin:0}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:52px;padding:0 28px;border:1.5px solid transparent;border-radius:var(--r);font:600 16px/1 var(--ui);text-decoration:none;cursor:pointer;transition:transform .25s var(--ease),background-color .2s,color .2s,border-color .2s}
 .btn--main{background:var(--accent);color:var(--accent-ink)}
 .btn--ghost{background:transparent;color:var(--text);border-color:var(--line2)}
-.btn:active{transform:scale(.97)}
+.btn:active{transform:scale(.96)}
 @media (hover:hover) and (pointer:fine){.btn--main:hover{transform:translateY(-2px);background:var(--accent-hover)}.btn--ghost:hover{border-color:var(--text)}}
 
 /* header */
@@ -119,7 +119,7 @@ h1,h2,h3{font-family:var(--display);margin:0}
   @media (prefers-reduced-motion:no-preference) {
     .say{view-timeline:--lit block}
     .say p span{animation:lit linear both;animation-timeline:--lit;animation-range:cover calc(2% + var(--i) * 20% / var(--n)) cover calc(28% + var(--i) * 22% / var(--n))}
-    @keyframes lit{from{opacity:.18}to{opacity:1}}
+    @keyframes lit{from{opacity:.5}to{opacity:1}}
     .works figure{animation:come linear both;animation-timeline:view();animation-range:entry 0% entry 70%}
     .works figure:nth-child(3n+1){--dx:-40px}.works figure:nth-child(3n+2){--dy:40px}.works figure:nth-child(3n){--dx:40px}
     @keyframes come{from{opacity:0;transform:translate(var(--dx,0),var(--dy,20px))}}
@@ -284,3 +284,47 @@ html[data-hero=type] .head:not(.is-solid) .btn--main,html[data-hero=type] .head 
 @media (hover:hover) and (pointer:fine){.hero--type .slot:not([disabled]):not([aria-pressed=true]):hover{background:rgb(255 255 255/.24)}}
 .hero--type .hero__in{align-items:center}
 @media (min-width:1100px){.hero--type .card{align-self:center}}
+
+/* service selector: a list of treatments beside one reserved stage with the picture, the words, the price and the action */
+.pick{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:start}
+.pick__tabs{display:grid;border-top:1px solid var(--ink-line)}
+.pick__tabs button{display:flex;justify-content:space-between;align-items:baseline;gap:16px;min-height:64px;padding:16px 4px;border:0;border-bottom:1px solid var(--ink-line);background:none;color:var(--ink);font:var(--h3);text-align:left;cursor:pointer;transition:padding .25s var(--ease),color .2s}
+.pick__tabs b{font:var(--price);color:var(--accent-deep);white-space:nowrap}
+.pick__tabs button[aria-selected=true]{padding-left:16px;color:var(--ink);box-shadow:inset 3px 0 0 var(--accent)}
+.pick__tabs button:not([aria-selected=true]){color:var(--ink2)}
+@media (hover:hover) and (pointer:fine){.pick__tabs button:hover{padding-left:12px}}
+.pick__stage{position:relative;min-height:440px}
+.pick__stage article{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:28px;align-items:end}
+.pick__stage img{width:100%;aspect-ratio:4/5;object-fit:cover;filter:var(--grade,none)}
+.pick__stage article:not([hidden]) img{animation:swap .5s var(--ease) both}
+.pick__txt h3{font:var(--h2);margin:0 0 12px}
+.pick__txt p{margin:0 0 16px;color:var(--ink2)}
+.pick__meta{display:flex;gap:18px;align-items:baseline}
+.pick__meta .price{font:var(--price);color:var(--accent-deep)}
+@keyframes swap{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pick__stage article:not([hidden]) img{animation:none}}
+@media (max-width:960px){.pick{grid-template-columns:minmax(0,1fr);gap:24px}.pick__stage{min-height:0}.pick__stage article{grid-template-columns:minmax(0,1fr)}.pick__stage img{aspect-ratio:4/3}}
+
+.stack{display:grid;gap:40px}
+.stack h2.big{max-width:16ch}
+.stack .lead{max-width:34em;margin-top:12px}
+.pick__stage{min-height:520px}
+.pick__stage article{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}
+.pick__stage img{height:auto}
+@media (max-width:960px){.pick__stage{min-height:0}.pick__stage article{grid-template-columns:minmax(0,1fr)}}
+.pick__stage article[hidden]{display:none}
+.works img,.masters img,.pick__stage img,.frame__img{filter:var(--grade,none);transition:filter .5s var(--ease)}
+@media (hover:hover) and (pointer:fine){.works figure:hover img,.masters article:hover img,.pick__stage article:hover img{filter:none}}
+
+/* masters as a stack of wide cards: each one sticks a little lower than the last, so the next slides over it */
+.masters.masters--stack{display:block}
+.masters.masters--stack .master{position:sticky;top:calc(88px + var(--i,0) * 20px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:0;align-items:stretch;margin:0 0 28px;min-height:min(52vh,420px);background:var(--card);color:var(--text);border-radius:var(--r-card);overflow:hidden;box-shadow:0 -12px 28px rgb(0 0 0/.16)}
+.masters.masters--stack .master img,.masters.masters--stack .master__letter{width:100%;height:100%;min-height:0;aspect-ratio:auto;border-radius:0;flex:none}
+.masters.masters--stack .master__letter{font-size:clamp(120px,22vw,300px)}
+.masters.masters--stack .master__text{align-self:start;padding:clamp(24px,4vw,56px)}
+.masters.masters--stack .master h3{font:var(--h2)}
+.masters.masters--stack .master__role{font-size:17px}
+@media (max-width:960px){.masters.masters--stack .master{position:relative;top:auto;grid-template-columns:minmax(0,1fr);min-height:0}.masters.masters--stack .master img,.masters.masters--stack .master__letter{aspect-ratio:4/3;height:auto}}
+p,li{text-wrap:pretty}
+h2,h3{text-wrap:balance}
+.btn{transition:transform .15s ease-out,background-color .2s ease-out}

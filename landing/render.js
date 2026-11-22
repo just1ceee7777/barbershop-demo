@@ -18,6 +18,7 @@ export const LOOKS = {
     c: { bg: '#0f1c17', deep: '#0a1511', card: '#172a23', text: '#eee6d2', muted: '#9fada5', accent: '#e0642b', accentInk: '#1a0e07', accentText: '#ff9a62', accentDeep: '#b4491a', paper: '#eee6d2', ink: '#12201b', ink2: '#4d4f43', sage: '#8aa596' },
     type: { display: "'Podkova',Georgia,serif", logo: "800 20px/1 'Podkova',Georgia,serif", tag: "700 15px/1.2 'Podkova',Georgia,serif", h1: "800 clamp(40px,5.4vw,82px)/1 'Podkova',Georgia,serif", h2: "700 clamp(32px,4.4vw,60px)/1.06 'Podkova',Georgia,serif", h3: "700 24px/1.15 'Podkova',Georgia,serif", price: "800 26px/1 'Podkova',Georgia,serif", strip: "700 clamp(28px,4.6vw,64px)/1 'Podkova',Georgia,serif", caption: "italic 600 22px/1.1 'Cormorant Garamond',Georgia,serif", case: 'uppercase', h1Track: '.005em', h2Track: '0', r: '3px', rCtl: '5px', rCard: '8px' },
     ornament: true,
+    grade: 'sepia(.14) saturate(.92) contrast(1.05)',
   },
   candy: { // bright white, one violet, round wide letters: a nail bar
     c: { bg: '#fbfaff', deep: '#21164a', card: '#ffffff', text: '#21164a', muted: '#645a92', accent: '#5b3fd6', accentInk: '#ffffff', accentText: '#5b3fd6', accentDeep: '#5b3fd6', paper: '#ffffff', ink: '#21164a', ink2: '#4f4580', sage: '#ff6b5a' },
@@ -36,12 +37,14 @@ export const LOOKS = {
     type: { display: "'Tenor Sans','Century Gothic',sans-serif", logo: "400 22px/1 'Tenor Sans','Century Gothic',sans-serif", tag: "400 15px/1.3 'Tenor Sans','Century Gothic',sans-serif", h1: "400 clamp(40px,5.2vw,76px)/1.04 'Tenor Sans','Century Gothic',sans-serif", h2: "400 clamp(32px,4.2vw,56px)/1.08 'Tenor Sans','Century Gothic',sans-serif", h3: "400 22px/1.2 'Tenor Sans','Century Gothic',sans-serif", price: "400 24px/1 'Tenor Sans','Century Gothic',sans-serif", strip: "400 clamp(28px,4.4vw,60px)/1 'Tenor Sans','Century Gothic',sans-serif", caption: "italic 600 22px/1.1 'Cormorant Garamond',Georgia,serif", case: 'none', h1Track: '-.01em', h2Track: '-.005em', r: '4px', rCtl: '999px', rCard: '20px' },
     ornament: false,
     light: true,
+    grade: 'saturate(.86) contrast(.98) brightness(1.02)',
   },
   street: { // a poster: bone paper, black, one signal orange, tall narrow capitals
     c: { bg: '#e3e4e1', deep: '#0e0e0e', card: '#ffffff', text: '#0e0e0e', muted: '#55554f', accent: '#ff4a1f', accentInk: '#0e0e0e', accentText: '#b8290a', accentDeep: '#b8290a', paper: '#f6f5f1', ink: '#0e0e0e', ink2: '#3d3d3a', sage: '#0e0e0e' },
     type: { display: "'Yanone Kaffeesatz','Arial Narrow',sans-serif", logo: "700 28px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", tag: "700 19px/1.1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h1: "700 clamp(56px,9vw,150px)/.88 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h2: "700 clamp(44px,6vw,92px)/.92 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h3: "700 30px/1.05 'Yanone Kaffeesatz','Arial Narrow',sans-serif", price: "700 36px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", strip: "700 clamp(40px,6vw,88px)/.9 'Yanone Kaffeesatz','Arial Narrow',sans-serif", caption: "italic 600 22px/1.1 'Cormorant Garamond',Georgia,serif", case: 'uppercase', h1Type: 'clamp(56px,11vw,190px)', h1Track: '.005em', h2Track: '.005em', r: '0', rCtl: '0', rCard: '0' },
     ornament: false,
     light: true,
+    grade: 'grayscale(1) contrast(1.12)',
   },
 };
 
@@ -81,7 +84,7 @@ export function renderLanding(profile, photoUrl) {
     '--accent': c.accent, '--accent-ink': c.accentInk, '--accent-text': c.accentText, '--accent-hover': c.accent, '--accent-deep': c.accentDeep,
     '--paper': c.paper, '--ink': c.ink, '--ink2': c.ink2, '--ink-rgb': rgb(c.ink), '--ink-line': `rgb(${rgb(c.ink)} / .2)`,
     '--display': t.display, '--ui': "'Golos Text',system-ui,-apple-system,'Segoe UI',sans-serif", '--logo': t.logo, '--tag': t.tag, '--h1': t.h1, '--h2': t.h2, '--h3': t.h3, '--price': t.price, '--strip': t.strip, '--caption': t.caption,
-    '--h1-type': t.h1Type || 'clamp(40px,7.6vw,128px)', '--case': t.case, '--h1-track': t.h1Track, '--h2-track': t.h2Track, '--r': t.r, '--r-ctl': t.rCtl, '--r-card': t.rCard, '--ease': 'cubic-bezier(.23,1,.32,1)',
+    '--grade': look.grade || 'none', '--h1-type': t.h1Type || 'clamp(40px,7.6vw,128px)', '--case': t.case, '--h1-track': t.h1Track, '--h2-track': t.h2Track, '--r': t.r, '--r-ctl': t.rCtl, '--r-card': t.rCard, '--ease': 'cubic-bezier(.23,1,.32,1)',
     '--ornament': look.ornament ? ornamentTile(c) : 'none', '--focus': p.hero.focus || '60% 40%',
   };
   // On a light look the page body is light but the dark parts (first screen, strip text) keep light text: those are set per block below.
@@ -98,7 +101,7 @@ export function renderLanding(profile, photoUrl) {
   const statement = words.map((w, i) => `${i ? ' ' : ''}<span style="--i:${i}">${esc(w)}</span>`).join('');
   const strip = [...p.services.map((s) => s.name), ...p.services.map((s) => s.name)].map((n) => `<span>${esc(n)}</span>`).join('');
   const menu = p.services.map((s) => `<li${s.popular ? ' class="pop"' : ''}><div class="row"><h3>${esc(s.name)}${s.popular ? ' <em class="badge">Популярно</em>' : ''}</h3><i class="dots"></i><span class="price">${rub(s.price)}</span></div>${s.desc ? `<p>${esc(s.desc)}</p>` : '<span></span>'}<span class="dur">${s.duration >= 60 ? `${Math.floor(s.duration / 60)}\u00a0ч${s.duration % 60 ? ` ${s.duration % 60}\u00a0мин` : ''}` : `${s.duration}\u00a0мин`}</span></li>`).join('');
-  const masters = (p.masters || []).length ? `<section class="sec" id="masters"><div class="wrap"><h2 class="big">${esc(p.mastersTitle || 'Мастера')}</h2><div class="masters masters--${Math.min(p.masters.length, 3)}">${p.masters.map((m, i) => `<article class="master${i === 0 ? ' master--lead' : ''}">${m.photo ? `<img src="${photo(m.photo)}" alt="${esc(m.name)}" loading="lazy" decoding="async">` : `<div class="master__letter" aria-hidden="true">${esc(String(m.name).trim().slice(0, 1).toUpperCase())}</div>`}<div class="master__text"><h3>${esc(m.name)}</h3>${m.role ? `<p class="master__role">${esc(m.role)}</p>` : ''}${m.note ? `<p class="master__note">${esc(tie(m.note))}</p>` : ''}</div></article>`).join('')}</div></div></section>` : '';
+  const masters = (p.masters || []).length ? `<section class="sec" id="masters"><div class="wrap"><h2 class="big">${esc(p.mastersTitle || 'Мастера')}</h2><div class="masters masters--${Math.min(p.masters.length, 3)}${p.mastersView === 'stack' ? ' masters--stack' : ''}">${p.masters.map((m, i) => `<article class="master${i === 0 ? ' master--lead' : ''}" style="--i:${i}">${m.photo ? `<img src="${photo(m.photo)}" alt="${esc(m.name)}" loading="lazy" decoding="async">` : `<div class="master__letter" aria-hidden="true">${esc(String(m.name).trim().slice(0, 1).toUpperCase())}</div>`}<div class="master__text"><h3>${esc(m.name)}</h3>${m.role ? `<p class="master__role">${esc(m.role)}</p>` : ''}${m.note ? `<p class="master__note">${esc(tie(m.note))}</p>` : ''}</div></article>`).join('')}</div></div></section>` : '';
   const gallery = (p.gallery || []).slice(0, 7).map((g, i) => `<figure><img src="${photo(g.src)}" alt="${esc(g.alt || g.caption || '')}" loading="${i ? 'lazy' : 'eager'}" decoding="async"><figcaption>${esc(g.caption || '')}</figcaption></figure>`).join('');
   const tel = String(p.phone || '').replace(/[^\d+]/g, '');
   const cta = p.cta || 'Записаться онлайн';
@@ -106,6 +109,13 @@ export function renderLanding(profile, photoUrl) {
   const heroPhoto = p.hero.photo ? photo(p.hero.photo) : '';
   const title = `${p.name}${p.tagline ? ` — ${p.tagline}` : ''}`;
 
+  const fmtDur = (m) => (m >= 60 ? `${Math.floor(m / 60)}\u00a0ч${m % 60 ? ` ${m % 60}\u00a0мин` : ''}` : `${m}\u00a0мин`);
+  const stagePhotos = [...new Set([...p.services.map((s) => s.photo).filter(Boolean), ...(p.gallery || []).map((g) => g.src)])];
+  const pick = (s, i) => (s.photo || (stagePhotos.length ? stagePhotos[i % stagePhotos.length] : ''));
+  const selector = `<div class="pick" data-pick>
+    <div class="pick__tabs" role="tablist" aria-label="Услуги">${p.services.map((s, i) => `<button type="button" role="tab" id="svc-t${i}" aria-controls="svc-p${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}"><span>${esc(s.name)}${s.popular ? ' <em class="badge">Популярно</em>' : ''}</span><b>${rub(s.price)}</b></button>`).join('')}</div>
+    <div class="pick__stage">${p.services.map((s, i) => { const img = pick(s, i); return `<article role="tabpanel" id="svc-p${i}" aria-labelledby="svc-t${i}"${i ? ' hidden' : ''}>${img ? `<img src="${photo(img)}" alt="" width="900" height="1100" loading="${i ? 'lazy' : 'eager'}" decoding="async">` : ''}<div class="pick__txt"><h3>${esc(s.name)}</h3>${s.desc ? `<p>${esc(s.desc)}</p>` : ''}<p class="pick__meta"><span class="price">${rub(s.price)}</span><span>${fmtDur(s.duration)}</span></p><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a></div></article>`; }).join('')}</div>
+  </div>`;
   const dur = (m) => (m >= 60 ? `${Math.floor(m / 60)}\u00a0ч${m % 60 ? ` ${m % 60}\u00a0мин` : ''}` : `${m}\u00a0мин`);
   const free = Array.from({ length: 8 }, (_, i) => hhmm(first + i * step)).filter((_, i) => !taken.has(i)).slice(0, 3);
   const card = `<aside class="card" aria-labelledby="card-t">
@@ -169,9 +179,9 @@ ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
   ${look.ornament ? '<div class="ornament" aria-hidden="true"><i></i></div>' : ''}
 </section>
 <div class="strip" aria-hidden="true"><div class="strip__row">${strip}</div></div>
-<section class="sec paper" id="price"><div class="wrap split">
+<section class="sec paper" id="price"><div class="wrap ${p.servicesView === 'selector' ? 'stack' : 'split'}">
   <div><h2 class="big">Услуги и цены</h2><p class="lead">${esc(p.priceLead || 'Цена окончательная, без доплат на месте.')}</p></div>
-  <ul class="menu">${menu}</ul>
+  ${p.servicesView === 'selector' ? selector : `<ul class="menu">${menu}</ul>`}
 </div></section>
 ${gallery ? `<section class="sec" id="works"><div class="wrap"><h2 class="big">${esc(p.worksTitle || 'Работы')}</h2><div class="works">${gallery}</div></div></section>` : ''}
 ${masters}
@@ -206,6 +216,11 @@ ${statement ? `<section class="say"><div class="wrap"><p style="--n:${words.leng
     <button type="button" class="btn btn--main" id="book-close">Закрыть</button>
   </div>
 </dialog>
+<script>
+document.querySelectorAll('[data-pick]').forEach(function(root){var tabs=[].slice.call(root.querySelectorAll('[role=tab]')),panels=[].slice.call(root.querySelectorAll('[role=tabpanel]'));
+function show(i,focus){tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1});panels.forEach(function(x,k){x.hidden=k!==i});if(focus)tabs[i].focus()}
+tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){var n={ArrowDown:1,ArrowRight:1,ArrowUp:-1,ArrowLeft:-1}[e.key];if(n){e.preventDefault();show((i+n+tabs.length)%tabs.length,true)}else if(e.key==='Home'){e.preventDefault();show(0,true)}else if(e.key==='End'){e.preventDefault();show(tabs.length-1,true)}})})});
+</script>
 <script>
 (function () {
   var head = document.getElementById('head');
