@@ -390,3 +390,45 @@ html[data-name=street] .foot{background:var(--deep)}
 .masters.masters--stack .master--plain h3{font-size:clamp(48px,7vw,104px);line-height:.95}
 html[data-name=street] .hero--type .hero__time{top:-64px}
 html[data-name=street] .hero--type .hero__time b{font-size:clamp(88px,13vw,208px)}
+
+/* page.* : 404 and privacy pages, plain reading */
+.page{max-width:44em}
+.page h2{font:var(--h3);margin:32px 0 8px}
+.page p{margin:0 0 12px}
+.page a:not(.btn){text-decoration:underline;text-underline-offset:3px}
+.foot a{text-underline-offset:3px}
+
+/* street: the picture of the work on the first screen and the barber pole as the one repeated motif */
+html[data-name=street] .hero--type{overflow:hidden}
+html[data-name=street] .hero__photo{position:absolute;top:0;right:0;bottom:0;width:min(34%,520px);height:100%;object-fit:cover;object-position:50% 40%;filter:grayscale(1) contrast(1.12);z-index:0}
+html[data-name=street] .hero--type .hero__in{z-index:1}
+html[data-name=street] .hero--type .hero__time b{text-shadow:0 2px 24px rgb(0 0 0/.35)}
+html[data-name=street] .hero--type::after,html[data-name=street] .say::before,html[data-name=street] .foot::before{content:"";display:block;position:absolute;left:0;right:0;height:14px;background:repeating-linear-gradient(-45deg,var(--accent) 0 14px,var(--deep) 14px 28px,var(--paper) 28px 42px,var(--deep) 42px 56px);z-index:2}
+html[data-name=street] .hero--type::after{bottom:0}
+html[data-name=street] .say,html[data-name=street] .foot{position:relative}
+html[data-name=street] .say::before,html[data-name=street] .foot::before{top:0}
+@media (max-width:1099px){html[data-name=street] .hero__photo{width:100%;opacity:.14}}
+
+/* services as tall photo cards: the picture, the name and the price at the bottom */
+.svcs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));gap:14px}
+@media (max-width:960px){.svcs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.svc{position:relative;display:block;aspect-ratio:3/4;overflow:hidden;border-radius:var(--r-card);background:var(--deep);color:#fff;text-decoration:none}
+.svc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:var(--grade,none);transition:transform .6s var(--ease),filter .5s var(--ease)}
+.svc::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgb(0 0 0/.82),rgb(0 0 0/0) 58%)}
+.svc__t{position:absolute;left:18px;right:18px;bottom:16px;z-index:1;display:grid;gap:4px}
+.svc__t b{font:var(--h3);text-transform:var(--case)}
+.svc__p{font-size:14px;color:rgb(255 255 255/.82)}
+@media (hover:hover) and (pointer:fine){.svc:hover img{transform:scale(1.04);filter:none}}
+.svc:active{transform:scale(.98)}
+@media (prefers-reduced-motion:reduce){.svc img{transition:none}}
+@media (max-width:560px){.svcs{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.svc__t{left:12px;right:12px}.svc__t b{font-size:17px}}
+
+/* noir: dark chapters, light paper in between, one red */
+html[data-name=noir] .head{color:#fff}
+html[data-name=noir] .hero::before{background:linear-gradient(90deg,rgb(5 5 5/.94) 0,rgb(5 5 5/.8) 48%,rgb(5 5 5/.35) 78%,rgb(5 5 5/.12)),linear-gradient(0deg,rgb(5 5 5/.92),transparent 42%)}
+html[data-name=noir] .hero__bg{filter:grayscale(1) contrast(1.1)}
+html[data-name=noir] .btn--ghost{border-radius:999px}
+html[data-name=noir] .say{background:var(--accent);color:var(--accent-ink)}
+html[data-name=noir] .hero .btn--main,html[data-name=noir] .head .btn--main{background:#efeeea;color:#0b0b0b}
+html[data-name=noir] .hero .btn--main:hover,html[data-name=noir] .head .btn--main:hover{background:#fff}
+html[data-name=noir] .card .btn--main,html[data-name=noir] .sticky .btn--main,html[data-name=noir] .pick__txt .btn--main{background:var(--accent);color:var(--accent-ink)}

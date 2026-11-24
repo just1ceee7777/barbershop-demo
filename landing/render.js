@@ -39,6 +39,13 @@ export const LOOKS = {
     light: true,
     grade: 'saturate(.86) contrast(.98) brightness(1.02)',
   },
+  noir: { // black ground, black-and-white photographs, one red, uppercase grotesk: a premium barbershop without invented numbers
+    c: { bg: '#0b0b0b', deep: '#050505', card: '#171717', text: '#efeeea', muted: '#9c9b95', accent: '#d91f26', accentInk: '#ffffff', accentText: '#ff5a5f', accentDeep: '#c81e24', paper: '#efeeea', ink: '#0b0b0b', ink2: '#3c3c39', sage: '#efeeea' },
+    type: { display: "'Manrope','Arial',sans-serif", logo: "600 18px/1 'Manrope','Arial',sans-serif", tag: "600 13px/1.2 'Manrope','Arial',sans-serif", h1: "600 clamp(38px,5.4vw,84px)/1.02 'Manrope','Arial',sans-serif", h2: "600 clamp(30px,4vw,56px)/1.05 'Manrope','Arial',sans-serif", h3: "600 22px/1.15 'Manrope','Arial',sans-serif", price: "600 22px/1 'Manrope','Arial',sans-serif", strip: "600 clamp(26px,4vw,56px)/1 'Manrope','Arial',sans-serif", caption: "500 15px/1.35 var(--ui)", case: 'uppercase', h1Track: '-.01em', h2Track: '-.005em', r: '2px', rCtl: '999px', rCard: '14px' },
+    ornament: false,
+    quiet: true,
+    grade: 'grayscale(1) contrast(1.12)',
+  },
   street: { // a poster: bone paper, black, one signal orange, tall narrow capitals
     c: { bg: '#e3e4e1', deep: '#0e0e0e', card: '#ffffff', text: '#0e0e0e', muted: '#55554f', accent: '#ff4a1f', accentInk: '#0e0e0e', accentText: '#0e0e0e', accentDeep: '#0e0e0e', paper: '#f6f5f1', ink: '#0e0e0e', ink2: '#3d3d3a', sage: '#0e0e0e' },
     type: { display: "'Yanone Kaffeesatz','Arial Narrow',sans-serif", logo: "700 28px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", tag: "700 19px/1.1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h1: "700 clamp(56px,9vw,150px)/.88 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h2: "700 clamp(44px,6vw,92px)/.92 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h3: "700 30px/1.05 'Yanone Kaffeesatz','Arial Narrow',sans-serif", price: "700 36px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", strip: "700 clamp(40px,6vw,88px)/.9 'Yanone Kaffeesatz','Arial Narrow',sans-serif", caption: "500 16px/1.35 var(--ui)", case: 'uppercase', h1Type: 'clamp(56px,11vw,190px)', h1Track: '.005em', h2Track: '.005em', r: '0', rCtl: '0', rCard: '0' },
@@ -117,6 +124,7 @@ export function renderLanding(profile, photoUrl) {
     <div class="pick__tabs" role="tablist" aria-label="Услуги">${p.services.map((s, i) => `<button type="button" role="tab" id="svc-t${i}" aria-controls="svc-p${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}"><span>${esc(s.name)}${s.popular ? ' <em class="badge">Популярно</em>' : ''}</span><b>${rub(s.price)}</b></button>`).join('')}</div>
     <div class="pick__stage">${p.services.map((s, i) => { const img = pick(s, i); return `<article role="tabpanel" id="svc-p${i}" aria-labelledby="svc-t${i}"${i ? ' hidden' : ''}>${img ? `<img src="${photo(img)}" alt="" width="900" height="1100" loading="${i ? 'lazy' : 'eager'}" decoding="async">` : ''}<div class="pick__txt"><h3>${esc(s.name)}</h3>${s.desc ? `<p>${esc(s.desc)}</p>` : ''}<p class="pick__meta"><span class="price">${rub(s.price)}</span><span>${fmtDur(s.duration)}</span></p><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a></div></article>`; }).join('')}</div>
   </div>`;
+  const cardsView = `<ul class="svcs" style="--cols:${p.services.length % 4 === 0 ? 4 : p.services.length % 3 === 0 ? 3 : 4}">${p.services.map((s, i) => { const img = pick(s, i); return `<li><a class="svc" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${img ? `<img src="${photo(img)}" alt="" width="600" height="800" loading="lazy" decoding="async">` : ''}<span class="svc__t"><b>${esc(s.name)}</b><span class="svc__p">${rub(s.price)} · ${fmtDur(s.duration)}</span></span></a></li>`; }).join('')}</ul>`;
   const dur = (m) => (m >= 60 ? `${Math.floor(m / 60)}\u00a0ч${m % 60 ? ` ${m % 60}\u00a0мин` : ''}` : `${m}\u00a0мин`);
   const free = Array.from({ length: 8 }, (_, i) => hhmm(first + i * step)).filter((_, i) => !taken.has(i)).slice(0, 3);
   const card = `<aside class="card" aria-labelledby="card-t">
@@ -154,6 +162,11 @@ export function renderLanding(profile, photoUrl) {
 <meta name="robots" content="noindex">
 <meta name="description" content="${esc(`${title}${p.address ? `, ${p.address}` : ''}. Услуги, цены и онлайн-запись на удобное время.`)}">
 <meta name="theme-color" content="${esc(c.deep)}">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(`${p.tagline || 'Онлайн-запись'}${p.address ? `, ${p.address}` : ''}. Услуги, цены и запись на удобное время.`)}">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='${parseInt(t.r) > 6 ? 14 : 0}' fill='${c.accent}'/><text x='32' y='45' font-family='Georgia,serif' font-size='40' font-weight='700' text-anchor='middle' fill='${c.accentInk}'>${String(p.name).trim().slice(0, 1).toUpperCase().replace(/[<>&']/g, '')}</text></svg>`)}">
 <title>${esc(title)}</title>
 ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
 <link rel="stylesheet" href="assets/fonts.css">
@@ -170,20 +183,21 @@ ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
   ${heroPhoto && ['split', 'center', 'strip'].includes(variant) ? `<img class="hero__bg" src="${heroPhoto}" alt="" width="1800" height="1100" fetchpriority="high">` : ''}
   <div class="hero__in">
     <div class="hero__text">
-      ${p.hero.concept ? `<p class="tag">${esc(tie(p.hero.concept))}</p>` : ''}
+      ${p.hero.concept && !look.quiet ? `<p class="tag">${esc(tie(p.hero.concept))}</p>` : ''}
       <h1>${lines}</h1>
       ${p.hero.sub ? `<p class="hero__sub">${esc(tie(p.hero.sub))}</p>` : ''}
       <div class="hero__cta"><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a><a class="btn btn--ghost" href="tel:${esc(tel)}">${esc(p.phone || 'Позвонить')}</a></div>
     </div>
+    ${variant === 'type' && heroPhoto ? `<img class="hero__photo" src="${heroPhoto}" alt="" width="900" height="1100" fetchpriority="high">` : ''}
     ${variant === 'type' ? `<p class="hero__time" aria-hidden="true"><small>Сегодня свободно</small><b data-next>${free[0] || ''}</b></p>` : ''}
     ${variant === 'phone' ? phone : variant === 'strip' ? bar : variant === 'frame' ? `<div class="frame"><img class="frame__img" src="${heroPhoto}" alt="" width="900" height="1100" fetchpriority="high">${card}</div>` : card}
   </div>
   ${look.ornament ? '<div class="ornament" aria-hidden="true"><i></i></div>' : ''}
 </section>
 <div class="strip" aria-hidden="true"><div class="strip__row">${strip}</div></div>
-<section class="sec paper" id="price"><div class="wrap ${p.servicesView === 'selector' ? 'stack' : 'split'}">
+<section class="sec paper" id="price"><div class="wrap ${['selector', 'cards'].includes(p.servicesView) ? 'stack' : 'split'}">
   <div><h2 class="big">Услуги и цены</h2><p class="lead">${esc(p.priceLead || 'Цена окончательная, без доплат на месте.')}</p></div>
-  ${p.servicesView === 'selector' ? selector : `<ul class="menu">${menu}</ul>`}
+  ${p.servicesView === 'selector' ? selector : p.servicesView === 'cards' ? cardsView : `<ul class="menu">${menu}</ul>`}
 </div></section>
 ${gallery ? `<section class="sec" id="works"><div class="wrap"><h2 class="big">${esc(p.worksTitle || 'Работы')}</h2><div class="works">${gallery}</div></div></section>` : ''}
 ${masters}
@@ -197,7 +211,7 @@ ${statement ? `<section class="say"><div class="wrap"><p style="--n:${words.leng
   </dl>${p.address ? `<p class="route"><a class="btn btn--ghost" href="https://yandex.ru/maps/?text=${encodeURIComponent(p.address)}" target="_blank" rel="noopener">Построить маршрут</a></p>` : ''}</div>
 </div></section>
 </main>
-<footer class="foot"><div class="wrap"><span translate="no">© ${esc(p.name)}</span><span>Макет сайта, не окончательная версия${p.ownerLink ? ' · <a href="owner.html">Экран владельца, пример</a>' : ''}</span></div></footer>
+<footer class="foot"><div class="wrap"><span translate="no">© ${esc(p.name)}</span><span>Макет сайта, не окончательная версия${p.ownerLink ? ' · <a href="owner.html">Экран владельца, пример</a>' : ''} · <a href="privacy.html">Конфиденциальность</a></span></div></footer>
 <div class="sticky" id="sticky" aria-hidden="true"><span class="sticky__t"><b translate="no">${esc(p.name)}</b><small>от ${rub(Math.min(...p.services.map((x) => x.price)))}</small></span><a class="btn btn--main" data-book tabindex="-1" href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a></div>
 <dialog class="book" id="book-dialog" aria-labelledby="book-t">
   <form method="dialog" class="book__form" id="book-form" novalidate>

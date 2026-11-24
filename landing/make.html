@@ -55,7 +55,7 @@ iframe.phone{width:390px;max-width:100%}
 
   <fieldset><legend>Вид и первый экран</legend>
     <div class="row">
-      <label>Вид<select id="look"><option value="night">Ночь (тёмный, медь)</option><option value="blush">Роза (светлый, слива)</option><option value="jade">Нефрит (минерал, зелёный)</option><option value="street">Плакат (кость, оранжевый)</option><option value="candy">Конфетти (белый, фиолетовый)</option></select></label>
+      <label>Вид<select id="look"><option value="night">Ночь (тёмный, медь)</option><option value="blush">Роза (светлый, слива)</option><option value="jade">Нефрит (минерал, зелёный)</option><option value="street">Плакат (кость, оранжевый)</option><option value="noir">Нуар (чёрный, красный)</option><option value="candy">Конфетти (белый, фиолетовый)</option></select></label>
       <label>Первый экран<select id="variant"><option value="split">Фото и карточка записи</option><option value="phone">Телефон с перепиской</option><option value="center">Заголовок по центру</option><option value="type">Гигантские слова</option><option value="strip">Полоса записи на фото</option><option value="frame">Фото в арке, светлый</option></select></label>
     </div>
     <label>Фраза-ценник над заголовком (чем особенны)<input id="concept" maxlength="140" value="Бритьё опасной бритвой и горячее полотенце"></label>
@@ -107,6 +107,7 @@ const $ = (id) => document.getElementById(id);
 const STOCK = {
   night: { hero: [['', 'Без фото'], ['barber-0.jpg', 'Зал, кресла'], ['barber-1.jpg', 'Бритьё'], ['barber-2.jpg', 'Ножницы'], ['barber-3.jpg', 'Рабочее место'], ['barber-4.jpg', 'Инструмент']], gallery: ['barber-1.jpg', 'barber-2.jpg', 'barber-4.jpg', 'barber-5.jpg'] },
   street: { hero: [['', 'Без фото'], ['barber-0.jpg', 'Зал, кресла'], ['barber-1.jpg', 'Бритьё'], ['barber-2.jpg', 'Ножницы'], ['barber-3.jpg', 'Рабочее место'], ['barber-4.jpg', 'Инструмент']], gallery: ['barber-1.jpg', 'barber-2.jpg', 'barber-4.jpg', 'barber-5.jpg'] },
+  noir: { hero: [['', 'Без фото'], ['barber-0.jpg', 'Зал, кресла'], ['barber-1.jpg', 'Бритьё'], ['barber-2.jpg', 'Ножницы'], ['barber-3.jpg', 'Рабочее место'], ['barber-4.jpg', 'Инструмент']], gallery: ['barber-1.jpg', 'barber-2.jpg', 'barber-4.jpg', 'barber-5.jpg'] },
   blush: { hero: [['', 'Без фото'], ['salon-1.jpg', 'Укладка'], ['salon-2.jpg', 'Работа мастера'], ['salon-3.jpg', 'Интерьер']], gallery: ['salon-2.jpg', 'salon-3.jpg'] },
   jade: { hero: [['', 'Без фото'], ['salon-1.jpg', 'Укладка'], ['salon-2.jpg', 'Работа мастера'], ['salon-3.jpg', 'Интерьер']], gallery: ['salon-2.jpg', 'salon-3.jpg'] },
   candy: { hero: [['', 'Без фото'], ['nails-1.jpg', 'Маникюр'], ['nails-2.jpg', 'Руки, цвет'], ['nails-3.jpg', 'Нежный маникюр']], gallery: ['nails-2.jpg', 'nails-3.jpg', 'nails-1.jpg'] },
