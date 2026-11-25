@@ -46,6 +46,13 @@ export const LOOKS = {
     quiet: true,
     grade: 'grayscale(1) contrast(1.12)',
   },
+  mono: { // grey editorial first screen, black chapters, white and a single red dot: the quiet "studio" language
+    c: { bg: '#0a0a0a', deep: '#050505', card: '#161616', text: '#f2f1ee', muted: '#9a9993', accent: '#d91f26', accentInk: '#ffffff', accentText: '#ff5a5f', accentDeep: '#c81e24', paper: '#f2f1ee', ink: '#0a0a0a', ink2: '#3c3c39', sage: '#f2f1ee' },
+    type: { display: "'Manrope','Arial',sans-serif", logo: "600 18px/1 'Manrope','Arial',sans-serif", tag: "500 13px/1.2 'Manrope','Arial',sans-serif", h1: "600 clamp(40px,5.7vw,92px)/.94 'Manrope','Arial',sans-serif", h2: "600 clamp(30px,4vw,56px)/1.05 'Manrope','Arial',sans-serif", h3: "600 22px/1.15 'Manrope','Arial',sans-serif", price: "600 22px/1 'Manrope','Arial',sans-serif", strip: "600 clamp(26px,4vw,56px)/1 'Manrope','Arial',sans-serif", caption: "500 15px/1.35 var(--ui)", case: 'uppercase', h1Track: '-.035em', h2Track: '-.015em', r: '2px', rCtl: '10px', rCard: '14px' },
+    ornament: false,
+    quiet: true,
+    grade: 'grayscale(1) contrast(1.1)',
+  },
   street: { // a poster: bone paper, black, one signal orange, tall narrow capitals
     c: { bg: '#e3e4e1', deep: '#0e0e0e', card: '#ffffff', text: '#0e0e0e', muted: '#55554f', accent: '#ff4a1f', accentInk: '#0e0e0e', accentText: '#0e0e0e', accentDeep: '#0e0e0e', paper: '#f6f5f1', ink: '#0e0e0e', ink2: '#3d3d3a', sage: '#0e0e0e' },
     type: { display: "'Yanone Kaffeesatz','Arial Narrow',sans-serif", logo: "700 28px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", tag: "700 19px/1.1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h1: "700 clamp(56px,9vw,150px)/.88 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h2: "700 clamp(44px,6vw,92px)/.92 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h3: "700 30px/1.05 'Yanone Kaffeesatz','Arial Narrow',sans-serif", price: "700 36px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", strip: "700 clamp(40px,6vw,88px)/.9 'Yanone Kaffeesatz','Arial Narrow',sans-serif", caption: "500 16px/1.35 var(--ui)", case: 'uppercase', h1Type: 'clamp(56px,11vw,190px)', h1Track: '.005em', h2Track: '.005em', r: '0', rCtl: '0', rCard: '0' },
@@ -62,7 +69,7 @@ function ornamentTile(c) {
   return `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${W}' height='${H}' viewBox='0 0 ${W} ${H}'>${p}</svg>`).replace(/'/g, '%27')}")`;
 }
 
-export const HERO_VARIANTS = ['split', 'phone', 'center', 'type', 'strip', 'frame'];
+export const HERO_VARIANTS = ['split', 'phone', 'center', 'type', 'strip', 'frame', 'editorial'];
 
 export function validate(p) {
   const need = (cond, msg) => { if (!cond) throw new Error(`Профиль: ${msg}`); };
@@ -154,6 +161,31 @@ export function renderLanding(profile, photoUrl) {
       <p class="phone__note">Макет: переписка показана для примера</p>
     </div>`;
 
+  const sideSvc = p.services[1] || p.services[0];
+  const sideImg = stagePhotos[1] || stagePhotos[0] || '';
+  const clock = '<span class="clock" data-clock></span>';
+  const headEd = `<header class="head head--pill" id="head"><div class="wrap head__in">
+  <nav class="pill" aria-label="Разделы"><a class="is-on" href="#top">Главная</a><a href="#price">Цены</a>${gallery ? '<a href="#works">Работы</a>' : ''}${masters ? '<a href="#masters">Мастера</a>' : ''}<a href="#contacts">Контакты</a></nav>
+  <a class="logo logo--sm" href="#top" translate="no">${esc(p.name)}</a>
+  <div class="head__right">${clock}<a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">Записаться<span aria-hidden="true"> ↗</span></a></div>
+</div></header>`;
+  const heroEd = `<section class="hero hero--editorial" id="book">
+  <div class="ed">
+    <div class="ed__left">
+      <p class="ed__tag">(${esc(p.tagline || 'Запись онлайн')})</p>
+      <h1>${lines}</h1>
+      ${p.hero.sub ? `<p class="ed__sub">${esc(tie(p.hero.sub))}</p>` : ''}
+      <div class="ed__cta"><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}<span aria-hidden="true"> ↗</span></a><a class="btn btn--ghost" href="tel:${esc(tel)}">${esc(p.phone || 'Позвонить')}</a></div>
+      <div class="ed__card">${card}</div>
+    </div>
+    <figure class="ed__photo"><img src="${heroPhoto}" alt="" width="900" height="1100" fetchpriority="high"><figcaption class="ed__bar" translate="no"><b>${esc(p.name)}</b><i aria-hidden="true"></i></figcaption></figure>
+    <aside class="ed__right" aria-label="Популярная услуга">
+      <p class="ed__label">(${esc(sideSvc.popular ? 'Популярно' : 'Услуга')})</p>
+      <a class="ed__mini" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${sideImg ? `<img src="${photo(sideImg)}" alt="" width="600" height="400" loading="lazy">` : ''}<span class="ed__mini__t"><b>${esc(sideSvc.name)}</b><small>${rub(sideSvc.price)} · ${fmtDur(sideSvc.duration)}</small></span><em aria-hidden="true">↗</em></a>
+    </aside>
+  </div>
+</section>`;
+  const infoStrip = `<div class="infostrip"><span>${esc(p.address || p.tagline || '')}</span><span>Листайте вниз <i aria-hidden="true">↓</i></span><span>Ежедневно ${esc(p.hours[0])}–${esc(p.hours[1])}</span></div>`;
   const html = `<!doctype html>
 <html lang="ru" data-name="${p.look || 'night'}"${light ? ' data-look="light"' : ''} data-hero="${variant}">
 <head>
@@ -174,12 +206,12 @@ ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
 <style>:root{${Object.entries(vars).map(([k, v]) => `${k}:${v}`).join(';')}}${light ? `body{background:var(--bg);color:var(--text)}${darkHero ? '.head{color:#fff}.hero{color:#fff}.hero__sub{color:#fff}.btn--ghost{color:#fff;border-color:rgb(255 255 255/.45)}' : ''}.strip{border-color:var(--ink)}.strip__row{color:var(--ink)}` : ''}${parseInt(t.rCard) >= 14 ? '.card,.bar,.book__form,.book__done{border-top:0}' : ''}</style>
 </head>
 <body>
-<header class="head" id="head"><div class="wrap head__in">
+${variant === 'editorial' ? headEd : `<header class="head" id="head"><div class="wrap head__in">
   <a class="logo" href="#top" translate="no">${esc(p.name)}</a>
   <nav aria-label="Разделы"><a href="#price">Цены</a>${gallery ? '<a href="#works">Работы</a>' : ''}${masters ? '<a href="#masters">Мастера</a>' : ''}<a href="#contacts">Контакты</a><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">Записаться</a></nav>
-</div></header>
+</div></header>`}
 <main id="top" data-open="${esc(p.hours[0])}" data-close="${esc(p.hours[1])}" data-taken="${[...taken].join(',')}">
-<section class="hero hero--${variant}" id="book">
+${variant === 'editorial' ? heroEd : `<section class="hero hero--${variant}" id="book">
   ${heroPhoto && ['split', 'center', 'strip'].includes(variant) ? `<img class="hero__bg" src="${heroPhoto}" alt="" width="1800" height="1100" fetchpriority="high">` : ''}
   <div class="hero__in">
     <div class="hero__text">
@@ -193,8 +225,8 @@ ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
     ${variant === 'phone' ? phone : variant === 'strip' ? bar : variant === 'frame' ? `<div class="frame"><img class="frame__img" src="${heroPhoto}" alt="" width="900" height="1100" fetchpriority="high">${card}</div>` : card}
   </div>
   ${look.ornament ? '<div class="ornament" aria-hidden="true"><i></i></div>' : ''}
-</section>
-<div class="strip" aria-hidden="true"><div class="strip__row">${strip}</div></div>
+</section>`}
+${variant === 'editorial' ? infoStrip : `<div class="strip" aria-hidden="true"><div class="strip__row">${strip}</div></div>`}
 <section class="sec paper" id="price"><div class="wrap ${['selector', 'cards'].includes(p.servicesView) ? 'stack' : 'split'}">
   <div><h2 class="big">Услуги и цены</h2><p class="lead">${esc(p.priceLead || 'Цена окончательная, без доплат на месте.')}</p></div>
   ${p.servicesView === 'selector' ? selector : p.servicesView === 'cards' ? cardsView : `<ul class="menu">${menu}</ul>`}
@@ -248,6 +280,7 @@ var free=nodes.filter(function(b,i){return !b.disabled&&!b.parentNode.classList.
 var first=free[0]?free[0].textContent:f(start);
 [].forEach.call(document.querySelectorAll('[data-next]'),function(n){n.textContent=first});
 [].forEach.call(document.querySelectorAll('.hero__time small'),function(n){n.textContent=day==='Сегодня'?'Сегодня свободно':'Завтра свободно'});
+[].forEach.call(document.querySelectorAll('[data-clock]'),function(n){var tick=function(){var d=new Date();n.textContent=d.toLocaleDateString('ru-RU',{weekday:'long'})+' · '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+' · '+d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})};tick();setInterval(tick,30000)});
 var t=document.getElementById('card-t');if(t)t.textContent=day==='Сегодня'?'Свободное время сегодня':'Свободное время завтра';
 })();
 </script>

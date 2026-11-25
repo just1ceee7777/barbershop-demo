@@ -98,6 +98,7 @@ var free=nodes.filter(function(b,i){return !b.disabled&&!b.parentNode.classList.
 var first=free[0]?free[0].textContent:f(start);
 [].forEach.call(document.querySelectorAll('[data-next]'),function(n){n.textContent=first});
 [].forEach.call(document.querySelectorAll('.hero__time small'),function(n){n.textContent=day==='Сегодня'?'Сегодня свободно':'Завтра свободно'});
+[].forEach.call(document.querySelectorAll('[data-clock]'),function(n){var tick=function(){var d=new Date();n.textContent=d.toLocaleDateString('ru-RU',{weekday:'long'})+' · '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+' · '+d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})};tick();setInterval(tick,30000)});
 var t=document.getElementById('card-t');if(t)t.textContent=day==='Сегодня'?'Свободное время сегодня':'Свободное время завтра';
 })();
 </script>
