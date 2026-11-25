@@ -10,6 +10,7 @@ const lum = (h) => { const [r, g, b] = [1, 3, 5].map((i) => parseInt(h.slice(i, 
 export const contrast = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
 const rub = (n) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0')}\u00a0₽`;
 const mm = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+const plural = (n, a, b, c) => { const m = Math.abs(n) % 100, k = m % 10; return m > 10 && m < 20 ? c : k === 1 ? a : k >= 2 && k <= 4 ? b : c; };
 const hhmm = (n) => `${String(Math.floor(n / 60)).padStart(2, '0')}:${String(n % 60).padStart(2, '0')}`;
 
 // Two looks. Each is a complete set of colours and type; nothing here is specific to one business.
@@ -161,6 +162,8 @@ export function renderLanding(profile, photoUrl) {
       <p class="phone__note">Макет: переписка показана для примера</p>
     </div>`;
 
+  const nMasters = (p.masters || []).length, minPrice = Math.min(...p.services.map((x) => x.price));
+  const facts = `<ul class="ed__facts" aria-label="Коротко">${nMasters ? `<li><b data-count="${nMasters}">${nMasters}</b><span>${plural(nMasters, 'мастер', 'мастера', 'мастеров')}</span></li>` : ''}<li><b data-count="${p.services.length}">${p.services.length}</b><span>${plural(p.services.length, 'услуга', 'услуги', 'услуг')}</span></li><li><b data-count="${minPrice}" data-suffix="\u00a0₽">${rub(minPrice)}</b><span>цена от</span></li></ul>`;
   const sideSvc = p.services[1] || p.services[0];
   const sideImg = stagePhotos[1] || stagePhotos[0] || '';
   const clock = '<span class="clock" data-clock></span>';
@@ -182,6 +185,7 @@ export function renderLanding(profile, photoUrl) {
     <aside class="ed__right" aria-label="Популярная услуга">
       <p class="ed__label">(${esc(sideSvc.popular ? 'Популярно' : 'Услуга')})</p>
       <a class="ed__mini" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${sideImg ? `<img src="${photo(sideImg)}" alt="" width="600" height="400" loading="lazy">` : ''}<span class="ed__mini__t"><b>${esc(sideSvc.name)}</b><small>${rub(sideSvc.price)} · ${fmtDur(sideSvc.duration)}</small></span><em aria-hidden="true">↗</em></a>
+      ${facts}
     </aside>
   </div>
 </section>`;
@@ -281,6 +285,9 @@ var first=free[0]?free[0].textContent:f(start);
 [].forEach.call(document.querySelectorAll('[data-next]'),function(n){n.textContent=first});
 [].forEach.call(document.querySelectorAll('.hero__time small'),function(n){n.textContent=day==='Сегодня'?'Сегодня свободно':'Завтра свободно'});
 [].forEach.call(document.querySelectorAll('[data-clock]'),function(n){var tick=function(){var d=new Date();n.textContent=d.toLocaleDateString('ru-RU',{weekday:'long'})+' · '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+' · '+d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})};tick();setInterval(tick,30000)});
+var counters=[].slice.call(document.querySelectorAll('[data-count]'));
+if(counters.length&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){counters.forEach(function(n){var to=+n.dataset.count,suf=n.dataset.suffix||'',t0=null;function fmt(v){return String(v).replace(/\\B(?=(\\d{3})+(?!\\d))/g,'\u00a0')+suf}
+n.textContent=fmt(0);function step(ts){if(t0===null)t0=ts;var k=Math.min((ts-t0-700)/1400,1);if(k<0){requestAnimationFrame(step);return}var e=1-Math.pow(1-k,3);n.textContent=fmt(Math.round(to*e));if(k<1)requestAnimationFrame(step)}requestAnimationFrame(step)})}
 var t=document.getElementById('card-t');if(t)t.textContent=day==='Сегодня'?'Свободное время сегодня':'Свободное время завтра';
 })();
 </script>

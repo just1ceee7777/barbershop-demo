@@ -502,3 +502,12 @@ html[data-name=mono] .head--pill .btn--main{background:#0a0a0a;color:#fff}
 .ed__photo img{height:min(58svh,460px)}
 .ed__card .card{width:100%}
 .ed__mini img{height:150px}}
+
+/* editorial facts: three real numbers from the profile, counted up on load */
+.ed__facts{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ed__facts li{display:grid;gap:2px;padding:12px;border-radius:12px;background:#f3f3f1;color:#0a0a0a}
+.ed__facts b{font:var(--price);font-size:22px;font-variant-numeric:tabular-nums}
+.ed__facts span{font-size:12px;color:#55554f}
+@keyframes develop{from{filter:grayscale(1) blur(16px) brightness(1.6) contrast(.6);opacity:.15;transform:scale(1.05)}to{filter:grayscale(1) contrast(1.1);opacity:1;transform:none}}
+@media (prefers-reduced-motion:no-preference){.ed__photo img{animation:develop 1.5s var(--ease) .15s both}}
+@media (max-width:960px){.ed__facts{grid-template-columns:repeat(3,minmax(0,1fr))}}
