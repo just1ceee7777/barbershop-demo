@@ -197,6 +197,9 @@ h1,h2,h3{font-family:var(--display);margin:0}
 .book select,.book input{font:400 16px/1.2 var(--ui);color:var(--ink);background:rgb(255 255 255/.6);border:1px solid var(--ink-line);border-radius:var(--r-ctl);padding:12px 14px;width:100%;min-width:0}
 .book select:focus,.book input:focus{outline:3px solid var(--accent-text);outline-offset:1px}
 .book__x{position:absolute;top:10px;right:10px;width:44px;height:44px;border:0;background:transparent;font-size:28px;line-height:1;color:var(--ink);cursor:pointer;border-radius:50%}
+.book label.book__consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.4}
+.book__consent input{flex:none;width:18px;height:18px;margin:1px 0 0}
+.book__consent a{color:inherit;text-decoration:underline}
 .book__err{margin:0;min-height:1.2em;color:#a1260f;font-size:14px}
 .book__note{margin:0;font-size:12.5px;color:var(--ink2)}
 .book .btn--ghost{color:var(--ink);border-color:var(--ink-line)}
@@ -345,6 +348,14 @@ h2,h3{text-wrap:balance}
 .own__head em{font-style:normal;margin-left:8px;padding:3px 8px;border:1px solid var(--line2);border-radius:var(--r)}
 .own__main{padding:56px 0 96px}
 .own__h{font:var(--h1);font-size:clamp(40px,6vw,88px);text-transform:var(--case);margin:0 0 12px}
+.own__h--doc{font-size:clamp(30px,4.2vw,56px)}
+.own__draft{max-width:46em;margin:0 0 32px;padding:14px 18px;border:2px solid #b8860b;background:#fff7d6;color:#3a2f00;font-size:14px;line-height:1.45}
+.own__sec{max-width:46em;margin:0 0 28px}
+.own__sec h2{font-size:clamp(18px,2vw,24px);margin:0 0 10px}
+.own__sec p,.own__sec li{font-size:16px;line-height:1.6;margin:0 0 10px}
+.own__sec ul{margin:0 0 10px;padding-left:22px}
+.own__blank{background:#fff2b3;color:#3a2f00;padding:0 3px}
+.own__links{max-width:46em;margin:32px 0 0;font-size:15px}
 .own__lead{max-width:36em;margin:0 0 32px;color:var(--muted)}
 .own__stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 32px}
 .own__stats div{padding:16px 20px;background:var(--card);color:var(--text);border-radius:var(--r-card)}
@@ -511,3 +522,87 @@ html[data-name=mono] .head--pill .btn--main{background:#0a0a0a;color:#fff}
 @keyframes develop{from{filter:grayscale(1) blur(16px) brightness(1.6) contrast(.6);opacity:.15;transform:scale(1.05)}to{filter:grayscale(1) contrast(1.1);opacity:1;transform:none}}
 @media (prefers-reduced-motion:no-preference){.ed__photo img{animation:develop 1.5s var(--ease) .15s both}}
 @media (max-width:960px){.ed__facts{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* hero "menu": the services as a giant headline list on a flat dark field, the photograph and the next free time on the right.
+   Colours come from the look's variables, so it works in any look; the showroom block below only adds its own grain and rules. */
+.vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.hero--menu{background:var(--deep);align-items:center;padding:112px 0 72px}
+.hero--menu::before{display:none}
+.hero--menu .hero__in{grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:clamp(32px,4.5vw,80px);align-items:end;width:min(1320px,100% - 48px)}
+.hero--menu .hero__sub{margin:0 0 clamp(12px,2vw,24px);max-width:none;font-size:15px;font-weight:500;color:#a9a79f}
+.gmenu{list-style:none;margin:0;padding:0;border-top:1px solid rgb(255 255 255/.28)}
+.gmenu li{border-bottom:1px solid rgb(255 255 255/.28)}
+.gmenu__row{position:relative;display:block;text-decoration:none;color:inherit;padding:8px 0 10px}
+.gmenu__in{display:flex;align-items:baseline;justify-content:space-between;gap:4px 16px;transition:transform .2s var(--ease)}
+.gmenu__name{min-width:0;font:var(--h1);font-size:clamp(36px,4.6vw,72px);line-height:.98;text-transform:var(--case);letter-spacing:var(--h1-track);overflow-wrap:break-word}
+.gmenu__price{flex:none;font:500 16px/1 var(--ui);white-space:nowrap;font-variant-numeric:tabular-nums;color:#a9a79f}
+/* a thin line under the row is drawn from left to right in 200 ms; the row itself moves 12 px */
+.gmenu__line{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--paper);transform:scaleX(0);transform-origin:left;transition:transform .2s var(--ease)}
+.gmenu__row:focus-visible{outline-offset:-3px}
+.gmenu__row:focus-visible .gmenu__in{transform:translateX(12px)}
+.gmenu__row:focus-visible .gmenu__line{transform:scaleX(1)}
+@media (hover:hover) and (pointer:fine){.gmenu__row:hover .gmenu__in{transform:translateX(12px)}.gmenu__row:hover .gmenu__line{transform:scaleX(1)}}
+.hero--menu .hero__cta{margin-top:32px;align-items:center;gap:12px 28px}
+.quiet{padding:12px 0;font-weight:500;text-underline-offset:.3em;text-decoration-thickness:1px}
+.quiet:hover{text-decoration-thickness:2px}
+.gvis{display:grid;gap:20px;align-content:end;min-width:0}
+.gphoto{margin:0;aspect-ratio:4/5.2;overflow:hidden;background:#222}
+.gphoto img{width:100%;height:100%;object-fit:cover;object-position:var(--focus,50% 40%);filter:var(--grade,none);transition:filter .5s var(--ease)}
+@media (hover:hover) and (pointer:fine){.gphoto:hover img{filter:none}}
+.live{margin:0;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 16px;border-top:1px solid rgb(255 255 255/.28);padding-top:14px}
+.live small{font:600 13px/1.2 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:#a9a79f}
+.live b{font:var(--h1);font-size:clamp(34px,4vw,56px);line-height:1;text-transform:var(--case);color:var(--paper);font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:no-preference){.gmenu li{animation:rise .6s var(--ease) both;animation-delay:calc(.2s + var(--i) * 70ms)}}
+@media (prefers-reduced-motion:reduce){.gmenu__in,.gmenu__line,.gphoto img{transition:none}}
+@media (max-width:960px){.hero--menu .hero__in{grid-template-columns:minmax(0,1fr);gap:36px}.gphoto{aspect-ratio:4/3}}
+@media (max-width:560px){.gmenu__name{font-size:clamp(34px,10.5vw,48px)}.hero--menu .hero__cta{flex-direction:column;align-items:stretch}.hero--menu .quiet{text-align:center}}
+
+/* the one running line (looks with marquee): services and opening hours, two equal copies so the loop has no seam;
+   standing still, with one copy, for people who asked for less motion */
+.marquee{overflow:hidden;border-block:1px solid var(--ink);background:var(--bg);color:var(--text)}
+.marquee__track{display:flex;width:max-content;animation:marq 40s linear infinite}
+.marquee__g{display:flex;flex:none;align-items:center;margin:0;padding:0;list-style:none}
+.marquee__g li{display:flex;align-items:center;flex:none;white-space:nowrap;font:var(--strip);text-transform:var(--case);letter-spacing:var(--h2-track);padding:18px 0}
+.marquee__sep{margin:0 clamp(18px,2.4vw,36px);opacity:.45}
+.marquee:hover .marquee__track{animation-play-state:paused}
+@keyframes marq{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.marquee__track{animation:none;display:block;width:auto}.marquee__g{flex-wrap:wrap;padding:0 24px}.marquee__g--dup,.marquee__g li.rep{display:none}}
+
+/* showroom: bone paper and black chapters, narrow capitals. Radius 0, no shadows, no gradients. The only red: booking buttons, the chosen service and the one pole band. */
+html[data-name=showroom]{--grain-d:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");--grain-l:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-name=showroom] .hero--menu,html[data-name=showroom] #masters,html[data-name=showroom] .foot,html[data-name=showroom] .head,html[data-name=showroom] .sticky{--accent-text:var(--paper)}
+html[data-name=showroom] .hero,html[data-name=showroom] .sec,html[data-name=showroom] .say,html[data-name=showroom] .foot{position:relative;isolation:isolate}
+html[data-name=showroom] .hero--menu::before,html[data-name=showroom] .sec::before,html[data-name=showroom] .say::before,html[data-name=showroom] .foot::before{content:"";display:block;position:absolute;inset:0;z-index:-1;pointer-events:none;background:var(--grain-d) 0 0/240px 240px;opacity:.06;mix-blend-mode:multiply}
+html[data-name=showroom] .hero--menu::before,html[data-name=showroom] #masters::before,html[data-name=showroom] .foot::before{background-image:var(--grain-l);mix-blend-mode:screen}
+html[data-name=showroom] .hero{color:var(--paper)}
+html[data-name=showroom] .head .btn--main,html[data-name=showroom] .sticky .btn--main{background:var(--paper);color:var(--ink)}
+html[data-name=showroom] .head .btn--main:hover,html[data-name=showroom] .sticky .btn--main:hover{background:#fff}
+html[data-name=showroom] .sticky{background:var(--deep);color:var(--paper);border-color:rgb(255 255 255/.28);-webkit-backdrop-filter:none;backdrop-filter:none}
+html[data-name=showroom] .sticky__t small{color:#a9a79f}
+html[data-name=showroom] .sec h2.big,html[data-name=showroom] .end h2,html[data-name=showroom] .say p,html[data-name=showroom] .pick__tabs button,html[data-name=showroom] .pick__txt h3,html[data-name=showroom] .master h3,html[data-name=showroom] .book h2{text-transform:uppercase;letter-spacing:.02em}
+html[data-name=showroom] .pick__tabs b,html[data-name=showroom] .pick__meta .price,html[data-name=showroom] .menu .price{color:var(--ink)}
+html[data-name=showroom] .pick__tabs button[aria-selected=true]{box-shadow:none;border-left:4px solid var(--accent);padding-left:12px}
+html[data-name=showroom] .badge{border-radius:0;background:var(--ink);color:var(--paper)}
+html[data-name=showroom] #masters{background:var(--deep);color:var(--paper)}
+html[data-name=showroom] #masters .master h3{font-size:clamp(40px,5vw,72px);line-height:.95}
+html[data-name=showroom] #masters .master__role{color:#a9a79f}
+html[data-name=showroom] #masters .master__note{color:var(--paper)}
+html[data-name=showroom] #contacts{border-top:1px solid var(--ink-line)}
+html[data-name=showroom] .say{background:transparent;color:var(--text);padding:clamp(72px,10vw,150px) 0;border-top:1px solid var(--ink-line)}
+html[data-name=showroom] .say p{max-width:18em;font:var(--h2)}
+html[data-name=showroom] .pole{height:6px;background:var(--pole) 0 0/56px 6px repeat-x}
+html[data-name=showroom] .book__form,html[data-name=showroom] .book__done{border-top:8px solid var(--ink);box-shadow:none}
+html[data-name=showroom] .book__x{border-radius:0}
+html[data-name=showroom] .book__consent input{-webkit-appearance:none;appearance:none;width:22px;height:22px;margin:0;border:2px solid var(--ink);border-radius:0;background:#fff}
+html[data-name=showroom] .book__consent input:checked{background:var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 4.8' fill='none' stroke='%23efece4' stroke-width='2.4'/%3E%3C/svg%3E") center/14px no-repeat}
+html[data-name=showroom] .own__head{border-bottom:1px solid var(--ink)}
+html[data-name=showroom] .own__h,html[data-name=showroom] .page h2{text-transform:uppercase;letter-spacing:.02em}
+html[data-name=showroom] .own__cell--ok{box-shadow:none;border-left:4px solid var(--accent)}
+@media (max-width:380px){html[data-name=showroom] .sec h2.big{font-size:40px}}
+html[data-name=showroom] .wrap,html[data-name=showroom] .hero--menu .hero__in{width:min(1320px,100% - 48px)}
+html[data-name=showroom] .stack{gap:32px}
+html[data-name=showroom] .stack h2.big{margin:0}
+html[data-name=showroom] .pick__txt h3{font-size:clamp(30px,3vw,48px);line-height:.98}
+html[data-name=showroom] #masters .master--plain{align-self:start;padding-top:16px;border-top:1px solid rgb(255 255 255/.28)}
+html[data-name=showroom] .end h2{font-size:clamp(36px,4.4vw,68px);line-height:.98}
+@media (max-width:400px){.facts div{grid-template-columns:minmax(0,1fr);gap:4px}}

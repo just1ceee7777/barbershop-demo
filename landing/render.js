@@ -54,6 +54,17 @@ export const LOOKS = {
     quiet: true,
     grade: 'grayscale(1) contrast(1.1)',
   },
+  showroom: { // bone paper and black chapters, narrow capitals, one red only on the booking button; radius 0, no shadows, no gradients, a faint grain
+    c: { bg: '#efece4', deep: '#121212', card: '#f7f5ef', text: '#121212', muted: '#5b5a55', accent: '#d3202b', accentInk: '#ffffff', accentHover: '#b81a24', accentText: '#121212', accentDeep: '#121212', paper: '#efece4', ink: '#121212', ink2: '#5b5a55', sage: '#efece4' },
+    type: { ui: "'Manrope','Arial',sans-serif", display: "'Oswald','Arial Narrow',sans-serif", logo: "500 28px/1 'Oswald','Arial Narrow',sans-serif", tag: "500 19px/1.1 'Oswald','Arial Narrow',sans-serif", h1: "500 clamp(56px,8vw,128px)/.95 'Oswald','Arial Narrow',sans-serif", h2: "500 clamp(48px,6.4vw,104px)/.95 'Oswald','Arial Narrow',sans-serif", h3: "500 30px/1 'Oswald','Arial Narrow',sans-serif", price: "500 28px/1 'Oswald','Arial Narrow',sans-serif", strip: "500 clamp(32px,4.4vw,56px)/1 'Oswald','Arial Narrow',sans-serif", caption: "500 16px/1.35 var(--ui)", case: 'uppercase', h1Track: '.02em', h2Track: '.02em', r: '0', rCtl: '0', rCard: '0' },
+    ornament: false,
+    light: true,
+    quiet: true,
+    marquee: true, // one running line between the services and the masters, instead of the strip under the first screen
+    pole: true, // one barber-pole band above the footer
+    mastersFirst: true, // masters come before the works, so the page alternates bone / black
+    grade: 'grayscale(1) contrast(1.08)',
+  },
   street: { // a poster: bone paper, black, one signal orange, tall narrow capitals
     c: { bg: '#e3e4e1', deep: '#0e0e0e', card: '#ffffff', text: '#0e0e0e', muted: '#55554f', accent: '#ff4a1f', accentInk: '#0e0e0e', accentText: '#0e0e0e', accentDeep: '#0e0e0e', paper: '#f6f5f1', ink: '#0e0e0e', ink2: '#3d3d3a', sage: '#0e0e0e' },
     type: { display: "'Yanone Kaffeesatz','Arial Narrow',sans-serif", logo: "700 28px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", tag: "700 19px/1.1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h1: "700 clamp(56px,9vw,150px)/.88 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h2: "700 clamp(44px,6vw,92px)/.92 'Yanone Kaffeesatz','Arial Narrow',sans-serif", h3: "700 30px/1.05 'Yanone Kaffeesatz','Arial Narrow',sans-serif", price: "700 36px/1 'Yanone Kaffeesatz','Arial Narrow',sans-serif", strip: "700 clamp(40px,6vw,88px)/.9 'Yanone Kaffeesatz','Arial Narrow',sans-serif", caption: "500 16px/1.35 var(--ui)", case: 'uppercase', h1Type: 'clamp(56px,11vw,190px)', h1Track: '.005em', h2Track: '.005em', r: '0', rCtl: '0', rCard: '0' },
@@ -64,13 +75,13 @@ export const LOOKS = {
   },
 };
 
-function ornamentTile(c) {
-  const cols = [c.accent, c.paper, c.sage, c.paper]; const W = 112, H = 22, sw = 28; let p = '';
+function ornamentTile(c, cols = [c.accent, c.paper, c.sage, c.paper], H = 22, sw = 28) {
+  const W = sw * 4; let p = '';
   cols.forEach((col, i) => { const a = i * sw; for (const o of [0, -W]) p += `<polygon fill="${col}" points="${a + H + o},0 ${a + H + sw + o},0 ${a + sw + o},${H} ${a + o},${H}"/>`; });
   return `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${W}' height='${H}' viewBox='0 0 ${W} ${H}'>${p}</svg>`).replace(/'/g, '%27')}")`;
 }
 
-export const HERO_VARIANTS = ['split', 'phone', 'center', 'type', 'strip', 'frame', 'editorial'];
+export const HERO_VARIANTS = ['split', 'phone', 'center', 'type', 'strip', 'frame', 'editorial', 'menu'];
 
 export function validate(p) {
   const need = (cond, msg) => { if (!cond) throw new Error(`Профиль: ${msg}`); };
@@ -82,7 +93,7 @@ export function validate(p) {
   for (const s of p.services) need(s.name && Number.isFinite(s.price) && s.price >= 0 && Number.isFinite(s.duration) && s.duration >= 15, `услуга «${s.name}»: название, цена, длительность от 15 минут`);
   need(p.hero && p.hero.title, 'hero.title');
   need(HERO_VARIANTS.includes(p.hero.variant || 'split'), `hero.variant: один из ${HERO_VARIANTS.join(', ')}`);
-  need(p.hero.photo || ['phone', 'center', 'type'].includes(p.hero.variant || 'split'), 'hero.photo нужен для вариантов split и strip');
+  need(p.hero.photo || ['phone', 'center', 'type'].includes(p.hero.variant || 'split'), 'hero.photo нужен для вариантов split, strip, frame, editorial и menu');
   if (p.masters != null) { need(Array.isArray(p.masters) && p.masters.length <= 6, 'masters: список до 6 человек'); for (const m of p.masters) need(m && m.name && String(m.name).length <= 40, 'у каждого мастера есть имя до 40 знаков'); }
   for (const k of Object.keys(p.colors || {})) need(hex.test(p.colors[k]), `цвет ${k} в формате #rrggbb`);
   return p;
@@ -97,11 +108,11 @@ export function renderLanding(profile, photoUrl) {
   const vars = {
     '--bg': c.bg, '--deep': c.deep, '--deep-rgb': rgb(c.deep), '--card': c.card, '--text': c.text, '--text-rgb': rgb(c.text), '--muted': c.muted,
     '--line2': `rgb(${rgb(c.text)} / .26)`, '--head': `rgb(${rgb({ frame: c.bg, type: look.quiet ? c.bg : c.accent }[p.hero.variant] || c.deep)} / .94)`,
-    '--accent': c.accent, '--accent-ink': c.accentInk, '--accent-text': c.accentText, '--accent-hover': c.accent, '--accent-deep': c.accentDeep,
+    '--accent': c.accent, '--accent-ink': c.accentInk, '--accent-text': c.accentText, '--accent-hover': c.accentHover || c.accent, '--accent-deep': c.accentDeep,
     '--paper': c.paper, '--ink': c.ink, '--ink2': c.ink2, '--ink-rgb': rgb(c.ink), '--ink-line': `rgb(${rgb(c.ink)} / .2)`,
-    '--display': t.display, '--ui': "'Golos Text',system-ui,-apple-system,'Segoe UI',sans-serif", '--logo': t.logo, '--tag': t.tag, '--h1': t.h1, '--h2': t.h2, '--h3': t.h3, '--price': t.price, '--strip': t.strip, '--caption': t.caption,
+    '--display': t.display, '--ui': t.ui || "'Golos Text',system-ui,-apple-system,'Segoe UI',sans-serif", '--logo': t.logo, '--tag': t.tag, '--h1': t.h1, '--h2': t.h2, '--h3': t.h3, '--price': t.price, '--strip': t.strip, '--caption': t.caption,
     '--grade': look.grade || 'none', '--h1-type': t.h1Type || 'clamp(40px,7.6vw,128px)', '--case': t.case, '--h1-track': t.h1Track, '--h2-track': t.h2Track, '--r': t.r, '--r-ctl': t.rCtl, '--r-card': t.rCard, '--ease': 'cubic-bezier(.23,1,.32,1)',
-    '--ornament': look.ornament ? ornamentTile(c) : 'none', '--focus': p.hero.focus || '60% 40%',
+    '--ornament': look.ornament ? ornamentTile(c) : 'none', '--pole': look.pole ? ornamentTile(c, [c.accent, c.deep, c.paper, c.deep], 6, 14) : 'none', '--focus': p.hero.focus || '60% 40%',
   };
   // On a light look the page body is light but the dark parts (first screen, strip text) keep light text: those are set per block below.
   const light = Boolean(look.light);
@@ -130,7 +141,7 @@ export function renderLanding(profile, photoUrl) {
   const pick = (s, i) => (s.photo || (stagePhotos.length ? stagePhotos[i % stagePhotos.length] : ''));
   const selector = `<div class="pick" data-pick>
     <div class="pick__tabs" role="tablist" aria-label="Услуги">${p.services.map((s, i) => `<button type="button" role="tab" id="svc-t${i}" aria-controls="svc-p${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}"><span>${esc(s.name)}${s.popular ? ' <em class="badge">Популярно</em>' : ''}</span><b>${rub(s.price)}</b></button>`).join('')}</div>
-    <div class="pick__stage">${p.services.map((s, i) => { const img = pick(s, i); return `<article role="tabpanel" id="svc-p${i}" aria-labelledby="svc-t${i}"${i ? ' hidden' : ''}>${img ? `<img src="${photo(img)}" alt="" width="900" height="1100" loading="${i ? 'lazy' : 'eager'}" decoding="async">` : ''}<div class="pick__txt"><h3>${esc(s.name)}</h3>${s.desc ? `<p>${esc(s.desc)}</p>` : ''}<p class="pick__meta"><span class="price">${rub(s.price)}</span><span>${fmtDur(s.duration)}</span></p><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a></div></article>`; }).join('')}</div>
+    <div class="pick__stage">${p.services.map((s, i) => { const img = pick(s, i); return `<article role="tabpanel" id="svc-p${i}" aria-labelledby="svc-t${i}"${i ? ' hidden' : ''}>${img ? `<img src="${photo(img)}" alt="" width="900" height="1100" loading="${i ? 'lazy' : 'eager'}" decoding="async">` : ''}<div class="pick__txt"><h3>${esc(s.name)}</h3>${s.desc ? `<p>${esc(s.desc)}</p>` : ''}<p class="pick__meta"><span class="price">${rub(s.price)}</span><span>${fmtDur(s.duration)}</span></p><a class="btn btn--main" data-book data-svc="${i}" href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a></div></article>`; }).join('')}</div>
   </div>`;
   const cardsView = `<ul class="svcs" style="--cols:${p.services.length % 4 === 0 ? 4 : p.services.length % 3 === 0 ? 3 : 4}">${p.services.map((s, i) => { const img = pick(s, i); return `<li><a class="svc" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${img ? `<img src="${photo(img)}" alt="" width="600" height="800" loading="lazy" decoding="async">` : ''}<span class="svc__t"><b>${esc(s.name)}</b><span class="svc__p">${rub(s.price)} · ${fmtDur(s.duration)}</span></span></a></li>`; }).join('')}</ul>`;
   const dur = (m) => (m >= 60 ? `${Math.floor(m / 60)}\u00a0ч${m % 60 ? ` ${m % 60}\u00a0мин` : ''}` : `${m}\u00a0мин`);
@@ -190,6 +201,28 @@ export function renderLanding(profile, photoUrl) {
   </div>
 </section>`;
   const infoStrip = `<div class="infostrip"><span>${esc(p.address || p.tagline || '')}</span><span>Листайте вниз <i aria-hidden="true">↓</i></span><span>Ежедневно ${esc(p.hours[0])}–${esc(p.hours[1])}</span></div>`;
+  // showroom: the services as a giant headline list (menu hero) and the one running line. Declared after card, free and fmtDur on purpose.
+  const bookHref = esc(p.bookingUrl || 'tel:' + tel);
+  const menuRows = p.services.slice(0, 5).map((s, i) => `<li style="--i:${i}"><a class="gmenu__row" data-book data-svc="${i}" href="${bookHref}"><span class="gmenu__in"><span class="gmenu__name">${esc(s.name)}</span><span class="gmenu__price">${rub(s.price)}</span></span><span class="gmenu__line" aria-hidden="true"></span></a></li>`).join('');
+  const heroMenu = `<section class="hero hero--menu" id="book" aria-labelledby="hero-t">
+  <div class="hero__in">
+    <div class="hero__text">
+      <h1 id="hero-t" class="vh">${esc(p.name)}: ${esc(String(p.hero.title).replace(/\s*\n\s*/g, ' '))}</h1>
+      ${p.hero.sub ? `<p class="hero__sub">${esc(tie(p.hero.sub))}</p>` : ''}
+      <nav aria-label="Услуги: выбрать и записаться"><ul class="gmenu">${menuRows}</ul></nav>
+      <div class="hero__cta"><a class="btn btn--main" data-book href="${bookHref}">${esc(cta)}</a><a class="quiet" href="${gallery ? '#works' : `tel:${esc(tel)}`}">${gallery ? 'Посмотреть работы' : esc(p.phone || 'Позвонить')}</a></div>
+    </div>
+    <div class="gvis"><figure class="gphoto"><img src="${heroPhoto}" alt="" width="900" height="1100" fetchpriority="high"></figure><p class="live"><small data-day>Ближайшее время сегодня</small><b data-next>${free[0] || ''}</b></p></div>
+  </div>
+</section>`;
+  const mqItems = [...p.services.map((s) => s.name), `Ежедневно ${p.hours[0]}–${p.hours[1]}`];
+  const mqSet = (cls) => mqItems.map((n) => `<li${cls ? ` class="${cls}"` : ''}>${esc(n)}<span class="marquee__sep">/</span></li>`).join('');
+  const mqReps = Math.max(2, Math.ceil(12 / mqItems.length));
+  const mqGroup = (dup) => `<ul class="marquee__g${dup ? ' marquee__g--dup' : ''}">${mqSet('')}${Array.from({ length: mqReps - 1 }, () => mqSet('rep')).join('')}</ul>`;
+  const marquee = `<div class="marquee" aria-hidden="true"><div class="marquee__track">${mqGroup(false)}${mqGroup(true)}</div></div>`;
+  const navWorks = gallery ? '<a href="#works">Работы</a>' : '', navMasters = masters ? '<a href="#masters">Мастера</a>' : '';
+  const navLinks = `<a href="#price">Цены</a>${look.mastersFirst ? navMasters + navWorks : navWorks + navMasters}<a href="#contacts">Контакты</a>`;
+  const worksSec = gallery ? `<section class="sec" id="works"><div class="wrap"><h2 class="big">${esc(p.worksTitle || 'Работы')}</h2><div class="works">${gallery}</div></div></section>` : '';
   const html = `<!doctype html>
 <html lang="ru" data-name="${p.look || 'night'}"${light ? ' data-look="light"' : ''} data-hero="${variant}">
 <head>
@@ -212,10 +245,10 @@ ${heroPhoto ? `<link rel="preload" as="image" href="${heroPhoto}">` : ''}
 <body>
 ${variant === 'editorial' ? headEd : `<header class="head" id="head"><div class="wrap head__in">
   <a class="logo" href="#top" translate="no">${esc(p.name)}</a>
-  <nav aria-label="Разделы"><a href="#price">Цены</a>${gallery ? '<a href="#works">Работы</a>' : ''}${masters ? '<a href="#masters">Мастера</a>' : ''}<a href="#contacts">Контакты</a><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">Записаться</a></nav>
+  <nav aria-label="Разделы">${navLinks}<a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">Записаться</a></nav>
 </div></header>`}
 <main id="top" data-open="${esc(p.hours[0])}" data-close="${esc(p.hours[1])}" data-taken="${[...taken].join(',')}">
-${variant === 'editorial' ? heroEd : `<section class="hero hero--${variant}" id="book">
+${variant === 'editorial' ? heroEd : variant === 'menu' ? heroMenu : `<section class="hero hero--${variant}" id="book">
   ${heroPhoto && ['split', 'center', 'strip'].includes(variant) ? `<img class="hero__bg" src="${heroPhoto}" alt="" width="1800" height="1100" fetchpriority="high">` : ''}
   <div class="hero__in">
     <div class="hero__text">
@@ -230,13 +263,13 @@ ${variant === 'editorial' ? heroEd : `<section class="hero hero--${variant}" id=
   </div>
   ${look.ornament ? '<div class="ornament" aria-hidden="true"><i></i></div>' : ''}
 </section>`}
-${variant === 'editorial' ? infoStrip : `<div class="strip" aria-hidden="true"><div class="strip__row">${strip}</div></div>`}
+${variant === 'editorial' ? infoStrip : look.marquee ? '' : `<div class="strip" aria-hidden="true"><div class="strip__row">${strip}</div></div>`}
 <section class="sec paper" id="price"><div class="wrap ${['selector', 'cards'].includes(p.servicesView) ? 'stack' : 'split'}">
   <div><h2 class="big">Услуги и цены</h2><p class="lead">${esc(p.priceLead || 'Цена окончательная, без доплат на месте.')}</p></div>
   ${p.servicesView === 'selector' ? selector : p.servicesView === 'cards' ? cardsView : `<ul class="menu">${menu}</ul>`}
 </div></section>
-${gallery ? `<section class="sec" id="works"><div class="wrap"><h2 class="big">${esc(p.worksTitle || 'Работы')}</h2><div class="works">${gallery}</div></div></section>` : ''}
-${masters}
+${look.marquee ? marquee : ''}
+${look.mastersFirst ? masters + worksSec : worksSec + masters}
 ${statement ? `<section class="say"><div class="wrap"><p style="--n:${words.length}">${statement}</p></div></section>` : ''}
 <section class="sec paper" id="contacts"><div class="wrap end">
   <div><h2>${esc(tie(p.closing || 'Выберите время, остальное мы берём на себя.'))}</h2><a class="btn btn--main" data-book href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a></div>
@@ -247,7 +280,8 @@ ${statement ? `<section class="say"><div class="wrap"><p style="--n:${words.leng
   </dl>${p.address ? `<p class="route"><a class="btn btn--ghost" href="https://yandex.ru/maps/?text=${encodeURIComponent(p.address)}" target="_blank" rel="noopener">Построить маршрут</a></p>` : ''}</div>
 </div></section>
 </main>
-<footer class="foot"><div class="wrap"><span translate="no">© ${esc(p.name)}</span><span>Макет сайта, не окончательная версия${p.ownerLink ? ' · <a href="owner.html">Экран владельца, пример</a>' : ''} · <a href="privacy.html">Конфиденциальность</a></span></div></footer>
+${look.pole ? '<div class="pole" aria-hidden="true"></div>' : ''}
+<footer class="foot"><div class="wrap"><span translate="no">© ${esc(p.name)}</span><span>Макет сайта, не окончательная версия${p.ownerLink ? ' · <a href="owner.html">Экран владельца, пример</a>' : ''} · <a href="privacy.html">Политика обработки данных</a> · <a href="consent.html">Согласие</a></span></div></footer>
 <div class="sticky" id="sticky" aria-hidden="true"><span class="sticky__t"><b translate="no">${esc(p.name)}</b><small>от ${rub(Math.min(...p.services.map((x) => x.price)))}</small></span><a class="btn btn--main" data-book tabindex="-1" href="${esc(p.bookingUrl || 'tel:' + tel)}">${esc(cta)}</a></div>
 <dialog class="book" id="book-dialog" aria-labelledby="book-t">
   <form method="dialog" class="book__form" id="book-form" novalidate>
@@ -257,6 +291,7 @@ ${statement ? `<section class="say"><div class="wrap"><p style="--n:${words.leng
     <label>Время<select name="time" id="book-time">${Array.from({ length: 8 }, (_, i) => hhmm(first + i * step)).map((t, i) => `<option value="${t}"${taken.has(i) ? ' disabled' : ''}>Сегодня, ${t}${taken.has(i) ? ' (занято)' : ''}</option>`).join('')}</select></label>
     <label>Имя<input name="name" id="book-name" autocomplete="name" maxlength="60" placeholder="Как к вам обращаться"></label>
     <label>Телефон<input name="phone" id="book-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" placeholder="+7 900 000-00-00"></label>
+    <label class="book__consent"><input type="checkbox" name="consent" id="book-consent"><span>Согласен(на) на обработку персональных данных (<a href="consent.html" target="_blank" rel="noopener">текст согласия</a>). <a href="privacy.html" target="_blank" rel="noopener">Политика обработки</a></span></label>
     <p class="book__err" id="book-err" role="alert"></p>
     <button type="submit" class="btn btn--main">Записаться</button>
     <p class="book__note">Макет: заявка никуда не отправляется. В готовом сайте она сразу приходит администратору.</p>
@@ -284,6 +319,7 @@ var free=nodes.filter(function(b,i){return !b.disabled&&!b.parentNode.classList.
 var first=free[0]?free[0].textContent:f(start);
 [].forEach.call(document.querySelectorAll('[data-next]'),function(n){n.textContent=first});
 [].forEach.call(document.querySelectorAll('.hero__time small'),function(n){n.textContent=day==='Сегодня'?'Сегодня свободно':'Завтра свободно'});
+[].forEach.call(document.querySelectorAll('[data-day]'),function(n){n.textContent=day==='Сегодня'?'Ближайшее время сегодня':'Ближайшее время завтра'});
 [].forEach.call(document.querySelectorAll('[data-clock]'),function(n){var tick=function(){var d=new Date();n.textContent=d.toLocaleDateString('ru-RU',{weekday:'long'})+' · '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+' · '+d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})};tick();setInterval(tick,30000)});
 var counters=[].slice.call(document.querySelectorAll('[data-count]'));
 if(counters.length&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){counters.forEach(function(n){var to=+n.dataset.count,suf=n.dataset.suffix||'',t0=null;function fmt(v){return String(v).replace(/\\B(?=(\\d{3})+(?!\\d))/g,'\u00a0')+suf}
@@ -310,6 +346,7 @@ var t=document.getElementById('card-t');if(t)t.textContent=day==='Сегодня
     var reset = function () { form.hidden = false; done.hidden = true; err.textContent = ''; };
     document.querySelectorAll('[data-book]').forEach(function (a) { a.addEventListener('click', function (e) {
       e.preventDefault(); reset();
+      var si = a.getAttribute('data-svc'), sv = document.getElementById('book-svc'); if (si !== null && sv) sv.selectedIndex = +si;
       var picked = document.querySelector('.slot[aria-pressed=true]'); if (picked) timeSel.value = picked.textContent;
       dlg.showModal(); document.getElementById('book-name').focus();
     }); });
@@ -323,6 +360,7 @@ var t=document.getElementById('card-t');if(t)t.textContent=day==='Сегодня
       var digits = phone.replace(/\\D/g, '').length;
       if (name.length < 2) { err.textContent = 'Введите имя'; return; }
       if (digits < 10 || digits > 15) { err.textContent = 'Проверьте телефон: от 10 до 15 цифр'; return; }
+      if (!document.getElementById('book-consent').checked) { err.textContent = 'Отметьте согласие на обработку персональных данных'; return; }
       var svc = document.getElementById('book-svc'), label = svc.options[svc.selectedIndex].text;
       document.getElementById('book-sum').textContent = name + ', ' + label + ', сегодня в ' + timeSel.value + '. Так выглядит подтверждение; на настоящем сайте оно приходит сразу и с напоминанием.';
       form.hidden = true; done.hidden = false;
